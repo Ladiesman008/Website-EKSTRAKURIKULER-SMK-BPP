@@ -1,9 +1,7 @@
 Absensi Coach SMK BPP Bandung
-Paket rekonstruksi: V3.2
-Tanggal paket: 1 November 2026
+Paket UI: V3.2.1
+Backend API: V3.2
+Tanggal pembaruan UI: 1 November 2026
 
-Alur normal absensi: satu klik Absen Sekarang → izin kamera/GPS → hitung mundur 3 detik → foto otomatis → simpan otomatis.
-Aksen antarmuka: hijau tua.
-
-Paket tidak menyertakan file logo agar logo yang sudah ada di GitHub tidak tertimpa. Letakkan logo.* satu folder dengan index.html.
-Deploy ulang code.gs sebagai New version sebelum digunakan.
+Perubahan V3.2.1: memperbesar logo, banner header, tulisan identitas sekolah, dan heading beranda; penyetelan responsif desktop, tablet, dan ponsel.
+Alur absensi dan backend tetap kompatibel dengan V3.2.

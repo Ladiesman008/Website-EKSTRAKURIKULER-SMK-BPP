@@ -123,3 +123,12 @@ File yang diberikan adalah **Laporan Evaluasi & Kinerja Ekstrakurikuler TA 2025/
 - Tombol **Batalkan** tersedia sebelum foto diambil. Berpindah menu saat proses berlangsung akan menghentikan sesi kamera.
 - Aksen ungu diganti menjadi hijau tua.
 - Endpoint health backend mengembalikan versi `3.2`.
+
+
+## Pembaruan tampilan V3.2.1
+- Logo header diperbesar hingga maksimum 118 px pada desktop dan 82 px pada ponsel (74 px pada layar sangat kecil).
+- Banner header diperbesar dengan tinggi minimum 164 px pada desktop, menyesuaikan otomatis pada ponsel.
+- Nama sekolah dan subjudul header diperbesar serta ditata ulang agar tetap terbaca pada layar sempit.
+- Heading hero beranda diperbesar.
+- Backend tetap versi API 3.2; tidak perlu deployment Code.gs baru untuk perubahan visual ini.
+- Setelah mengganti file, lakukan hard refresh atau bersihkan cache browser agar style.css?v=3.2.1 termuat.

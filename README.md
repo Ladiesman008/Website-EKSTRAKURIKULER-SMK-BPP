@@ -1,6 +1,6 @@
 # Sistem Absensi Coach & Evaluasi Ekstrakurikuler — SMK BPP Bandung
 
-Versi ini mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
+Versi 3.1 ini memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
 
 ## Fitur utama
 
@@ -29,7 +29,8 @@ Dokumen sumber berisi jumlah anggota dan struktur pembina, tetapi tidak menyerta
 ## Isi paket
 
 - `index.html` — struktur halaman website.
-- `style.css` — dark neumorphism hitam/charcoal.
+- `style.css` — dark neumorphism hitam/charcoal, layout responsif, dan area logo.
+- `logo.png` / `logo.svg` / `logo.webp` / `logo.jpg` / `logo.jpeg` (juga AVIF/GIF) — letakkan file logo sekolah di folder yang sama dengan `index.html`. Frontend akan mencoba nama-nama ini otomatis. Nama file harus huruf kecil `logo` diikuti ekstensi; format PNG transparan atau SVG disarankan.
 - `data.js` — data deskripsi enam ekstrakurikuler dari dokumen sumber.
 - `script.js` — navigasi, izin kamera/lokasi, pengambilan foto, pengiriman check-in, kehadiran/nilai anggota, login admin, rekap, dan unduh DOCX.
 - `config.js` — URL Web App Google Apps Script.
@@ -62,14 +63,25 @@ Dokumen sumber berisi jumlah anggota dan struktur pembina, tetapi tidak menyerta
 9. Deploy Apps Script sebagai **Web App**:
    - **Execute as:** akun pemilik script.
    - **Who has access:** Anyone, karena coach tidak menggunakan login Google.
-10. Salin URL deployment berakhiran `/exec` dan periksa `config.js`. URL di file ini mempertahankan URL proyek sebelumnya; ganti bila deployment baru menghasilkan URL berbeda.
+10. Buka **Deploy → Manage deployments → Edit** pada deployment yang dipakai website, pilih **New version**, lalu deploy ulang `code.gs` terbaru. Dengan mengedit deployment yang sama, URL `/exec` biasanya tetap sama. Jika membuat deployment baru, salin URL `/exec` baru ke `SCRIPT_URL` di `config.js`.
+11. Setelah deploy, uji endpoint kesehatan dengan membuka `URL_WEB_APP/exec?action=health`. Respons yang benar memuat `service: Absensi Coach SMK BPP` dan `version: 3.1`. Jika respons berbeda, frontend masih mengarah ke backend versi lama.
 
 ## Instalasi website
 
-1. Upload `index.html`, `style.css`, `data.js`, `config.js`, dan `script.js` ke hosting statis.
+1. Upload `index.html`, `style.css`, `data.js`, `config.js`, `script.js`, dan file logo (`logo.png`, `logo.svg`, `logo.webp`, `logo.jpg`, `logo.jpeg`, `logo.avif`, atau `logo.gif`) ke folder hosting yang sama. Untuk GitHub Pages, letakkan file logo di folder yang sama dengan `index.html`; pemanggilan logo memakai path relatif sehingga berfungsi pada project site maupun custom domain.
 2. Gunakan hosting **HTTPS** (misalnya GitHub Pages atau Netlify). API kamera dan GPS browser tidak berjalan dari halaman HTTP biasa atau file lokal.
 3. Pastikan `WEBSITE_URL` pada Script Properties menunjuk ke alamat publik website yang sama.
 4. Buka website melalui URL publik. Uji menu Beranda, lalu buka link coach dari sheet `Coach`.
+
+## Pemeriksaan setelah update V3.1
+
+- Buka website di desktop dan HP; pastikan logo terlihat di kiri atas. Jika belum, periksa apakah nama file benar-benar `logo.png` (atau salah satu ekstensi yang didukung) dan berada satu folder dengan `index.html`.
+- Klik ketiga menu navigasi dan tombol “Buka portal coach”.
+- Buka link coach; pastikan nama coach dan ekskul berhasil diverifikasi.
+- Tekan “Absen Sekarang”, izinkan kamera dan lokasi, ambil foto, lalu kirim. Pastikan satu baris muncul pada `AbsensiCoach`.
+- Isi status seluruh anggota aktif dan simpan; pastikan data masuk ke `AbsensiAnggota` dan `Penilaian`.
+- Login administrator, tampilkan rekap, lalu unduh DOCX.
+- Jika muncul pesan koneksi, periksa `SCRIPT_URL` dan endpoint `?action=health`; deployment backend harus versi 3.1.
 
 ## Cara kerja absensi coach
 

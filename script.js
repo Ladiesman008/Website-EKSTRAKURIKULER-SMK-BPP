@@ -40,24 +40,76 @@
   }
 
   async function request(action, data = {}, method = 'POST') {
-    if (typeof SCRIPT_URL === 'undefined' || !SCRIPT_URL) throw new Error('URL backend belum diatur di config.js.');
-    let url = SCRIPT_URL;
-    const options = { method };
+    if (typeof SCRIPT_URL === 'undefined' || !SCRIPT_URL) {
+      throw new Error('URL backend belum diatur. Isi SCRIPT_URL di config.js dengan URL Web App Apps Script yang sudah di-deploy.');
+    }
+    let url = SCRIPT_URL.trim();
+    const options = { method, mode: 'cors', credentials: 'omit', redirect: 'follow', cache: 'no-store' };
     if (method === 'GET') {
       const params = new URLSearchParams({ action, ...data });
       url += `${url.includes('?') ? '&' : '?'}${params.toString()}`;
     } else {
-      options.headers = { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' };
+      // URLSearchParams membuat request form-urlencoded sederhana tanpa custom header,
+      // sehingga browser tidak perlu mengirim preflight OPTIONS.
       options.body = new URLSearchParams({ action, ...data });
     }
-    const response = await fetch(url, options);
+    let response;
+    try {
+      response = await fetch(url, options);
+    } catch (error) {
+      const detail = error && error.message ? ` (${error.message})` : '';
+      throw new Error('Tidak dapat membaca respons Google Apps Script. Periksa URL /exec di config.js, deploy versi backend terbaru dengan akses "Anyone", dan pastikan website dibuka melalui HTTPS.' + detail);
+    }
     if (!response.ok) throw new Error(`Server merespons HTTP ${response.status}.`);
-    const result = await response.json();
+    const raw = await response.text();
+    let result;
+    try { result = JSON.parse(raw); }
+    catch (error) {
+      throw new Error('Backend tidak mengirim JSON. Kemungkinan URL masih menunjuk ke deployment lama atau Apps Script belum di-deploy ulang.');
+    }
     if (!result || typeof result !== 'object') throw new Error('Respons server tidak valid.');
+    if (result.result === 'error' && /^Aksi (GET|POST) tidak dikenal/i.test(String(result.message || ''))) {
+      result.message = 'Backend masih menggunakan versi lama. Deploy ulang file code.gs V3.1 melalui Manage deployments → Edit → New version.';
+    }
     return result;
   }
 
+  function loadSchoolLogo() {
+    const image = $('#school-logo');
+    const fallback = $('#brand-fallback');
+    if (!image || !fallback) return;
+    const candidates = ['logo.png', 'logo.svg', 'logo.webp', 'logo.jpg', 'logo.jpeg', 'logo.avif', 'logo.gif', 'logo.PNG', 'logo.SVG', 'logo.WEBP', 'logo.JPG', 'logo.JPEG', 'logo.AVIF', 'logo.GIF', 'logo'];
+    let index = 0;
+    image.onload = () => {
+      image.hidden = false;
+      fallback.hidden = true;
+      image.dataset.loaded = 'true';
+    };
+    image.onerror = () => {
+      index += 1;
+      if (index < candidates.length) image.src = new URL(candidates[index], document.baseURI).href;
+      else {
+        image.hidden = true;
+        fallback.hidden = false;
+      }
+    };
+    image.src = new URL(candidates[index], document.baseURI).href;
+  }
+
+  function jakartaDateKey() {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
+    }).formatToParts(new Date());
+    const value = {};
+    parts.forEach((part) => { value[part.type] = part.value; });
+    return `${value.year}-${value.month}-${value.day}`;
+  }
+
   function switchView(name) {
+    if (name !== 'absensi') {
+      stopCamera();
+      if (!checkin) resetCaptureFlow();
+    }
     $$('.view').forEach((section) => section.classList.toggle('active', section.id === `view-${name}`));
     $$('.nav-btn').forEach((button) => button.classList.toggle('active', button.dataset.view === name));
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -150,6 +202,9 @@
       startArea.hidden = false;
       captureArea.hidden = true;
       memberWorkspace.hidden = true;
+      $('#capture-photo').disabled = true;
+      $('#submit-checkin').disabled = true;
+      $('#retake-photo').hidden = true;
     }
   }
 
@@ -162,8 +217,26 @@
     if (video) video.srcObject = null;
   }
 
+  function resetCaptureFlow() {
+    capturedPhoto = '';
+    currentLocation = null;
+    $('#checkin-start-area').hidden = false;
+    $('#capture-area').hidden = true;
+    $('#camera-preview').hidden = false;
+    $('#photo-preview').hidden = true;
+    $('#camera-placeholder').hidden = false;
+    $('#capture-photo').disabled = true;
+    $('#submit-checkin').disabled = true;
+    $('#retake-photo').hidden = true;
+    $('#camera-status').textContent = 'Menunggu izin kamera…';
+    $('#location-status').textContent = 'Menunggu izin lokasi…';
+  }
+
   function getPosition() {
     return new Promise((resolve, reject) => {
+      if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+        return reject(new Error('Kamera dan GPS memerlukan HTTPS. Buka website melalui alamat GitHub Pages/hosting HTTPS, bukan HTTP atau file lokal.'));
+      }
       if (!navigator.geolocation) return reject(new Error('Browser ini tidak mendukung akses lokasi.'));
       navigator.geolocation.getCurrentPosition(
         (position) => resolve({
@@ -189,6 +262,7 @@
     const button = $('#start-checkin');
     setBusy(button, true, 'Meminta izin…');
     showMessage($('#checkin-message'), 'Browser akan meminta izin kamera dan lokasi. Pilih Izinkan pada kedua permintaan.');
+    $('#checkin-start-area').hidden = true;
     $('#capture-area').hidden = false;
     $('#camera-placeholder').hidden = false;
     $('#camera-status').textContent = 'Mengaktifkan kamera…';
@@ -222,6 +296,7 @@
       $('#camera-status').textContent = 'Kamera/lokasi belum siap.';
       showMessage($('#checkin-message'), error.message || 'Tidak dapat mengakses kamera atau lokasi.', 'error');
       $('#capture-area').hidden = false;
+      $('#checkin-start-area').hidden = false;
     } finally {
       setBusy(button, false);
     }
@@ -235,12 +310,32 @@
       return;
     }
     const maxDimension = 1280;
-    const scale = Math.min(1, maxDimension / Math.max(video.videoWidth, video.videoHeight));
-    canvas.width = Math.round(video.videoWidth * scale);
-    canvas.height = Math.round(video.videoHeight * scale);
+    let scale = Math.min(1, maxDimension / Math.max(video.videoWidth, video.videoHeight));
     const context = canvas.getContext('2d', { alpha: false });
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    capturedPhoto = canvas.toDataURL('image/jpeg', 0.78);
+    if (!context) {
+      showMessage($('#checkin-message'), 'Perangkat tidak dapat memproses foto. Muat ulang halaman lalu coba kembali.', 'error');
+      return;
+    }
+    const maxBase64Length = 1450000; // buffer aman di bawah batas server 1.600.000 karakter
+    const encodeAtScale = (nextScale, qualities) => {
+      canvas.width = Math.max(1, Math.round(video.videoWidth * nextScale));
+      canvas.height = Math.max(1, Math.round(video.videoHeight * nextScale));
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      for (const quality of qualities) {
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        if ((dataUrl.split(',')[1] || '').length <= maxBase64Length) return dataUrl;
+      }
+      return '';
+    };
+    capturedPhoto = encodeAtScale(scale, [0.76, 0.68, 0.60, 0.52]);
+    if (!capturedPhoto) {
+      scale *= 0.78;
+      capturedPhoto = encodeAtScale(scale, [0.68, 0.58, 0.50]);
+    }
+    if (!capturedPhoto) {
+      showMessage($('#checkin-message'), 'Ukuran foto masih terlalu besar. Coba ambil foto dengan latar yang lebih sederhana atau perangkat lain.', 'error');
+      return;
+    }
     $('#photo-preview').src = capturedPhoto;
     $('#photo-preview').hidden = false;
     video.hidden = true;
@@ -260,6 +355,9 @@
     $('#capture-photo').disabled = true;
     $('#submit-checkin').disabled = true;
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Browser tidak menyediakan akses kamera. Gunakan browser modern melalui HTTPS.');
+      }
       cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'user' }, width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false });
       const video = $('#camera-preview');
       video.srcObject = cameraStream;
@@ -267,9 +365,11 @@
       $('#capture-photo').disabled = false;
       $('#camera-status').textContent = 'Kamera aktif.';
     } catch (error) {
-      showMessage($('#checkin-message'), 'Kamera tidak dapat dibuka kembali. Tekan Absen Sekarang untuk mengulangi proses izin.', 'error');
+      stopCamera();
       $('#capture-area').hidden = true;
+      $('#checkin-start-area').hidden = false;
       $('#start-checkin').hidden = false;
+      showMessage($('#checkin-message'), (error.message || 'Kamera tidak dapat dibuka kembali.') + ' Tekan Absen Sekarang untuk mengulangi proses izin.', 'error');
     }
   }
 
@@ -379,13 +479,20 @@
   }
 
   async function refreshCoachHistory() {
-    if (!coachToken) return;
-    const result = await request('coach_info', { coach: coachToken }, 'GET');
-    if (result.result === 'success') {
+    if (!coachToken) return false;
+    try {
+      const result = await request('coach_info', { coach: coachToken }, 'GET');
+      if (result.result !== 'success') return false;
       checkin = result.checkin || checkin;
       renderCheckinHistory(result.checkinRecent || []);
       renderHistory(result.recent || []);
       renderCheckinState();
+      return true;
+    } catch (error) {
+      // Kegagalan memuat ulang riwayat tidak boleh membatalkan pesan sukses
+      // untuk transaksi absensi/penilaian yang sudah tersimpan.
+      console.warn('Riwayat coach belum dapat diperbarui:', error);
+      return false;
     }
   }
 
@@ -427,8 +534,7 @@
       $('#admin-auth').hidden = true;
       $('#report-workspace').hidden = false;
       $('#admin-password').value = '';
-      const today = new Date();
-      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      const todayStr = jakartaDateKey();
       $('#date-from').value = todayStr.slice(0, 8) + '01';
       $('#date-to').value = todayStr;
       showMessage($('#admin-auth-message'), '');
@@ -446,6 +552,7 @@
     $('#admin-auth').hidden = false;
     $('#report-workspace').hidden = true;
     $('#report-result').hidden = true;
+    $('#download-docx').disabled = true;
     $('#admin-login-form').reset();
   }
 
@@ -454,7 +561,10 @@
     const memberRows = Array.isArray(data.memberRows) ? data.memberRows : [];
     const counts = { Hadir: 0, Izin: 0, Sakit: 0, Alpa: 0 };
     memberRows.forEach((row) => { if (Object.prototype.hasOwnProperty.call(counts, row.status)) counts[row.status] += 1; });
-    const scores = memberRows.map((row) => Number(row.score)).filter((value) => Number.isFinite(value));
+    const scores = memberRows
+      .filter((row) => row.score !== '' && row.score != null)
+      .map((row) => Number(row.score))
+      .filter((value) => Number.isFinite(value));
     const average = scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : '—';
     $('#report-stats').innerHTML = [
       ['ABSENSI COACH', coachRows.length],
@@ -486,6 +596,9 @@
       showMessage($('#report-message'), 'Periksa tanggal awal dan akhir laporan.', 'error');
       return;
     }
+    currentReport = null;
+    $('#report-result').hidden = true;
+    $('#download-docx').disabled = true;
     setBusy(button, true, 'Mengambil rekap…');
     showMessage($('#report-message'), 'Mengambil data absensi dan penilaian…');
     try {
@@ -496,7 +609,10 @@
       }
       currentReport = { from, to, extracurricular };
       renderReport(result);
-      showMessage($('#report-message'), `Berhasil memuat ${result.coachRows.length} absensi coach dan ${result.memberRows.length} catatan anggota.`, 'success');
+      $('#download-docx').disabled = false;
+      const coachCount = Array.isArray(result.coachRows) ? result.coachRows.length : 0;
+      const memberCount = Array.isArray(result.memberRows) ? result.memberRows.length : 0;
+      showMessage($('#report-message'), `Berhasil memuat ${coachCount} absensi coach dan ${memberCount} catatan anggota.`, 'success');
     } catch (error) {
       showMessage($('#report-message'), error.message || 'Gagal memuat laporan.', 'error');
     } finally {
@@ -546,9 +662,14 @@
 
   function init() {
     const now = new Date();
-    $('#year').textContent = now.getFullYear();
-    $('#today-label').textContent = new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(now);
+    $('#year').textContent = new Intl.DateTimeFormat('en', { timeZone: 'Asia/Jakarta', year: 'numeric' }).format(now);
+    $('#today-label').textContent = new Intl.DateTimeFormat('id-ID', { dateStyle: 'long', timeZone: 'Asia/Jakarta' }).format(now);
+    loadSchoolLogo();
     renderPrograms();
+    $('.brand').addEventListener('click', (event) => {
+      event.preventDefault();
+      switchView('beranda');
+    });
     $$('.nav-btn').forEach((button) => button.addEventListener('click', () => switchView(button.dataset.view)));
     $$('[data-go]').forEach((button) => button.addEventListener('click', () => switchView(button.dataset.go)));
     $('#start-checkin').addEventListener('click', startCheckin);

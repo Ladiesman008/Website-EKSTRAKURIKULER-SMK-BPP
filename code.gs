@@ -287,11 +287,11 @@ function saveCoachCheckin_(p) {
   const lat = Number(p.latitude), lon = Number(p.longitude), accuracy = Number(p.accuracy);
   if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lon) || lon < -180 || lon > 180) return fail_('Koordinat lokasi tidak valid.');
   if (!Number.isFinite(accuracy) || accuracy < 0) return fail_('Akurasi GPS tidak valid.');
-  const today = currentDateKey_();
+  const now = new Date(); // Satu timestamp server untuk tanggal dan jam yang sama.
+  const today = Utilities.formatDate(now, TZ, 'yyyy-MM-dd');
   const existing = checkinRowForCoachDate_(coach.id, today);
   if (existing) return fail_('Absensi coach untuk hari ini sudah tercatat.', { alreadyCheckedIn: true, checkin: checkinPublic_(existing) });
   const photo = savePhoto_(p.photoBase64, p.photoMime, coach.nama, today);
-  const now = new Date(); // Timestamp otoritatif dari server Apps Script.
   const id = uuid_();
   const sh = sheet_('AbsensiCoach');
   try {
@@ -330,21 +330,22 @@ function saveMemberRecords_(p) {
   if (!coach) return fail_('Link coach tidak valid atau sudah dinonaktifkan.');
   const checkin = findObject_(sheet_('AbsensiCoach'), 'ID Absensi Coach', String(p.checkinId || ''));
   if (!checkin || String(checkin['ID Coach']) !== coach.id) return fail_('Absensi coach tidak ditemukan. Lakukan Absen Sekarang terlebih dahulu.');
+  if (dateKey_(checkin.Tanggal) !== currentDateKey_()) return fail_('Sesi absensi sudah berganti hari. Muat ulang link coach dan lakukan absensi hari ini.');
   let requested;
   try { requested = JSON.parse(p.records || '[]'); } catch (e) { return fail_('Data anggota tidak dapat dibaca.'); }
   if (!Array.isArray(requested) || !requested.length || requested.length > 250) return fail_('Daftar anggota kosong atau melebihi batas pemrosesan.');
+
   const active = activeMembers_(coach.ekstrakurikuler);
   const byId = {};
   active.forEach(member => { byId[member.id] = member; });
-  const attendanceSheet = sheet_('AbsensiAnggota');
-  const scoreSheet = sheet_('Penilaian');
-  const date = dateKey_(checkin.Tanggal);
-  const now = new Date();
-  let saved = 0;
-
-  requested.forEach(item => {
+  const seen = {};
+  // Validasi seluruh payload lebih dahulu agar satu data tidak valid tidak meninggalkan
+  // setengah daftar anggota tersimpan.
+  const normalized = requested.map(item => {
     const member = byId[String(item.memberId || '')];
     if (!member) throw new Error('Anggota tidak termasuk roster aktif ekstrakurikuler coach ini. Muat ulang data.');
+    if (seen[member.id]) throw new Error('Anggota yang sama dikirim lebih dari satu kali: ' + member.nama + '.');
+    seen[member.id] = true;
     const status = String(item.status || '');
     if (STATUS_ANGGOTA.indexOf(status) < 0) throw new Error('Status kehadiran tidak valid untuk ' + member.nama + '.');
     const scoreText = String(item.score == null ? '' : item.score).trim();
@@ -353,8 +354,17 @@ function saveMemberRecords_(p) {
       score = Number(scoreText);
       if (!Number.isInteger(score) || score < 0 || score > 100) throw new Error('Nilai harus bilangan bulat 0 sampai 100 untuk ' + member.nama + '.');
     }
-    const note = cleanText_(item.note, 250);
-    const attendanceRows = objectRows_(attendanceSheet);
+    return { member: member, status: status, score: score, note: cleanText_(item.note, 250) };
+  });
+
+  const attendanceSheet = sheet_('AbsensiAnggota');
+  const scoreSheet = sheet_('Penilaian');
+  const date = dateKey_(checkin.Tanggal);
+  const now = new Date();
+  const attendanceRows = objectRows_(attendanceSheet);
+  const scoreRows = objectRows_(scoreSheet);
+  normalized.forEach(entry => {
+    const member = entry.member;
     const existingAttendance = attendanceRows.find(row => String(row['ID Absensi Coach']) === String(checkin['ID Absensi Coach']) && String(row['ID Anggota']) === member.id);
     const attendanceObject = {
       'ID Catatan': existingAttendance ? existingAttendance['ID Catatan'] : uuid_(),
@@ -367,12 +377,11 @@ function saveMemberRecords_(p) {
       'ID Anggota': member.id,
       'Nama Anggota': member.nama,
       Kelas: member.kelas,
-      'Status Kehadiran': status
+      'Status Kehadiran': entry.status
     };
     if (existingAttendance) updateObject_(attendanceSheet, existingAttendance._row, attendanceObject);
     else appendObject_(attendanceSheet, attendanceObject);
 
-    const scoreRows = objectRows_(scoreSheet);
     const existingScore = scoreRows.find(row => String(row['ID Absensi Coach']) === String(checkin['ID Absensi Coach']) && String(row['ID Anggota']) === member.id);
     const scoreObject = {
       'ID Penilaian': existingScore ? existingScore['ID Penilaian'] : uuid_(),
@@ -385,14 +394,13 @@ function saveMemberRecords_(p) {
       'ID Anggota': member.id,
       'Nama Anggota': member.nama,
       Kelas: member.kelas,
-      Nilai: score,
-      'Catatan Coach': note
+      Nilai: entry.score,
+      'Catatan Coach': entry.note
     };
     if (existingScore) updateObject_(scoreSheet, existingScore._row, scoreObject);
     else appendObject_(scoreSheet, scoreObject);
-    saved++;
   });
-  return ok_({ saved: saved, message: 'Kehadiran dan evaluasi ' + saved + ' anggota berhasil disimpan.' });
+  return ok_({ saved: normalized.length, message: 'Kehadiran dan evaluasi ' + normalized.length + ' anggota berhasil disimpan.' });
 }
 
 // -------------------------------- Coach API -------------------------------
@@ -438,6 +446,7 @@ function coachInfo_(token) {
 function doGet(e) {
   const p = e && e.parameter ? e.parameter : {};
   try {
+    if (p.action === 'health') return ok_({ service: 'Absensi Coach SMK BPP', version: '3.1', timezone: TZ });
     if (p.action === 'coach_info') return coachInfo_(p.coach);
     return fail_('Aksi GET tidak dikenal.');
   } catch (error) {
@@ -686,12 +695,18 @@ function exportDocx_(p) {
 // -------------------------------- doPost -----------------------------------
 function doPost(e) {
   const p = e && e.parameter ? e.parameter : {};
-  const lock = LockService.getScriptLock();
+  const action = String(p.action || '');
+  const requiresWriteLock = action === 'save_coach_checkin' || action === 'save_member_records';
+  const lock = requiresWriteLock ? LockService.getScriptLock() : null;
   let locked = false;
   try {
-    lock.waitLock(25000);
-    locked = true;
-    switch (p.action) {
+    // Hanya transaksi tulis yang diserialisasi. Login, baca rekap, dan ekspor DOCX
+    // tidak perlu menahan antrean check-in coach.
+    if (lock) {
+      lock.waitLock(25000);
+      locked = true;
+    }
+    switch (action) {
       case 'save_coach_checkin': return saveCoachCheckin_(p);
       case 'save_member_records': return saveMemberRecords_(p);
       case 'admin_login': return adminLogin_(p);
@@ -703,7 +718,7 @@ function doPost(e) {
     Logger.log(error && error.stack ? error.stack : error);
     return fail_(error.message || 'Terjadi kesalahan server.');
   } finally {
-    if (locked) lock.releaseLock();
+    if (locked && lock) lock.releaseLock();
   }
 }
 

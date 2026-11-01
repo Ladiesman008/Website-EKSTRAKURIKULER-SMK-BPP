@@ -1,0 +1,10 @@
+Absensi Coach SMK BPP Bandung
+Paket rekonstruksi: V3.1
+Tanggal paket: 1 November 2026
+
+Pemeriksaan statis: 23/23 lulus.
+
+Paket tidak menyertakan file logo agar file logo yang telah diunggah pemilik ke GitHub tidak tertimpa.
+Letakkan logo.* di folder yang sama dengan index.html. Nama yang didukung tercantum di README.md.
+
+Perubahan backend perlu di-deploy sebagai New version di Apps Script sebelum digunakan.

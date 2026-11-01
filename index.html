@@ -9,13 +9,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3.1">
 </head>
 <body>
   <div class="app-shell">
     <header class="site-header neo-card">
       <a class="brand" href="#beranda" aria-label="Beranda SMK BPP">
-        <span class="brand-mark">BPP</span>
+        <span class="brand-logo-wrap" aria-label="Logo ekstrakurikuler SMK BPP">
+          <img id="school-logo" class="brand-logo" alt="Logo Ekstrakurikuler SMK BPP Bandung" decoding="async" fetchpriority="high" hidden>
+          <span id="brand-fallback" class="brand-mark" aria-hidden="true">BPP</span>
+        </span>
         <span class="brand-copy"><strong>SMK BALAI PERGURUAN PUTRI</strong><small>BANDUNG · EKSTRAKURIKULER</small></span>
       </a>
       <div class="header-meta"><span class="live-indicator"></span><span id="today-label">Memuat tanggal…</span></div>
@@ -153,14 +156,14 @@
             <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Waktu</th><th>Coach</th><th>Ekstrakurikuler</th><th>Lokasi / Akurasi</th><th>Foto</th></tr></thead><tbody id="report-coach-rows"></tbody></table></div>
             <h3 class="table-title">Kehadiran & Penilaian Anggota</h3>
             <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Coach</th><th>Anggota</th><th>Ekskul</th><th>Kehadiran</th><th>Nilai</th></tr></thead><tbody id="report-member-rows"></tbody></table></div>
-            <div class="download-row"><p class="small-muted">DOCX mengikuti identitas dan gaya laporan yang kamu unggah, dengan lampiran tabel absensi serta bukti foto.</p><button id="download-docx" class="button button-primary" type="button">Download Laporan DOCX <span>⇩</span></button></div>
+            <div class="download-row"><p class="small-muted">DOCX mengikuti identitas dan gaya laporan yang kamu unggah, dengan lampiran tabel absensi serta bukti foto.</p><button id="download-docx" class="button button-primary" type="button" disabled>Download Laporan DOCX <span>⇩</span></button></div>
           </section>
         </div>
       </section>
     </main>
   </div>
-  <script src="data.js"></script>
-  <script src="config.js"></script>
-  <script src="script.js"></script>
+  <script src="data.js?v=3.1"></script>
+  <script src="config.js?v=3.1"></script>
+  <script src="script.js?v=3.1"></script>
 </body>
 </html>

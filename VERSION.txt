@@ -1,1 +1,1 @@
-3.13 - User supplied botanical artwork converted to recessed charcoal stone engraving; embedded as CSS data URI.
+3.14 - About floating panel, random interactive emoji and animated glass-envelope signature.

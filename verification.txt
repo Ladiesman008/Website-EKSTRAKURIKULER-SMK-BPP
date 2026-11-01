@@ -1,2 +1,4 @@
-V3.13 static verification: 38 checks, 0 failures
-PASS: HTML, program popups, six emblems, inline botanical engraving, alpha/transparency, CSS, JavaScript, Apps Script and report hooks.
+SMK BPP Absensi Coach — V3.14
+Static verification: 60 checks, 0 failures.
+Checked: unique HTML IDs; About non-modal popup and close behavior hooks; randomized floating emoji and pause/restart flow; envelope opening and glassmorphism signature text/year; responsive and reduced-motion CSS; six extracurricular entries and embedded emblems; JavaScript, CSS, and Apps Script syntax; existing attendance, evaluation, reporting API hooks; unchanged backend/config/data files.
+Note: browser permission flows (camera/GPS) still require HTTPS deployment testing. Live browser rendering could not be verified in this environment.

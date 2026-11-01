@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.13">
+  <link rel="stylesheet" href="style.css?v=3.14">
 </head>
 <body>
   <div class="app-shell">
@@ -51,7 +51,7 @@
           </button>
         </div>
         <div class="nav-separator"></div>
-        <button class="nav-btn nav-about" type="button" data-view="beranda" data-scroll="about-strip">
+        <button class="nav-btn nav-about" type="button" data-about-open aria-haspopup="dialog" aria-expanded="false" aria-controls="about-popover">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5h.01"/></svg><span>Tentang</span>
         </button>
         <div class="nav-ornament" aria-hidden="true"><span class="nav-ornament-img" aria-hidden="true"></span></div>
@@ -215,8 +215,53 @@
     </div>
     <div id="program-popover-content" class="program-popover-scroll"></div>
   </aside>
-  <script src="data.js?v=3.13"></script>
-  <script src="config.js?v=3.13"></script>
-  <script src="script.js?v=3.13"></script>
+
+  <!-- Non-blocking About panel: visible content floats above the page without a backdrop. -->
+  <aside id="about-popover" class="about-popover" role="dialog" aria-modal="false" aria-labelledby="about-popover-title" aria-hidden="true" hidden>
+    <div class="about-popover-head">
+      <div class="about-heading-mark" aria-hidden="true">i</div>
+      <div class="about-heading-copy">
+        <p class="eyebrow">SMK BPP BANDUNG · EXTRACURRICULAR MANAGEMENT</p>
+        <h2 id="about-popover-title">Tentang Website Ini</h2>
+      </div>
+      <button id="close-about-popover" class="about-popover-close" type="button" aria-label="Tutup tentang">×</button>
+    </div>
+    <div class="about-popover-body">
+      <h3>Mengapa website ini dibuat?</h3>
+      <p>Website ini dibuat untuk membantu pengelolaan enam ekstrakurikuler SMK Balai Perguruan Putri Bandung agar informasi kegiatan, kehadiran, dan perkembangan anggota tersusun dalam satu tempat.</p>
+      <p>Melalui portal absensi, coach dapat melakukan check-in dengan foto, lokasi perangkat, serta waktu yang dicatat otomatis oleh server. Setelah itu, coach dapat mencatat kehadiran dan memberikan penilaian kepada anggota aktif.</p>
+      <p>Data yang terkumpul dapat dipantau dan direkap berdasarkan periode maupun ekstrakurikuler, lalu diunduh sebagai dokumen DOCX untuk membantu penyusunan laporan kepada kepala sekolah. Beranda juga menyediakan informasi program, pembina, koordinator, jadwal, visi, misi, dan kegiatan setiap ekstrakurikuler.</p>
+      <div class="about-feature-row" aria-label="Fungsi utama website">
+        <span><i>⌖</i> Absensi foto & lokasi</span>
+        <span><i>✓</i> Evaluasi anggota</span>
+        <span><i>▤</i> Laporan DOCX</span>
+      </div>
+      <p class="about-closing">Satu sistem untuk membantu kegiatan ekstrakurikuler tercatat lebih rapi, mudah dipantau, dan siap dilaporkan.</p>
+    </div>
+  </aside>
+
+  <!-- Interactive floating emoji; selecting one pauses the motion and reveals the signature envelope. -->
+  <div id="emoji-layer" class="emoji-layer" aria-label="Kejutan interaktif"></div>
+  <div id="signature-envelope" class="signature-envelope" aria-hidden="true" hidden>
+    <div class="envelope-stage">
+      <div class="envelope-letter">
+        <div class="signature-glass-banner">
+          <button id="close-signature" class="signature-close" type="button" aria-label="Tutup animasi">×</button>
+          <span class="signature-kicker">A NOTE FROM THE CREATOR</span>
+          <strong>developed by Sahrul Mubarok, S. Pd.</strong>
+          <small>Tahun dibuat · <span id="signature-year">2026</span></small>
+        </div>
+      </div>
+      <div class="envelope-body">
+        <div class="envelope-pocket"></div>
+        <div class="envelope-seal" aria-hidden="true">✉</div>
+      </div>
+      <div class="envelope-flap"></div>
+    </div>
+  </div>
+
+  <script src="data.js?v=3.14"></script>
+  <script src="config.js?v=3.14"></script>
+  <script src="script.js?v=3.14"></script>
 </body>
 </html>

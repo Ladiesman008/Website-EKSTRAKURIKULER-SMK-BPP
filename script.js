@@ -16,6 +16,9 @@
   let checkinSaveInProgress = false;
   let adminToken = '';
   let currentReport = null;
+  let aboutCloseTimer = 0;
+  let signatureCloseTimer = 0;
+  const SIGNATURE_YEAR = '2026';
 
   const escapeHTML = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -109,6 +112,7 @@
   }
 
   function switchView(name) {
+    closeAboutPopover(false);
     closeProgramPopover();
     if (name !== 'absensi') {
       if (checkinInProgress && !checkinSaveInProgress) cancelCheckin();
@@ -233,6 +237,133 @@
     void panel.offsetWidth;
     panel.classList.add('is-visible');
     positionProgramPopover(trigger);
+  }
+
+  function openAboutPopover(trigger) {
+    const panel = $('#about-popover');
+    if (!panel) return;
+    closeProgramPopover();
+    window.clearTimeout(aboutCloseTimer);
+    panel.hidden = false;
+    panel.setAttribute('aria-hidden', 'false');
+    panel.classList.remove('is-closing');
+    panel.classList.add('is-visible');
+    trigger?.setAttribute('aria-expanded', 'true');
+    trigger?.classList.add('about-open');
+    $('#close-about-popover')?.focus({ preventScroll: true });
+  }
+
+  function closeAboutPopover(restoreFocus = false) {
+    const panel = $('#about-popover');
+    const trigger = $('[data-about-open]');
+    if (!panel || panel.hidden) return;
+    panel.classList.remove('is-visible');
+    panel.classList.add('is-closing');
+    panel.setAttribute('aria-hidden', 'true');
+    trigger?.setAttribute('aria-expanded', 'false');
+    trigger?.classList.remove('about-open');
+    window.clearTimeout(aboutCloseTimer);
+    aboutCloseTimer = window.setTimeout(() => {
+      if (!panel.classList.contains('is-visible')) {
+        panel.hidden = true;
+        panel.classList.remove('is-closing');
+      }
+    }, 240);
+    if (restoreFocus) trigger?.focus({ preventScroll: true });
+  }
+
+  const FLOATING_EMOJI = ['✨', '🎈', '🎵', '💫', '🌿', '⭐', '🎨', '🕊️'];
+
+  function spawnFloatingEmojis() {
+    const layer = $('#emoji-layer');
+    if (!layer) return;
+    layer.classList.remove('is-paused');
+    layer.innerHTML = '';
+    const compact = window.matchMedia('(max-width: 760px)').matches;
+    const count = compact ? 3 : 5;
+    const chosen = [...FLOATING_EMOJI].sort(() => Math.random() - 0.5).slice(0, count);
+    chosen.forEach((symbol, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'float-emoji';
+      button.textContent = symbol;
+      button.setAttribute('aria-label', 'Buka kejutan dari pembuat website');
+      button.style.left = `${7 + Math.random() * 86}%`;
+      button.style.top = `${18 + Math.random() * 70}%`;
+      button.style.setProperty('--drift-x', `${Math.round(-16 + Math.random() * 32)}px`);
+      button.style.setProperty('--drift-y', `${Math.round(-23 + Math.random() * 46)}px`);
+      button.style.animationDuration = `${8 + Math.random() * 7}s`;
+      button.style.animationDelay = `${-Math.random() * 9}s`;
+      button.style.setProperty('--emoji-order', String(index));
+      button.addEventListener('click', () => revealSignature(button));
+      layer.appendChild(button);
+    });
+  }
+
+  function revealSignature(sourceButton) {
+    const layer = $('#emoji-layer');
+    const envelope = $('#signature-envelope');
+    if (!layer || !envelope || !envelope.hidden) return;
+    const rect = sourceButton.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2 - window.innerWidth / 2;
+    const originY = rect.top + rect.height / 2 - window.innerHeight / 2;
+    envelope.style.setProperty('--origin-x', `${originX}px`);
+    envelope.style.setProperty('--origin-y', `${originY}px`);
+    envelope.hidden = false;
+    envelope.setAttribute('aria-hidden', 'false');
+    envelope.classList.remove('is-opening');
+    layer.classList.add('is-paused');
+    $$('.float-emoji', layer).forEach((item) => {
+      item.disabled = true;
+      if (item === sourceButton) item.classList.add('is-selected');
+      else item.classList.add('is-dimmed');
+    });
+    void envelope.offsetWidth;
+    envelope.classList.add('is-opening');
+    window.setTimeout(() => envelope.classList.add('letter-emerged'), 420);
+    window.setTimeout(() => $('#close-signature')?.focus({ preventScroll: true }), 950);
+  }
+
+  function closeSignatureExperience() {
+    const envelope = $('#signature-envelope');
+    if (!envelope || envelope.hidden) return;
+    envelope.classList.remove('is-opening', 'letter-emerged');
+    envelope.setAttribute('aria-hidden', 'true');
+    window.clearTimeout(signatureCloseTimer);
+    signatureCloseTimer = window.setTimeout(() => {
+      envelope.hidden = true;
+      envelope.style.removeProperty('--origin-x');
+      envelope.style.removeProperty('--origin-y');
+      spawnFloatingEmojis();
+    }, 220);
+  }
+
+  function initAboutAndEmoji() {
+    const aboutButton = $('[data-about-open]');
+    const aboutPanel = $('#about-popover');
+    aboutButton?.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (aboutPanel && !aboutPanel.hidden && aboutPanel.classList.contains('is-visible')) {
+        closeAboutPopover(true);
+      } else {
+        openAboutPopover(aboutButton);
+      }
+    });
+    $('#close-about-popover')?.addEventListener('click', () => closeAboutPopover(true));
+    document.addEventListener('click', (event) => {
+      if (!aboutPanel || aboutPanel.hidden || aboutPanel.contains(event.target)) return;
+      if (event.target.closest('[data-about-open]')) return;
+      closeAboutPopover();
+    });
+    $('#close-signature')?.addEventListener('click', closeSignatureExperience);
+    spawnFloatingEmojis();
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        if ($('#signature-envelope')?.hidden) spawnFloatingEmojis();
+      }, 180);
+    });
   }
 
   function showCoachGate(message) {
@@ -779,9 +910,11 @@
   function init() {
     const now = new Date();
     $('#year').textContent = new Intl.DateTimeFormat('en', { timeZone: 'Asia/Jakarta', year: 'numeric' }).format(now);
+    $('#signature-year').textContent = SIGNATURE_YEAR;
     $('#today-label').textContent = new Intl.DateTimeFormat('id-ID', { dateStyle: 'long', timeZone: 'Asia/Jakarta' }).format(now);
     loadSchoolLogo();
     renderPrograms();
+    initAboutAndEmoji();
     $('#extracurricular-grid').addEventListener('click', (event) => {
       const trigger = event.target.closest('[data-program-open]');
       if (!trigger) return;
@@ -796,7 +929,11 @@
       closeProgramPopover();
     });
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeProgramPopover(true);
+      if (event.key === 'Escape') {
+        closeProgramPopover(true);
+        closeAboutPopover(true);
+        closeSignatureExperience();
+      }
     });
     window.addEventListener('resize', () => {
       const active = $('[data-program-open][aria-expanded="true"]');
@@ -810,7 +947,8 @@
       event.preventDefault();
       switchView('beranda');
     });
-    $$('.nav-btn').forEach((button) => button.addEventListener('click', () => {
+    $$('.nav-btn').forEach((button) => button.addEventListener('click', (event) => {
+      if (button.hasAttribute('data-about-open')) return;
       switchView(button.dataset.view);
       $$('.nav-btn').forEach((item) => {
         item.classList.remove('active');

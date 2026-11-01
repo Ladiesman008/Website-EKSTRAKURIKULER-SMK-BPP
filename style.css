@@ -1249,3 +1249,157 @@ td { color: #a7adb3 !important; border-top-color: rgba(190,195,201,.08) !importa
 @media (max-width: 560px) {
   .quote-leaf-ornament { width:72px; height:98px; right:0; bottom:0; opacity:.80; }
 }
+
+
+/* ================================================================
+   V3.14 — ABOUT FLOATING PANEL + RANDOM EMOJI / ENVELOPE SIGNATURE
+   All surfaces stay within the black-charcoal carved-stone system.
+   ================================================================ */
+.about-popover {
+  position:fixed;
+  z-index:86;
+  left:50%; top:50%;
+  width:min(540px, calc(100vw - 34px));
+  max-height:min(78dvh, 690px);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+  border:1px solid rgba(190,196,202,.17);
+  border-radius:24px;
+  color:#aeb4ba;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.045),transparent 34%),
+    linear-gradient(145deg,rgba(48,51,55,.985),rgba(31,34,38,.99) 54%,rgba(19,21,24,.995));
+  box-shadow:24px 28px 58px rgba(0,0,0,.92),-10px -10px 26px rgba(75,78,83,.27),inset 1.5px 1.5px 2px rgba(255,255,255,.095),inset -2px -2px 5px rgba(0,0,0,.88);
+  opacity:0;
+  pointer-events:auto;
+  transform:translate(-50%,-46%) scale(.965);
+  transition:opacity .24s ease,transform .3s cubic-bezier(.2,.72,.22,1);
+}
+.about-popover.is-visible { opacity:1; transform:translate(-50%,-50%) scale(1); }
+.about-popover[hidden] { display:none !important; }
+.about-popover-head {
+  display:flex; align-items:center; gap:13px;
+  padding:19px 20px 15px;
+  border-bottom:1px solid rgba(190,196,202,.095);
+  background:linear-gradient(180deg,rgba(255,255,255,.022),transparent);
+}
+.about-heading-mark {
+  flex:0 0 42px; width:42px; height:42px; display:grid; place-items:center;
+  border-radius:14px; color:#9da4aa; font:700 22px/1 var(--display);
+  background:linear-gradient(145deg,#34373b,#202327);
+  box-shadow:7px 8px 15px rgba(0,0,0,.8),-4px -4px 10px rgba(75,78,84,.3),inset 1px 1px 1px rgba(255,255,255,.08),inset -2px -2px 4px rgba(0,0,0,.8);
+  text-shadow:-1px -1px 1px #050607,.7px .7px .5px rgba(255,255,255,.15);
+}
+.about-heading-copy { min-width:0; flex:1; }
+.about-heading-copy .eyebrow { margin:0 0 5px; color:#777e85; font-size:8px; font-weight:800; letter-spacing:.16em; }
+.about-heading-copy h2 { margin:0; color:#b9bfc5; font:700 clamp(19px,3vw,25px)/1.2 var(--display); text-shadow:-1.5px -1.5px 1px #050607,.8px .8px 0 rgba(255,255,255,.14),0 2px 4px #000; }
+.about-popover-close {
+  flex:0 0 34px; width:34px; height:34px; display:grid; place-items:center;
+  border:1px solid rgba(190,196,202,.12); border-radius:50%; cursor:pointer;
+  color:#aeb4ba; background:linear-gradient(145deg,#303337,#1a1c20);
+  box-shadow:5px 6px 12px rgba(0,0,0,.8),-3px -3px 8px rgba(76,79,84,.27),inset 1px 1px 1px rgba(255,255,255,.07);
+  font-size:22px; line-height:1; transition:transform .18s ease,box-shadow .18s ease;
+}
+.about-popover-close:hover { transform:translateY(-2px); }
+.about-popover-close:active { transform:translateY(1px); box-shadow:inset 4px 4px 8px rgba(0,0,0,.78),inset -2px -2px 5px rgba(88,92,97,.2); }
+.about-popover-body { overflow:auto; padding:19px 21px 21px; scrollbar-width:thin; scrollbar-color:#555b62 #1a1c1f; }
+.about-popover-body h3 { margin:0 0 10px; color:#b9bfc5; font:700 16px/1.4 var(--display); text-shadow:-1px -1px 1px #050607,.6px .6px 0 rgba(255,255,255,.12); }
+.about-popover-body p { margin:0 0 11px; color:#979ea5; font-size:12px; line-height:1.78; text-shadow:-.5px -.5px .8px #050607,.4px .4px .3px rgba(255,255,255,.08); }
+.about-feature-row { display:flex; flex-wrap:wrap; gap:8px; margin:15px 0 14px; }
+.about-feature-row span { display:inline-flex; align-items:center; gap:7px; padding:8px 10px; border:1px solid rgba(190,196,202,.09); border-radius:999px; color:#a4abb1; background:linear-gradient(145deg,#282b2f,#1d2023); box-shadow:5px 6px 11px rgba(0,0,0,.65),-3px -3px 8px rgba(73,76,81,.2),inset 1px 1px 1px rgba(255,255,255,.04); font-size:9px; font-weight:700; }
+.about-feature-row i { color:#858d94; font-style:normal; font-size:13px; }
+.about-popover-body .about-closing { margin:12px 0 0; padding:12px 13px; border:1px solid rgba(190,196,202,.08); border-radius:13px; color:#858c93; background:linear-gradient(145deg,#1b1e21,#26292d); box-shadow:inset 4px 4px 9px rgba(0,0,0,.65),inset -3px -3px 7px rgba(80,84,90,.12); font-size:10px; font-style:italic; }
+.nav-btn.about-open { color:#c1c7cd !important; border-color:rgba(190,196,202,.17) !important; background:linear-gradient(145deg,#303338,#1d2023) !important; box-shadow:inset 3px 3px 7px rgba(0,0,0,.55),inset -2px -2px 5px rgba(98,103,109,.13),4px 5px 12px rgba(0,0,0,.56) !important; }
+
+/* Randomly placed decorative emoji are small, low-contrast and individually clickable. */
+.emoji-layer { position:fixed; inset:0; z-index:48; pointer-events:none; overflow:hidden; }
+.float-emoji {
+  position:fixed; z-index:1; display:grid; place-items:center;
+  width:35px; height:35px; padding:0;
+  border:1px solid rgba(190,196,202,.12); border-radius:50%;
+  color:#c3c8cd; background:linear-gradient(145deg,rgba(50,53,58,.82),rgba(23,25,28,.78));
+  box-shadow:7px 8px 16px rgba(0,0,0,.68),-4px -4px 10px rgba(85,89,95,.18),inset 1px 1px 1px rgba(255,255,255,.07),inset -1px -1px 3px rgba(0,0,0,.8);
+  font-size:17px; line-height:1; cursor:pointer; pointer-events:auto;
+  opacity:.68; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  animation:emoji-drift var(--emoji-duration,11s) ease-in-out var(--emoji-delay,0s) infinite alternate;
+  transition:opacity .2s ease,filter .2s ease,transform .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.float-emoji:hover { opacity:.98; filter:brightness(1.12); }
+.float-emoji:focus-visible { outline:1px solid rgba(180,188,196,.5); outline-offset:4px; }
+.float-emoji.is-selected { opacity:1; z-index:2; animation-play-state:paused; transform:translate(-50%,-50%) scale(1.25); }
+.emoji-layer.is-paused .float-emoji { animation-play-state:paused; }
+.emoji-layer.is-paused .float-emoji.is-dimmed { opacity:.12; filter:grayscale(1); }
+@keyframes emoji-drift {
+  0% { transform:translate(-50%,-50%) rotate(-8deg) translate3d(0,0,0); }
+  50% { transform:translate(calc(-50% + var(--drift-x,12px)),calc(-50% + var(--drift-y,-16px))) rotate(8deg); }
+  100% { transform:translate(calc(-50% - var(--drift-x,12px)),calc(-50% - var(--drift-y,-16px))) rotate(-5deg); }
+}
+
+/* Envelope grows from the emoji position; its translucent glass note rises out of the pocket. */
+.signature-envelope {
+  position:fixed; z-index:100; left:50%; top:50%;
+  width:min(470px,calc(100vw - 30px));
+  pointer-events:none; opacity:0;
+  transform:translate(-50%,-50%) scale(.2);
+  transform-origin:center;
+}
+.signature-envelope[hidden] { display:none !important; }
+.signature-envelope.is-opening { animation:envelope-arrive .72s cubic-bezier(.16,.78,.2,1) forwards; }
+.envelope-stage { position:relative; width:100%; height:205px; perspective:900px; }
+.envelope-body {
+  position:absolute; z-index:3; left:50%; bottom:0; width:214px; height:116px;
+  overflow:hidden; transform:translateX(-50%); border:1px solid rgba(190,196,202,.2); border-radius:13px 13px 17px 17px;
+  background:linear-gradient(145deg,#34373b,#25282c 48%,#171a1d);
+  box-shadow:13px 15px 28px rgba(0,0,0,.84),-6px -6px 14px rgba(84,88,94,.22),inset 1px 1px 2px rgba(255,255,255,.1),inset -2px -2px 5px rgba(0,0,0,.85);
+}
+.envelope-pocket { position:absolute; inset:0; background:linear-gradient(145deg,transparent 49.2%,rgba(7,8,10,.84) 49.5%,rgba(59,63,68,.72) 50.2%,transparent 51%),linear-gradient(35deg,transparent 49.2%,rgba(8,9,11,.88) 49.5%,rgba(75,79,85,.58) 50.2%,transparent 51%); }
+.envelope-flap { position:absolute; z-index:5; left:calc(50% - 107px); bottom:65px; width:214px; height:75px; clip-path:polygon(0 0,100% 0,50% 100%); transform-origin:50% 0%; background:linear-gradient(160deg,#3a3e43,#24272b 68%,#17191c); filter:drop-shadow(0 5px 4px rgba(0,0,0,.6)); }
+.signature-envelope.is-opening .envelope-flap { animation:envelope-flap-open .62s .16s cubic-bezier(.2,.72,.22,1) forwards; }
+.envelope-seal { position:absolute; z-index:6; left:50%; top:36px; display:grid; place-items:center; width:32px; height:32px; transform:translateX(-50%); border:1px solid rgba(190,196,202,.22); border-radius:50%; color:#aeb4ba; background:linear-gradient(145deg,#34383d,#181b1e); box-shadow:3px 4px 8px rgba(0,0,0,.7),inset 1px 1px 1px rgba(255,255,255,.08); font-size:15px; }
+.envelope-letter { position:absolute; z-index:4; left:50%; bottom:43px; width:100%; opacity:0; transform:translate(-50%,68px) scale(.94); }
+.signature-envelope.letter-emerged .envelope-letter { animation:letter-rise .82s .06s cubic-bezier(.18,.76,.2,1) forwards; }
+.signature-glass-banner {
+  position:relative; width:100%; box-sizing:border-box; padding:20px 47px 17px 22px;
+  border:1px solid rgba(207,214,221,.26); border-radius:18px;
+  background:linear-gradient(135deg,rgba(104,111,119,.37),rgba(42,46,51,.48) 48%,rgba(21,24,28,.67));
+  box-shadow:0 17px 34px rgba(0,0,0,.58),inset 1px 1px 1px rgba(255,255,255,.18),inset -1px -1px 3px rgba(0,0,0,.46);
+  backdrop-filter:blur(18px) saturate(115%); -webkit-backdrop-filter:blur(18px) saturate(115%);
+  text-align:center;
+}
+.signature-kicker { display:block; margin-bottom:8px; color:#7f878f; font-size:8px; font-weight:800; letter-spacing:.2em; }
+.signature-glass-banner strong { display:block; color:#c0c6cc; font:700 clamp(14px,3vw,19px)/1.4 var(--display); text-shadow:-1px -1px 1px #08090a,.8px .8px 0 rgba(255,255,255,.15),0 3px 5px rgba(0,0,0,.8); overflow-wrap:anywhere; }
+.signature-glass-banner small { display:block; margin-top:7px; color:#8e969e; font:600 10px/1.4 var(--body); letter-spacing:.14em; }
+.signature-close { position:absolute; top:8px; right:9px; width:29px; height:29px; display:grid; place-items:center; border:1px solid rgba(200,207,214,.15); border-radius:50%; color:#b1b8bf; background:linear-gradient(145deg,rgba(60,64,70,.8),rgba(22,24,27,.82)); box-shadow:3px 4px 8px rgba(0,0,0,.55),inset 1px 1px 1px rgba(255,255,255,.1); cursor:pointer; pointer-events:auto; font-size:20px; }
+.signature-close:hover { filter:brightness(1.18); }
+.signature-close:active { transform:translateY(1px); }
+@keyframes envelope-arrive {
+  0% { opacity:0; transform:translate(calc(-50% + var(--origin-x,0px)),calc(-50% + var(--origin-y,0px))) scale(.16) rotate(-13deg); }
+  70% { opacity:1; transform:translate(-50%,-50%) scale(1.035) rotate(2deg); }
+  100% { opacity:1; transform:translate(-50%,-50%) scale(1) rotate(0); }
+}
+@keyframes envelope-flap-open { 0% { transform:rotateX(0); z-index:5; } 100% { transform:rotateX(178deg); z-index:1; } }
+@keyframes letter-rise { 0% { opacity:0; transform:translate(-50%,66px) scale(.94); } 70% { opacity:1; transform:translate(-50%,-42px) scale(1.015); } 100% { opacity:1; transform:translate(-50%,-34px) scale(1); } }
+
+@media (max-width:760px) {
+  .about-popover { width:calc(100vw - 24px); max-height:min(76dvh,650px); border-radius:20px; }
+  .about-popover-head { padding:15px 15px 12px; }
+  .about-popover-body { padding:15px 16px 17px; }
+  .about-popover-body p { font-size:11px; line-height:1.72; }
+  .about-feature-row { gap:6px; }
+  .about-feature-row span { padding:7px 8px; font-size:8px; }
+  .float-emoji { width:31px; height:31px; font-size:15px; opacity:.58; }
+  .envelope-stage { height:185px; }
+  .envelope-body { width:190px; height:105px; }
+  .envelope-flap { left:calc(50% - 95px); bottom:59px; width:190px; height:68px; }
+  .signature-glass-banner { padding:17px 42px 15px 15px; border-radius:15px; }
+  .signature-glass-banner strong { font-size:clamp(13px,4vw,17px); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .float-emoji { animation:none !important; }
+  .about-popover,.signature-envelope,.envelope-flap,.envelope-letter { transition:none !important; animation:none !important; }
+  .about-popover.is-visible { transform:translate(-50%,-50%); }
+  .signature-envelope.is-opening { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  .signature-envelope.letter-emerged .envelope-letter { opacity:1; transform:translate(-50%,-34px); }
+  .signature-envelope.is-opening .envelope-flap { transform:rotateX(178deg); }
+}

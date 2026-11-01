@@ -1,6 +1,6 @@
 # Sistem Absensi Coach & Evaluasi Ekstrakurikuler — SMK BPP Bandung
 
-Versi 3.6 menyusun ulang beranda agar mengikuti komposisi gambar referensi: header besar di atas, navigasi vertikal di kiri, banner foto gedung, empat kartu statistik, enam kartu ekstrakurikuler dalam grid 3×2, dan panel kutipan. Enam emblem SVG khusus, efek ukiran pada tipografi, serta lapisan neumorphism 3D tetap dipertahankan. Backend tetap kompatibel dengan API V3.2. Versi ini mempertahankan alur absensi one-tap dan memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
+Versi 3.7 menyusun ulang beranda agar mengikuti komposisi gambar referensi: header besar di atas, navigasi vertikal di kiri, banner foto gedung, empat kartu statistik, enam kartu ekstrakurikuler dalam grid 3×2, dan panel kutipan. Enam emblem SVG khusus, efek ukiran pada tipografi, serta lapisan neumorphism 3D tetap dipertahankan. Backend tetap kompatibel dengan API V3.2. Versi ini mempertahankan alur absensi one-tap dan memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
 
 ## Fitur utama
 
@@ -169,3 +169,19 @@ Jalankan `python verify_project.py` untuk pemeriksaan statis paket.
 Keluhan logo yang tidak muncul ditangani dengan menghilangkan ketergantungan kartu ekskul pada file SVG eksternal. Keenam emblem (Seni Musik, English Club, Boxing, Futsal, Seni Tari, Basket) kini disematkan langsung di `data.js` sebagai SVG data URI. Dengan begitu, emblem tetap tampil meskipun pengguna mengunggah file satu per satu ke GitHub dan folder `assets/logos/` tidak ikut terunggah. File SVG terpisah di `assets/logos/` tetap disediakan sebagai sumber yang mudah diedit.
 
 Cache buster pada HTML diperbarui menjadi V3.6 agar browser tidak menggunakan script lama. Logo kartu ekskul diperbesar dan diberi rim bevel serta cahaya hijau lembut. Untuk memasang, unggah ulang `index.html`, `data.js`, `script.js`, dan `style.css` minimal; lebih disarankan unggah seluruh isi ZIP. Backend tidak berubah.
+
+
+## Pembaruan V3.7 — ukuran emblem dan ornamen daun
+
+- Ukuran artwork emblem pada kartu ekstrakurikuler diperkecil menjadi 82% dari lingkaran medali. Ruang di antara artwork dan rim terlihat jelas, tanpa mengubah ukuran lingkaran medali utama.
+- Ornamen daun abstrak dibuat sebagai `assets/leaf-ornament.svg`, dengan beberapa lapisan relief: bayangan gelap, permukaan batu hijau-charcoal, bevel terang, urat daun terukir, dan batang berlapis.
+- Ornamen daun digunakan di bagian bawah sidebar kiri serta sudut kanan bawah panel kutipan. Pada layar ponsel, ornamen sidebar disembunyikan agar navigasi tetap ringkas, sedangkan ornamen kutipan dikecilkan.
+- Pastikan folder `assets/` ikut diunggah ke GitHub, karena berisi `hero-school.jpg` dan `leaf-ornament.svg`. Enam emblem ekskul tetap disematkan dalam `data.js`.
+- Cache-buster CSS, data, config, dan script diubah ke `?v=3.7`.
+- Backend tidak berubah; tidak perlu deployment ulang Apps Script untuk pembaruan UI ini.
+
+
+### Pratinjau V3.7
+
+- `previews/leaf-ornament-on-charcoal.png` memperlihatkan ornamen daun di atas permukaan charcoal.
+- `previews/emblem-spacing.png` memperlihatkan jarak emblem yang sudah diperkecil di dalam medali.

@@ -1,6 +1,6 @@
 Absensi Coach SMK BPP Bandung
-Paket UI: V3.6 — Reference Match + Embedded Emblems
+Paket UI: V3.7 — Smaller Medallion Emblems + Carved Botanical Ornament
 Backend API: V3.2 (tetap kompatibel; tidak ada perubahan backend)
 Tanggal pembaruan UI: 1 November 2026
 
-Perubahan V3.6: enam emblem ekstrakurikuler disematkan langsung ke data.js sebagai SVG data URI. Website tidak lagi bergantung pada folder assets/logos agar logo tidak hilang saat file diunggah satu per satu ke GitHub. Cache buster diperbarui ke V3.6. Emblem diperjelas dan diperbesar dengan rim 3D hijau gelap.
+Perubahan V3.7: artwork emblem ekstrakurikuler diperkecil menjadi 82% dari ukuran medali agar memiliki jarak visual dari lingkaran. Ornamen daun botani abstrak dibuat sebagai SVG dengan relief batu, bayangan terukir, highlight bevel, urat daun, dan batang berlapis. Ornamen dipasang di sisi bawah sidebar kiri serta sudut kanan bawah panel kutipan. Cache-buster frontend diperbarui ke V3.7.

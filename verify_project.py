@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static verification for Absensi Coach SMK BPP UI V3.5."""
+"""Static verification for Absensi Coach SMK BPP UI V3.7."""
 from pathlib import Path
 from bs4 import BeautifulSoup
 import json, re, subprocess, sys, xml.etree.ElementTree as ET
@@ -11,7 +11,7 @@ def check(ok, message):
     if not ok: errors.append(message)
 
 # Required distribution files
-required = ['index.html','style.css','data.js','config.js','script.js','code.gs','appsscript.json','README.md','VERSION.txt','assets/hero-school.jpg']
+required = ['index.html','style.css','data.js','config.js','script.js','code.gs','appsscript.json','README.md','VERSION.txt','assets/hero-school.jpg','assets/leaf-ornament.svg']
 for f in required: check((ROOT/f).is_file(), f'file tersedia: {f}')
 
 # Syntax checks
@@ -72,7 +72,13 @@ check('EXTRACURRICULAR_LOGOS[item.id]' in js and 'data:image/svg+xml;base64,' in
 check("dataset.scroll" in js and "scrollIntoView" in js,'item navigasi anchor berfungsi')
 check("startCheckin" in js and "capturePhoto()" in js and "await submitCheckin()" in js,'flow absensi satu sentuhan masih tersedia')
 check("version: '3.2'" in gs,'backend API 3.2 tetap ada dan tidak berubah')
-check('V3.6' in (ROOT/'VERSION.txt').read_text(),'versi paket UI V3.6')
+check('V3.7' in (ROOT/'VERSION.txt').read_text(),'versi paket UI V3.7')
+check('leaf-ornament.svg' in (ROOT/'index.html').read_text(),'ornamen daun SVG digunakan pada sidebar dan kutipan')
+check('width:82%; height:82%' in css,'emblem diperkecil dan memiliki jarak dari lingkaran')
+check((ROOT/'assets'/'leaf-ornament.svg').is_file(),'ornamen daun tersedia sebagai aset lokal')
+try: ET.parse(ROOT/'assets'/'leaf-ornament.svg'); leaf_svg_valid=True
+except Exception: leaf_svg_valid=False
+check(leaf_svg_valid,'SVG ornamen daun valid')
 check('translateY(-3px)' in css and ':hover' in css,'efek hover mengangkat elemen tersedia')
 check(':active' in css and 'translateY(1px)' in css,'efek tekan/amblas tersedia')
 check('var(--neon-edge)' in css and 'var(--neon-halo)' in css,'border glow hijau tersedia')

@@ -8,6 +8,7 @@ PASS: file tersedia: appsscript.json
 PASS: file tersedia: README.md
 PASS: file tersedia: VERSION.txt
 PASS: file tersedia: assets/hero-school.jpg
+PASS: file tersedia: assets/leaf-ornament.svg
 PASS: sintaks JavaScript script.js
 PASS: sintaks JavaScript data.js
 PASS: sintaks JavaScript config.js
@@ -53,7 +54,11 @@ PASS: kartu memakai emblem SVG tersemat tanpa ketergantungan path eksternal
 PASS: item navigasi anchor berfungsi
 PASS: flow absensi satu sentuhan masih tersedia
 PASS: backend API 3.2 tetap ada dan tidak berubah
-PASS: versi paket UI V3.6
+PASS: versi paket UI V3.7
+PASS: ornamen daun SVG digunakan pada sidebar dan kutipan
+PASS: emblem diperkecil dan memiliki jarak dari lingkaran
+PASS: ornamen daun tersedia sebagai aset lokal
+PASS: SVG ornamen daun valid
 PASS: efek hover mengangkat elemen tersedia
 PASS: efek tekan/amblas tersedia
 PASS: border glow hijau tersedia

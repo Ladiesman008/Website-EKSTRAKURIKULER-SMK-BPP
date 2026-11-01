@@ -170,13 +170,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .nav-btn.active svg { stroke:#8fe0a4; }
 .nav-separator { height:1px; margin:9px 8px 4px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent); }
 .nav-about { min-height:64px; }
-.nav-ornament { position:relative; display:block; flex:1 1 210px; min-height:190px; margin:13px 3px 2px; overflow:hidden; opacity:.34; }
-.nav-ornament::before,.nav-ornament::after,.nav-ornament span { content:""; position:absolute; display:block; width:90px; height:160px; border:4px solid rgba(118,145,122,.37); border-left-color:transparent; border-bottom-color:transparent; border-radius:90% 0 90% 0; transform:rotate(38deg); filter:drop-shadow(2px 4px 3px rgba(0,0,0,.85)); }
-.nav-ornament::before { left:35px; bottom:-53px; }
-.nav-ornament::after { left:81px; bottom:-17px; transform:rotate(67deg) scale(.72); }
-.nav-ornament span:nth-child(1) { left:9px; bottom:15px; transform:rotate(15deg) scale(.65); }
-.nav-ornament span:nth-child(2) { left:72px; bottom:45px; transform:rotate(80deg) scale(.56); }
-.nav-ornament span:nth-child(3) { left:35px; bottom:84px; transform:rotate(5deg) scale(.38); }
+.nav-ornament { position:relative; display:block; flex:1 1 210px; min-height:190px; margin:13px 3px 2px; overflow:hidden; opacity:.78; }
+.nav-ornament img { position:absolute; inset:auto 0 -11px; display:block; width:100%; height:100%; max-height:210px; object-fit:contain; object-position:center bottom; transform:rotate(-7deg) scale(1.08); transform-origin:bottom center; filter:drop-shadow(5px 8px 5px rgba(0,0,0,.92)) drop-shadow(-1px -1px 1px rgba(191,208,191,.08)); }
+
 main { min-width:0; }
 .view { display:none; min-width:0; animation:fade-up .3s ease both; }
 .view.active { display:block; }
@@ -248,13 +244,13 @@ h1,h2,h3,h4 { font-family:var(--display); }
 .program-top { position:relative; z-index:1; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:9px; width:100%; min-width:0; }
 .program-brand { display:flex; align-items:center; gap:13px; min-width:0; flex:1 1 auto; }
 .program-emblem-wrap {
-  position:relative; display:grid; place-items:center; flex:0 0 92px; width:92px; height:92px; padding:2px;
+  position:relative; display:grid; place-items:center; flex:0 0 92px; width:92px; height:92px; padding:0;
   border:1px solid rgba(167,220,175,.2); border-radius:50%;
   background:radial-gradient(circle at 28% 22%,#354239,#171e19 57%,#0e120f);
   box-shadow:10px 11px 19px rgba(0,0,0,.9),-7px -7px 16px rgba(67,81,68,.53),inset 2px 2px 3px rgba(255,255,255,.14),inset -3px -3px 6px rgba(0,0,0,.82);
 }
 .program-emblem-wrap::after { content:""; position:absolute; inset:7px; border:1px solid rgba(167,220,177,.14); border-radius:50%; box-shadow:inset 0 1px 3px rgba(255,255,255,.07); pointer-events:none; }
-.program-emblem { display:block; width:100%; height:100%; object-fit:contain; opacity:1; visibility:visible; filter:drop-shadow(3px 4px 4px rgba(0,0,0,.72)); }
+.program-emblem { display:block; width:82%; height:82%; min-width:0; min-height:0; margin:auto; object-fit:contain; opacity:1; visibility:visible; filter:drop-shadow(2px 3px 3px rgba(0,0,0,.78)); }
 .program-title-stack { min-width:0; }
 .program-category { display:none; }
 .program-title-stack h3 { margin:0 0 5px; color:#d6ddd6; font:600 clamp(15px,1.35vw,21px)/1.22 var(--display); letter-spacing:-.012em; overflow-wrap:anywhere; text-shadow:-1.5px -1.5px 1px rgba(0,0,0,.96),1px 1px 0 rgba(255,255,255,.17),0 2px 4px rgba(0,0,0,.88); }
@@ -280,14 +276,16 @@ h1,h2,h3,h4 { font-family:var(--display); }
 
 /* Kutipan bawah sesuai referensi */
 .quote-strip {
+  position:relative; isolation:isolate; overflow:hidden;
   display:flex; align-items:center; justify-content:center; gap:26px;
   min-height:76px; margin-top:17px; padding:14px 24px; border-radius:25px;
   background:linear-gradient(145deg,#202521,#151a16 60%,#111512);
   box-shadow:15px 16px 28px rgba(0,0,0,.82),-8px -8px 19px rgba(61,72,63,.38),inset 1.5px 1.5px 2px rgba(255,255,255,.075),inset -2px -2px 3px rgba(0,0,0,.75);
 }
-.quote-rule { height:1px; width:min(16%,150px); background:linear-gradient(90deg,transparent,rgba(96,181,117,.65),transparent); }
-.quote-mark { color:#6fbd83; font:700 48px/.75 Georgia,serif; transform:translateY(8px); text-shadow:-2px -2px 1px #000,1px 1px 0 rgba(255,255,255,.16),0 3px 4px #000; }
-.quote-strip p { margin:0; color:#b8c1ba; font:italic 600 clamp(13px,1.2vw,17px)/1.45 var(--body); text-align:center; text-shadow:-1px -1px 1px #000,1px 1px 0 rgba(255,255,255,.12),0 2px 4px #000; }
+.quote-rule { position:relative; z-index:1; height:1px; width:min(16%,150px); background:linear-gradient(90deg,transparent,rgba(96,181,117,.65),transparent); }
+.quote-mark { position:relative; z-index:1; color:#6fbd83; font:700 48px/.75 Georgia,serif; transform:translateY(8px); text-shadow:-2px -2px 1px #000,1px 1px 0 rgba(255,255,255,.16),0 3px 4px #000; }
+.quote-strip p { position:relative; z-index:1; margin:0; color:#b8c1ba; font:italic 600 clamp(13px,1.2vw,17px)/1.45 var(--body); text-align:center; text-shadow:-1px -1px 1px #000,1px 1px 0 rgba(255,255,255,.12),0 2px 4px #000; }
+.quote-leaf-ornament { position:absolute; z-index:0; right:-11px; bottom:-35px; width:158px; height:172px; object-fit:contain; object-position:center bottom; opacity:.72; transform:scaleX(-1) rotate(-5deg); transform-origin:bottom right; pointer-events:none; filter:drop-shadow(4px 7px 5px rgba(0,0,0,.95)) drop-shadow(-1px -1px 1px rgba(205,220,204,.10)); }
 .site-footer { display:flex; justify-content:space-between; gap:15px; margin:14px 4px 0; color:#677168; font-size:9px; }
 
 /* Halaman absensi coach, penilaian dan laporan */
@@ -486,7 +484,8 @@ td { padding:11px; border-top:1px solid rgba(255,255,255,.05); color:#c5cec6; ve
   .program-meta { grid-template-columns:1fr; }
   .quote-strip { min-height:62px; gap:9px; margin-top:12px; padding:10px; border-radius:18px; }
   .quote-mark { font-size:34px; }
-  .quote-strip p { font-size:10px; }
+  .quote-strip p { font-size:10px; max-width:76%; }
+  .quote-leaf-ornament { right:-15px; bottom:-28px; width:88px; height:96px; opacity:.46; }
   .quote-rule { width:8%; }
   .site-footer { flex-direction:column; gap:4px; font-size:8px; }
   .page-heading h1 { font-size:26px; }
@@ -697,7 +696,7 @@ td { padding:11px; border-top:1px solid rgba(255,255,255,.05); color:#c5cec6; ve
 }
 
 
-/* V3.6 — guarantee legible, fully visible extracurricular emblems */
+/* V3.7 — medallion breathing room and carved botanical ornaments */
 .program-emblem-wrap { isolation:isolate; overflow:visible; }
 .program-emblem-wrap::before { content:""; position:absolute; inset:-3px; z-index:-1; border-radius:50%; background:radial-gradient(circle,rgba(89,177,112,.13),transparent 69%); filter:blur(5px); pointer-events:none; }
-.program-emblem { position:relative; z-index:1; min-width:100%; min-height:100%; }
+.program-emblem { position:relative; z-index:1; width:82%; height:82%; min-width:0; min-height:0; }

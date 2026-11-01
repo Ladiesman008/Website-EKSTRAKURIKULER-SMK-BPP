@@ -132,7 +132,7 @@
         <div class="program-top">
           <div class="program-brand">
             <span class="program-emblem-wrap">
-              <img class="program-emblem" src="assets/logos/${encodeURIComponent(item.id)}.svg" alt="Emblem ${escapeHTML(item.name)}" loading="lazy" decoding="async">
+              <img class="program-emblem" src="${EXTRACURRICULAR_LOGOS[item.id] || ''}" alt="Emblem ${escapeHTML(item.name)}" loading="eager" decoding="async" fetchpriority="high">
             </span>
             <div class="program-title-stack">
               <span class="program-category">${escapeHTML(item.category)}</span>

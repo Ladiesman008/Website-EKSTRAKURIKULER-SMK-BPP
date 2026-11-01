@@ -1,6 +1,6 @@
 Absensi Coach SMK BPP Bandung
-Paket UI: V3.4 — Reference Match Layout
-Backend API: V3.2 (kompatibel; tidak ada perubahan backend)
+Paket UI: V3.6 — Reference Match + Embedded Emblems
+Backend API: V3.2 (tetap kompatibel; tidak ada perubahan backend)
 Tanggal pembaruan UI: 1 November 2026
 
-Perubahan V3.4: struktur visual beranda disusun mengikuti gambar referensi pengguna: header horizontal besar, sidebar vertikal, banner foto gedung, empat statistik sejajar, kartu ekskul 3×2, serta panel kutipan. Kartu ekskul menampilkan emblem SVG khusus dan detail dapat dibuka melalui tombol panah.
+Perubahan V3.6: enam emblem ekstrakurikuler disematkan langsung ke data.js sebagai SVG data URI. Website tidak lagi bergantung pada folder assets/logos agar logo tidak hilang saat file diunggah satu per satu ke GitHub. Cache buster diperbarui ke V3.6. Emblem diperjelas dan diperbesar dengan rim 3D hijau gelap.

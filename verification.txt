@@ -1,0 +1,64 @@
+PASS: file tersedia: index.html
+PASS: file tersedia: style.css
+PASS: file tersedia: data.js
+PASS: file tersedia: config.js
+PASS: file tersedia: script.js
+PASS: file tersedia: code.gs
+PASS: file tersedia: appsscript.json
+PASS: file tersedia: README.md
+PASS: file tersedia: VERSION.txt
+PASS: file tersedia: assets/hero-school.jpg
+PASS: sintaks JavaScript script.js
+PASS: sintaks JavaScript data.js
+PASS: sintaks JavaScript config.js
+PASS: sintaks Google Apps Script
+PASS: ID HTML unik
+PASS: header utama tersedia
+PASS: sidebar berada di kiri workspace
+PASS: main berada di kanan sidebar
+PASS: empat kartu statistik tersedia
+PASS: grid daftar ekskul tersedia
+PASS: panel kutipan tersedia
+PASS: lima item navigasi tersedia
+PASS: target navigasi cocok dengan view
+PASS: target scroll tersedia: member-workspace
+PASS: target scroll tersedia: about-strip
+PASS: CSS lolos parsing
+PASS: desktop sidebar layout
+PASS: 3-column extracurricular grid
+PASS: responsive mobile grid
+PASS: school facade banner
+PASS: engraved typography
+PASS: 3D raised neumorphism
+PASS: emblem SVG valid: seni-musik
+PASS: emblem SVG valid: english-club
+PASS: emblem SVG valid: boxing
+PASS: emblem SVG valid: futsal
+PASS: emblem SVG valid: seni-tari
+PASS: emblem SVG valid: basket
+PASS: emblem disematkan: seni-musik
+PASS: emblem disematkan: english-club
+PASS: emblem disematkan: boxing
+PASS: emblem disematkan: futsal
+PASS: emblem disematkan: seni-tari
+PASS: emblem disematkan: basket
+PASS: backend action tersedia: admin_login
+PASS: backend action tersedia: coach_info
+PASS: backend action tersedia: export_docx
+PASS: backend action tersedia: report_data
+PASS: backend action tersedia: save_coach_checkin
+PASS: backend action tersedia: save_member_records
+PASS: logo otomatis dimuat dari folder website
+PASS: kartu memakai emblem SVG tersemat tanpa ketergantungan path eksternal
+PASS: item navigasi anchor berfungsi
+PASS: flow absensi satu sentuhan masih tersedia
+PASS: backend API 3.2 tetap ada dan tidak berubah
+PASS: versi paket UI V3.6
+PASS: efek hover mengangkat elemen tersedia
+PASS: efek tekan/amblas tersedia
+PASS: border glow hijau tersedia
+PASS: hover hanya untuk perangkat pointer
+PASS: dukungan reduced motion tersedia
+PASS: enam data ekstrakurikuler tersedia
+
+HASIL: seluruh pemeriksaan statis lulus.

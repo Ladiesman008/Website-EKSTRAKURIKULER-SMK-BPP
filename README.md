@@ -1,6 +1,6 @@
 # Sistem Absensi Coach & Evaluasi Ekstrakurikuler — SMK BPP Bandung
 
-Versi 3.4 menyusun ulang beranda agar mengikuti komposisi gambar referensi: header besar di atas, navigasi vertikal di kiri, banner foto gedung, empat kartu statistik, enam kartu ekstrakurikuler dalam grid 3×2, dan panel kutipan. Enam emblem SVG khusus, efek ukiran pada tipografi, serta lapisan neumorphism 3D tetap dipertahankan. Backend tetap kompatibel dengan API V3.2. Versi ini mempertahankan alur absensi one-tap dan memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
+Versi 3.6 menyusun ulang beranda agar mengikuti komposisi gambar referensi: header besar di atas, navigasi vertikal di kiri, banner foto gedung, empat kartu statistik, enam kartu ekstrakurikuler dalam grid 3×2, dan panel kutipan. Enam emblem SVG khusus, efek ukiran pada tipografi, serta lapisan neumorphism 3D tetap dipertahankan. Backend tetap kompatibel dengan API V3.2. Versi ini mempertahankan alur absensi one-tap dan memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
 
 ## Fitur utama
 
@@ -150,3 +150,22 @@ File yang diberikan adalah **Laporan Evaluasi & Kinerja Ekstrakurikuler TA 2025/
 - Struktur header V3.4 mengikuti gambar referensi: logo besar di kiri, nama sekolah di sampingnya, serta tanggal dan status di sisi kanan.
 - Backend tetap versi API 3.2; tidak perlu deployment Code.gs baru untuk perubahan visual ini.
 - Setelah mengganti file V3.4, lakukan hard refresh agar style.css?v=3.4 termuat.
+
+
+## Pembaruan V3.5 — Interaksi tombol dan dashboard
+
+- Pointer mouse: tombol navigasi, tombol aksi, tombol detail, dan kartu ekstrakurikuler terangkat sedikit dengan transisi singkat.
+- Saat ditekan: permukaan tombol terasa masuk/amblas dan border menampilkan glow hijau yang sangat tipis.
+- Tombol utama memiliki respons 3D yang lebih terasa namun tetap mempertahankan tema dark-green.
+- Di perangkat sentuh, efek tekan tetap aktif tanpa mengandalkan hover.
+- Pengguna yang mengaktifkan `prefers-reduced-motion` mendapat transisi dan transformasi minimal.
+- Tidak ada perubahan backend; cukup perbarui file frontend (`style.css`) dan metadata versi.
+
+Jalankan `python verify_project.py` untuk pemeriksaan statis paket.
+
+
+## Perbaikan V3.6 — logo ekskul selalu tampil
+
+Keluhan logo yang tidak muncul ditangani dengan menghilangkan ketergantungan kartu ekskul pada file SVG eksternal. Keenam emblem (Seni Musik, English Club, Boxing, Futsal, Seni Tari, Basket) kini disematkan langsung di `data.js` sebagai SVG data URI. Dengan begitu, emblem tetap tampil meskipun pengguna mengunggah file satu per satu ke GitHub dan folder `assets/logos/` tidak ikut terunggah. File SVG terpisah di `assets/logos/` tetap disediakan sebagai sumber yang mudah diedit.
+
+Cache buster pada HTML diperbarui menjadi V3.6 agar browser tidak menggunakan script lama. Logo kartu ekskul diperbesar dan diberi rim bevel serta cahaya hijau lembut. Untuk memasang, unggah ulang `index.html`, `data.js`, `script.js`, dan `style.css` minimal; lebih disarankan unggah seluruh isi ZIP. Backend tidak berubah.

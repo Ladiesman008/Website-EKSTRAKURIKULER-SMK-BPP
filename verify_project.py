@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static verification for Absensi Coach SMK BPP UI V3.4."""
+"""Static verification for Absensi Coach SMK BPP UI V3.5."""
 from pathlib import Path
 from bs4 import BeautifulSoup
 import json, re, subprocess, sys, xml.etree.ElementTree as ET
@@ -60,17 +60,24 @@ for name in logos:
     try: ET.parse(path); valid=path.is_file()
     except Exception: valid=False
     check(valid,f'emblem SVG valid: {name}')
+for name in logos:
+    check(re.search(r"'"+re.escape(name)+r"': 'data:image/svg\+xml;base64,[A-Za-z0-9+/=]+'", (ROOT/'data.js').read_text()) is not None, f'emblem disematkan: {name}')
 
 # JS references and API compatibility
 js=(ROOT/'script.js').read_text(); gs=(ROOT/'code.gs').read_text(); data=(ROOT/'data.js').read_text()
 for action in sorted(set(re.findall(r"request\('([a-z_]+)'",js))):
     check((f"case '{action}'" in gs) or (f"p.action === '{action}'" in gs),f'backend action tersedia: {action}')
 check("function loadSchoolLogo()" in js and "logo.png" in js and 'id="school-logo"' in (ROOT/'index.html').read_text(),'logo otomatis dimuat dari folder website')
-check("assets/logos/${encodeURIComponent(item.id)}.svg" in js,'kartu memakai emblem SVG masing-masing')
+check('EXTRACURRICULAR_LOGOS[item.id]' in js and 'data:image/svg+xml;base64,' in data,'kartu memakai emblem SVG tersemat tanpa ketergantungan path eksternal')
 check("dataset.scroll" in js and "scrollIntoView" in js,'item navigasi anchor berfungsi')
 check("startCheckin" in js and "capturePhoto()" in js and "await submitCheckin()" in js,'flow absensi satu sentuhan masih tersedia')
 check("version: '3.2'" in gs,'backend API 3.2 tetap ada dan tidak berubah')
-check('V3.4' in (ROOT/'VERSION.txt').read_text(),'versi paket UI V3.4')
+check('V3.6' in (ROOT/'VERSION.txt').read_text(),'versi paket UI V3.6')
+check('translateY(-3px)' in css and ':hover' in css,'efek hover mengangkat elemen tersedia')
+check(':active' in css and 'translateY(1px)' in css,'efek tekan/amblas tersedia')
+check('var(--neon-edge)' in css and 'var(--neon-halo)' in css,'border glow hijau tersedia')
+check('@media (hover: hover) and (pointer: fine)' in css,'hover hanya untuk perangkat pointer')
+check('prefers-reduced-motion: reduce' in css,'dukungan reduced motion tersedia')
 check(all(name in data for name in ['Seni Musik','English Club','Boxing','Futsal','Seni Tari','Basket']),'enam data ekstrakurikuler tersedia')
 
 if errors:

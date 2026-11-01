@@ -1,2 +1,2 @@
-V3.12 static verification: 59 checks, 0 failures
-PASS: HTML IDs, popup interactions, six embedded emblems, inline carved leaves, unclipped responsive ornaments, CSS parsing, charcoal stone material system, inset typography, JS syntax, Apps Script syntax, and reporting hooks.
+V3.13 static verification: 38 checks, 0 failures
+PASS: HTML, program popups, six emblems, inline botanical engraving, alpha/transparency, CSS, JavaScript, Apps Script and report hooks.

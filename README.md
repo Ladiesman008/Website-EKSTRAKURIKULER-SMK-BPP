@@ -1,14 +1,14 @@
 # Sistem Absensi Coach & Evaluasi Ekstrakurikuler — SMK BPP Bandung
 
-**Versi 3.12 — Unified Black Charcoal Stone Neumorphism**
+**Versi 3.13 — User Botanical Stone Engraving**
 
-Versi ini mempertahankan struktur dan fungsi V3.11, tetapi mengganti keseluruhan sistem visual menjadi neumorphism hitam-charcoal dengan material batu berlapis: kartu dan tombol tampak menonjol melalui bayangan luar dan bevel halus, sedangkan input serta tipografi memakai efek cekung/ukiran. Aksen hijau neon diminimalkan dan diganti highlight graphite/netral. Layout beranda, enam emblem ekstrakurikuler, popup melayang, ornamen daun, absensi kamera-GPS, penilaian anggota, dan ekspor DOCX tetap dipertahankan. Backend dan endpoint Google Apps Script tidak berubah.
+Versi ini mempertahankan struktur dan fungsi V3.12, tetapi mengganti keseluruhan sistem visual menjadi neumorphism hitam-charcoal dengan material batu berlapis: kartu dan tombol tampak menonjol melalui bayangan luar dan bevel halus, sedangkan input serta tipografi memakai efek cekung/ukiran. Aksen hijau neon diminimalkan dan diganti highlight graphite/netral. Layout beranda, enam emblem ekstrakurikuler, popup melayang, ornamen daun, absensi kamera-GPS, penilaian anggota, dan ekspor DOCX tetap dipertahankan. Backend dan endpoint Google Apps Script tidak berubah.
 
-## Cara memperbarui website ke V3.12
+## Cara memperbarui website ke V3.13
 
-Untuk GitHub Pages, unggah ulang `index.html` dan `style.css` dari paket ini. Pastikan seluruh folder `assets/` yang sudah ada tetap dipertahankan, karena berisi foto banner, enam logo ekskul, dan ornamen. `data.js`, `script.js`, `config.js`, dan `code.gs` tidak berubah pada pembaruan visual ini. Karena perubahan hanya pada frontend, Google Apps Script tidak perlu di-deploy ulang. Setelah commit, lakukan hard refresh (`Ctrl + Shift + R`) agar browser memuat `style.css?v=3.12`.
+Untuk GitHub Pages, unggah ulang `index.html` dan `style.css` dari paket ini. Pastikan seluruh folder `assets/` yang sudah ada tetap dipertahankan, karena berisi foto banner, enam logo ekskul, dan ornamen. `data.js`, `script.js`, `config.js`, dan `code.gs` tidak berubah pada pembaruan visual ini (query cache pada HTML hanya dinaikkan ke versi 3.13). Karena perubahan hanya pada frontend, Google Apps Script tidak perlu di-deploy ulang. Setelah commit, lakukan hard refresh (`Ctrl + Shift + R`) agar browser memuat `style.css?v=3.13`.
 
-## Pembaruan visual V3.12
+## Pembaruan visual V3.13
 
 - **Palet penuh charcoal:** latar, header, sidebar, banner, kartu statistik, kartu ekskul, popup, tabel, form, tombol, dan panel laporan menggunakan gradasi hitam-charcoal.
 - **Neumorphism timbul 3D:** setiap panel utama memakai dua arah bayangan luar, highlight bevel di sisi atas-kiri, dan bayangan bawah-kanan yang lebih dalam. Tombol tetap memiliki state hover/pressed, tetapi tanpa lapisan glow hijau yang mencolok.
@@ -253,3 +253,15 @@ Pemasangan: ganti `index.html` dan `style.css` dari paket V3.10. Pertahankan fil
 Ornamen daun diselaraskan dengan permukaan dashboard hitam/charcoal. Tidak ada lagi bidang daun hijau. Bentuk daun memakai alur hitam pekat, bevel graphite abu-abu yang sangat terkendali pada sisi bawah/kanan, serta urat daun berupa garis pahatan. Efeknya cekung ke dalam batu, bukan timbul atau bercahaya.
 
 Pembaruan hanya pada `index.html`, `style.css`, `assets/leaf-ornament.svg`, dan cache-buster asset versi 3.11. Backend tidak berubah. Untuk update GitHub, ganti `index.html` dan `style.css`; `leaf-ornament.svg` juga ikut diganti bila file tersebut digunakan di luar elemen inline.
+
+
+## Pembaruan ornamen daun V3.13
+
+- Ornamen daun sekarang menggunakan ilustrasi bunga botani yang diunggah oleh pengguna (`Desain tanpa judul.png`).
+- Ilustrasi diolah menjadi monokrom graphite/charcoal: bidang putih asli dipetakan ke permukaan batu gelap, tinta hitam dipertahankan sebagai alur ukiran, dan tepi diberi bevel sangat halus.
+- Latar hijau transparan dari file sumber tidak ikut ditampilkan.
+- Gambar di-embed langsung sebagai CSS data URI (`--leaf-engraving`) agar tidak bergantung pada path atau folder aset di GitHub Pages. File `assets/leaf-botanical-carved.webp` juga disertakan sebagai salinan aset mandiri.
+- Ornamen digunakan pada sidebar dan sudut kanan panel kutipan; skala otomatis menyesuaikan desktop dan ponsel.
+
+### Cara memperbarui dari V3.13
+Unggah ulang `index.html` dan `style.css` dari paket V3.13. File `assets/leaf-botanical-carved.webp` disertakan sebagai aset mandiri/backup, tetapi tampilan web memakai gambar inline sehingga tidak wajib dimuat terpisah. File backend dan konfigurasi tidak berubah; Google Apps Script tidak perlu di-deploy ulang. Lakukan hard refresh setelah commit.

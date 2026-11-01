@@ -1,1 +1,1 @@
-3.12 - Unified black charcoal stone neumorphism; carved/inset typography; restrained green accents.
+3.13 - User supplied botanical artwork converted to recessed charcoal stone engraving; embedded as CSS data URI.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static checks for Absensi Coach SMK BPP V3.8."""
+"""Static checks for Absensi Coach SMK BPP V3.9."""
 from pathlib import Path
 from collections import Counter
 from bs4 import BeautifulSoup
@@ -30,7 +30,7 @@ check(not duplicates, f'Duplicate HTML IDs: {duplicates}')
 for required_id in ['extracurricular-grid', 'program-popover', 'program-popover-title', 'program-popover-content', 'close-program-popover']:
     check(soup.find(id=required_id) is not None, f'Missing HTML id: {required_id}')
 check('aria-modal="false"' in html, 'Floating panel must remain non-modal')
-check('v=3.8' in html, 'HTML asset cache-buster is not V3.8')
+check('v=3.9' in html, 'HTML asset cache-buster is not V3.9')
 
 # Frontend popup behavior hooks
 for marker in ['data-program-open', 'openProgramPopover', 'closeProgramPopover', 'Escape', 'positionProgramPopover']:
@@ -67,8 +67,15 @@ if leaf.exists():
         check(True, 'Carved leaf SVG parses')
     except Exception as exc:
         check(False, f'Carved leaf SVG invalid: {exc}')
-check('leaf-ornament.svg' in html, 'HTML does not reference the leaf SVG')
-check('opacity:.96' in css and 'opacity:.94' in css, 'Leaf visibility adjustments missing')
+check(html.count('class=\"nav-ornament-svg carved-leaf-svg\"') == 1, 'Inline sidebar leaf missing')
+check(html.count('class=\"quote-leaf-ornament carved-leaf-svg\"') == 1, 'Inline quote leaf missing')
+check('assets/leaf-ornament.svg' not in html, 'Leaf still depends on external SVG path')
+check('loading=\"lazy\"' not in html[html.find('nav-ornament'):html.find('</nav>')], 'Sidebar leaf must not lazy-load')
+check('.nav-ornament { position:relative' in css and 'overflow:visible' in css[css.find('.nav-ornament {'):css.find('main {')], 'Sidebar leaf container may clip ornament')
+quote_rule = css[css.find('.quote-strip {'):css.find('.quote-rule {')]
+check('overflow:visible' in quote_rule, 'Quote strip clips decorative leaf')
+check('min-height:124px' in quote_rule, 'Quote strip does not reserve vertical room for leaf')
+check('.quote-leaf-ornament {' in css and 'opacity:1' in css[css.find('.quote-leaf-ornament {'):css.find('.site-footer')], 'Quote leaf visibility CSS missing')
 
 # CSS parse
 rules = tinycss2.parse_stylesheet(css, skip_comments=True, skip_whitespace=True)
@@ -83,7 +90,7 @@ for name in ['script.js', 'data.js', 'config.js']:
     result = subprocess.run(['node', '--check', str(ROOT / name)], capture_output=True, text=True)
     check(result.returncode == 0, f'{name} syntax error: {result.stderr.strip()}')
 # Apps Script syntax is JavaScript; check with temporary .js extension.
-tmp = Path('/tmp/smk_bpp_v38_code_check.js')
+tmp = Path('/tmp/smk_bpp_v39_code_check.js')
 tmp.write_text((ROOT / 'code.gs').read_text(encoding='utf-8'), encoding='utf-8')
 result = subprocess.run(['node', '--check', str(tmp)], capture_output=True, text=True)
 check(result.returncode == 0, f'code.gs syntax error: {result.stderr.strip()}')
@@ -92,9 +99,9 @@ check(result.returncode == 0, f'code.gs syntax error: {result.stderr.strip()}')
 check('function request(' in js, 'Frontend request helper missing')
 check("request('export_docx'" in js and "request('report_data'" in js, 'Reporting API calls missing')
 
-print(f'V3.8 static verification: {checks} checks, {len(errors)} failures')
+print(f'V3.9 static verification: {checks} checks, {len(errors)} failures')
 for err in errors:
     print('FAIL:', err)
 if errors:
     sys.exit(1)
-print('PASS: HTML IDs, popup interactions, six embedded emblems, leaf SVG, CSS parsing, JS syntax, Apps Script syntax, and reporting hooks.')
+print('PASS: HTML IDs, popup interactions, six embedded emblems, inline carved leaves, unclipped responsive ornaments, CSS parsing, JS syntax, Apps Script syntax, and reporting hooks.')

@@ -1,13 +1,7 @@
-Absensi Coach SMK BPP Bandung
-Paket UI: V3.8 — Floating Extracurricular Details + Carved Botanical Ornament
-Backend API: V3.2 (dipertahankan; tidak ada perubahan endpoint backend)
-Tanggal pembaruan UI: 1 November 2026
-
-Perubahan V3.8:
-- Detail enam ekstrakurikuler dibuka melalui panel floating non-modal.
-- Kartu ekskul tetap pada posisi dan ukuran semula; grid tidak diperluas atau didorong.
-- Klik kartu lain mengganti isi popup; klik area kosong, tombol X, atau Escape menutup popup.
-- Popup desktop diposisikan dekat kartu terpilih; pada mobile tampil sebagai bottom-sheet yang dapat discroll.
-- Popup tidak menggunakan backdrop layar penuh sehingga kontrol di luar panel tetap dapat digunakan.
-- Ornamen daun SVG diperjelas dengan bevel batu, urat daun lebih kontras, highlight dan shadow yang lebih terbaca.
-- Cache-buster frontend diperbarui ke V3.8.
+Version 3.9 — Embedded Botanical Fix
+- Decorative leaf SVG is now inline in index.html (no assets path or lazy loading).
+- Sidebar botanical has visible dimensions and overflow.
+- Quote strip no longer clips the leaf and reserves space for it.
+- Mobile layout keeps a small visible leaf.
+- Cache-busting query version updated to 3.9.
+- Backend/API behavior unchanged.

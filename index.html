@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.8">
+  <link rel="stylesheet" href="style.css?v=3.9">
 </head>
 <body>
   <div class="app-shell">
@@ -54,7 +54,69 @@
         <button class="nav-btn nav-about" type="button" data-view="beranda" data-scroll="about-strip">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5h.01"/></svg><span>Tentang</span>
         </button>
-        <div class="nav-ornament" aria-hidden="true"><img src="assets/leaf-ornament.svg" alt="" loading="lazy" decoding="async"></div>
+        <div class="nav-ornament" aria-hidden="true"><svg class="nav-ornament-svg carved-leaf-svg" viewBox="0 0 430 540" aria-hidden="true" focusable="false">
+<defs>
+  <linearGradient id="navLeaf-leafFillA" x1="0" y1="0" x2=".88" y2="1"><stop stop-color="#d8e2d6"/><stop offset=".16" stop-color="#a9b9a7"/><stop offset=".42" stop-color="#718572"/><stop offset=".72" stop-color="#4a5d4b"/><stop offset="1" stop-color="#27362a"/></linearGradient>
+  <linearGradient id="navLeaf-leafFillB" x1=".05" y1="0" x2=".9" y2="1"><stop stop-color="#e1e9df"/><stop offset=".18" stop-color="#b5c4b2"/><stop offset=".5" stop-color="#7b907a"/><stop offset=".78" stop-color="#4b604d"/><stop offset="1" stop-color="#2b3a2e"/></linearGradient>
+  <linearGradient id="navLeaf-edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5faf3"/><stop offset=".28" stop-color="#d7e3d4" stop-opacity=".92"/><stop offset=".7" stop-color="#819581" stop-opacity=".76"/><stop offset="1" stop-color="#172219" stop-opacity=".25"/></linearGradient>
+  <linearGradient id="navLeaf-stem" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d1ddcf"/><stop offset=".26" stop-color="#899a87"/><stop offset=".62" stop-color="#455746"/><stop offset="1" stop-color="#1b261d"/></linearGradient>
+  <filter id="navLeaf-depth" x="-35%" y="-35%" width="180%" height="180%"><feGaussianBlur in="SourceAlpha" stdDeviation="3.2" result="blur"/><feOffset in="blur" dx="3.5" dy="5.5" result="shadow"/><feComponentTransfer in="shadow" result="soft"><feFuncA type="linear" slope=".88"/></feComponentTransfer><feMerge><feMergeNode in="soft"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="navLeaf-stemDepth" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="4" result="b"/><feOffset in="b" dx="4" dy="7" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <style>
+    .vein-dark{fill:none;stroke:#152019;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;opacity:.86}
+    .vein-light{fill:none;stroke:#f2f7ef;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+    .vein-fine{fill:none;stroke:#e0e9dd;stroke-width:1.65;stroke-linecap:round;opacity:.78}
+  </style>
+</defs>
+<!-- sculpted curved stem -->
+<path d="M42 515 C105 456 148 393 185 328 C221 266 257 206 292 146 C320 98 354 57 393 25" fill="none" stroke="#050907" stroke-width="27" stroke-linecap="round" transform="translate(4 7)" opacity=".95"/>
+<path d="M42 515 C105 456 148 393 185 328 C221 266 257 206 292 146 C320 98 354 57 393 25" fill="none" stroke="url(#navLeaf-stem)" stroke-width="19" stroke-linecap="round" filter="url(#navLeaf-stemDepth)"/>
+<path d="M39 509 C102 450 145 387 182 322 C218 260 254 200 289 140 C317 92 351 51 390 19" fill="none" stroke="#f0f6ed" stroke-width="2.5" stroke-linecap="round" opacity=".78"/>
+<g filter="url(#navLeaf-depth)">
+  <!-- leaf 1 lower left -->
+  <path d="M79 448 C44 431 17 390 25 350 C67 364 96 408 79 448Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M79 448 C44 431 17 390 25 350 C67 364 96 408 79 448Z" fill="url(#navLeaf-leafFillA)" stroke="#b9c9b7" stroke-width="2.8"/>
+  <path d="M78 445 Q48 397 26 352" class="vein-dark"/><path d="M76 443 Q46 394 24 349" class="vein-light"/>
+  <path d="M62 420 Q47 420 36 417 M62 420 Q64 404 67 392 M48 394 Q38 395 30 391 M48 394 Q52 382 55 373" class="vein-fine"/>
+  <!-- leaf 2 lower right -->
+  <path d="M102 408 C142 374 207 373 235 403 C202 444 136 449 102 408Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M102 408 C142 374 207 373 235 403 C202 444 136 449 102 408Z" fill="url(#navLeaf-leafFillB)" stroke="#c4d2c1" stroke-width="2.8"/>
+  <path d="M104 408 Q167 406 233 403" class="vein-dark"/><path d="M101 406 Q166 403 232 400" class="vein-light"/>
+  <path d="M143 405 Q151 391 158 383 M143 405 Q152 421 162 431 M176 404 Q184 390 190 381 M176 404 Q186 420 198 430 M207 403 Q216 391 222 386" class="vein-fine"/>
+  <!-- leaf 3 mid left -->
+  <path d="M147 352 C105 329 73 281 82 239 C132 258 160 305 147 352Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M147 352 C105 329 73 281 82 239 C132 258 160 305 147 352Z" fill="url(#navLeaf-leafFillA)" stroke="#becdbb" stroke-width="2.8"/>
+  <path d="M145 349 Q110 292 83 241" class="vein-dark"/><path d="M143 347 Q108 290 81 238" class="vein-light"/>
+  <path d="M124 320 Q106 320 95 315 M124 320 Q127 301 129 290 M105 289 Q91 291 83 286 M105 289 Q111 275 115 265" class="vein-fine"/>
+  <!-- leaf 4 mid right -->
+  <path d="M174 315 C220 275 286 270 321 292 C288 337 215 352 174 315Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M174 315 C220 275 286 270 321 292 C288 337 215 352 174 315Z" fill="url(#navLeaf-leafFillB)" stroke="#c8d5c5" stroke-width="2.8"/>
+  <path d="M177 314 Q245 305 319 292" class="vein-dark"/><path d="M174 311 Q243 302 316 289" class="vein-light"/>
+  <path d="M218 306 Q226 293 234 284 M218 306 Q228 318 239 328 M250 300 Q260 287 268 280 M250 300 Q261 313 276 321 M282 295 Q293 286 301 282" class="vein-fine"/>
+  <!-- leaf 5 upper left -->
+  <path d="M220 244 C182 210 166 157 185 119 C230 153 247 204 220 244Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M220 244 C182 210 166 157 185 119 C230 153 247 204 220 244Z" fill="url(#navLeaf-leafFillA)" stroke="#cbd8c8" stroke-width="2.8"/>
+  <path d="M218 241 Q198 183 186 121" class="vein-dark"/><path d="M216 239 Q196 181 184 118" class="vein-light"/>
+  <path d="M203 202 Q188 203 177 199 M203 202 Q211 186 217 174 M195 169 Q182 171 174 166 M195 169 Q201 155 205 146" class="vein-fine"/>
+  <!-- leaf 6 upper right -->
+  <path d="M244 218 C291 179 353 171 383 192 C349 235 284 249 244 218Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M244 218 C291 179 353 171 383 192 C349 235 284 249 244 218Z" fill="url(#navLeaf-leafFillB)" stroke="#cbd8c8" stroke-width="2.8"/>
+  <path d="M247 217 Q314 208 381 192" class="vein-dark"/><path d="M244 214 Q312 205 378 189" class="vein-light"/>
+  <path d="M285 207 Q293 193 301 185 M285 207 Q298 219 310 227 M320 199 Q331 187 339 181 M320 199 Q334 211 348 217 M352 195 Q363 186 371 183" class="vein-fine"/>
+  <!-- leaf 7 high left -->
+  <path d="M302 145 C275 109 276 63 301 34 C333 70 341 115 302 145Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M302 145 C275 109 276 63 301 34 C333 70 341 115 302 145Z" fill="url(#navLeaf-leafFillA)" stroke="#d0dccd" stroke-width="2.8"/>
+  <path d="M300 142 Q294 85 302 36" class="vein-dark"/><path d="M298 140 Q292 83 300 33" class="vein-light"/>
+  <path d="M296 104 Q282 100 276 93 M296 104 Q307 91 315 82 M298 75 Q284 70 280 64 M298 75 Q306 62 312 54" class="vein-fine"/>
+  <!-- leaf 8 high right -->
+  <path d="M319 124 C347 86 393 71 423 88 C399 127 356 148 319 124Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M319 124 C347 86 393 71 423 88 C399 127 356 148 319 124Z" fill="url(#navLeaf-leafFillB)" stroke="#d0dccd" stroke-width="2.8"/>
+  <path d="M322 123 Q374 101 421 88" class="vein-dark"/><path d="M319 120 Q371 98 418 85" class="vein-light"/>
+  <path d="M355 108 Q361 95 370 87 M355 108 Q365 119 375 125 M385 97 Q393 87 400 82" class="vein-fine"/>
+</g>
+<!-- engraved ridge glints to emphasize carved stone relief -->
+<path d="M39 509 C102 450 145 387 182 322 C218 260 254 200 289 140 C317 92 351 51 390 19" fill="none" stroke="#eaf3e7" stroke-width="1.1" stroke-linecap="round" opacity=".56"/>
+</svg></div>
       </nav>
 
       <main>
@@ -95,7 +157,69 @@
         </section>
 
         <section id="about-strip" class="quote-strip neo-card">
-          <img class="quote-leaf-ornament" src="assets/leaf-ornament.svg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+          <svg class="quote-leaf-ornament carved-leaf-svg" viewBox="0 0 430 540" aria-hidden="true" focusable="false">
+<defs>
+  <linearGradient id="quoteLeaf-leafFillA" x1="0" y1="0" x2=".88" y2="1"><stop stop-color="#d8e2d6"/><stop offset=".16" stop-color="#a9b9a7"/><stop offset=".42" stop-color="#718572"/><stop offset=".72" stop-color="#4a5d4b"/><stop offset="1" stop-color="#27362a"/></linearGradient>
+  <linearGradient id="quoteLeaf-leafFillB" x1=".05" y1="0" x2=".9" y2="1"><stop stop-color="#e1e9df"/><stop offset=".18" stop-color="#b5c4b2"/><stop offset=".5" stop-color="#7b907a"/><stop offset=".78" stop-color="#4b604d"/><stop offset="1" stop-color="#2b3a2e"/></linearGradient>
+  <linearGradient id="quoteLeaf-edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5faf3"/><stop offset=".28" stop-color="#d7e3d4" stop-opacity=".92"/><stop offset=".7" stop-color="#819581" stop-opacity=".76"/><stop offset="1" stop-color="#172219" stop-opacity=".25"/></linearGradient>
+  <linearGradient id="quoteLeaf-stem" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d1ddcf"/><stop offset=".26" stop-color="#899a87"/><stop offset=".62" stop-color="#455746"/><stop offset="1" stop-color="#1b261d"/></linearGradient>
+  <filter id="quoteLeaf-depth" x="-35%" y="-35%" width="180%" height="180%"><feGaussianBlur in="SourceAlpha" stdDeviation="3.2" result="blur"/><feOffset in="blur" dx="3.5" dy="5.5" result="shadow"/><feComponentTransfer in="shadow" result="soft"><feFuncA type="linear" slope=".88"/></feComponentTransfer><feMerge><feMergeNode in="soft"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="quoteLeaf-stemDepth" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="4" result="b"/><feOffset in="b" dx="4" dy="7" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <style>
+    .vein-dark{fill:none;stroke:#152019;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;opacity:.86}
+    .vein-light{fill:none;stroke:#f2f7ef;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+    .vein-fine{fill:none;stroke:#e0e9dd;stroke-width:1.65;stroke-linecap:round;opacity:.78}
+  </style>
+</defs>
+<!-- sculpted curved stem -->
+<path d="M42 515 C105 456 148 393 185 328 C221 266 257 206 292 146 C320 98 354 57 393 25" fill="none" stroke="#050907" stroke-width="27" stroke-linecap="round" transform="translate(4 7)" opacity=".95"/>
+<path d="M42 515 C105 456 148 393 185 328 C221 266 257 206 292 146 C320 98 354 57 393 25" fill="none" stroke="url(#quoteLeaf-stem)" stroke-width="19" stroke-linecap="round" filter="url(#quoteLeaf-stemDepth)"/>
+<path d="M39 509 C102 450 145 387 182 322 C218 260 254 200 289 140 C317 92 351 51 390 19" fill="none" stroke="#f0f6ed" stroke-width="2.5" stroke-linecap="round" opacity=".78"/>
+<g filter="url(#quoteLeaf-depth)">
+  <!-- leaf 1 lower left -->
+  <path d="M79 448 C44 431 17 390 25 350 C67 364 96 408 79 448Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M79 448 C44 431 17 390 25 350 C67 364 96 408 79 448Z" fill="url(#quoteLeaf-leafFillA)" stroke="#b9c9b7" stroke-width="2.8"/>
+  <path d="M78 445 Q48 397 26 352" class="vein-dark"/><path d="M76 443 Q46 394 24 349" class="vein-light"/>
+  <path d="M62 420 Q47 420 36 417 M62 420 Q64 404 67 392 M48 394 Q38 395 30 391 M48 394 Q52 382 55 373" class="vein-fine"/>
+  <!-- leaf 2 lower right -->
+  <path d="M102 408 C142 374 207 373 235 403 C202 444 136 449 102 408Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M102 408 C142 374 207 373 235 403 C202 444 136 449 102 408Z" fill="url(#quoteLeaf-leafFillB)" stroke="#c4d2c1" stroke-width="2.8"/>
+  <path d="M104 408 Q167 406 233 403" class="vein-dark"/><path d="M101 406 Q166 403 232 400" class="vein-light"/>
+  <path d="M143 405 Q151 391 158 383 M143 405 Q152 421 162 431 M176 404 Q184 390 190 381 M176 404 Q186 420 198 430 M207 403 Q216 391 222 386" class="vein-fine"/>
+  <!-- leaf 3 mid left -->
+  <path d="M147 352 C105 329 73 281 82 239 C132 258 160 305 147 352Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M147 352 C105 329 73 281 82 239 C132 258 160 305 147 352Z" fill="url(#quoteLeaf-leafFillA)" stroke="#becdbb" stroke-width="2.8"/>
+  <path d="M145 349 Q110 292 83 241" class="vein-dark"/><path d="M143 347 Q108 290 81 238" class="vein-light"/>
+  <path d="M124 320 Q106 320 95 315 M124 320 Q127 301 129 290 M105 289 Q91 291 83 286 M105 289 Q111 275 115 265" class="vein-fine"/>
+  <!-- leaf 4 mid right -->
+  <path d="M174 315 C220 275 286 270 321 292 C288 337 215 352 174 315Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M174 315 C220 275 286 270 321 292 C288 337 215 352 174 315Z" fill="url(#quoteLeaf-leafFillB)" stroke="#c8d5c5" stroke-width="2.8"/>
+  <path d="M177 314 Q245 305 319 292" class="vein-dark"/><path d="M174 311 Q243 302 316 289" class="vein-light"/>
+  <path d="M218 306 Q226 293 234 284 M218 306 Q228 318 239 328 M250 300 Q260 287 268 280 M250 300 Q261 313 276 321 M282 295 Q293 286 301 282" class="vein-fine"/>
+  <!-- leaf 5 upper left -->
+  <path d="M220 244 C182 210 166 157 185 119 C230 153 247 204 220 244Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M220 244 C182 210 166 157 185 119 C230 153 247 204 220 244Z" fill="url(#quoteLeaf-leafFillA)" stroke="#cbd8c8" stroke-width="2.8"/>
+  <path d="M218 241 Q198 183 186 121" class="vein-dark"/><path d="M216 239 Q196 181 184 118" class="vein-light"/>
+  <path d="M203 202 Q188 203 177 199 M203 202 Q211 186 217 174 M195 169 Q182 171 174 166 M195 169 Q201 155 205 146" class="vein-fine"/>
+  <!-- leaf 6 upper right -->
+  <path d="M244 218 C291 179 353 171 383 192 C349 235 284 249 244 218Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M244 218 C291 179 353 171 383 192 C349 235 284 249 244 218Z" fill="url(#quoteLeaf-leafFillB)" stroke="#cbd8c8" stroke-width="2.8"/>
+  <path d="M247 217 Q314 208 381 192" class="vein-dark"/><path d="M244 214 Q312 205 378 189" class="vein-light"/>
+  <path d="M285 207 Q293 193 301 185 M285 207 Q298 219 310 227 M320 199 Q331 187 339 181 M320 199 Q334 211 348 217 M352 195 Q363 186 371 183" class="vein-fine"/>
+  <!-- leaf 7 high left -->
+  <path d="M302 145 C275 109 276 63 301 34 C333 70 341 115 302 145Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M302 145 C275 109 276 63 301 34 C333 70 341 115 302 145Z" fill="url(#quoteLeaf-leafFillA)" stroke="#d0dccd" stroke-width="2.8"/>
+  <path d="M300 142 Q294 85 302 36" class="vein-dark"/><path d="M298 140 Q292 83 300 33" class="vein-light"/>
+  <path d="M296 104 Q282 100 276 93 M296 104 Q307 91 315 82 M298 75 Q284 70 280 64 M298 75 Q306 62 312 54" class="vein-fine"/>
+  <!-- leaf 8 high right -->
+  <path d="M319 124 C347 86 393 71 423 88 C399 127 356 148 319 124Z" transform="translate(4 7)" fill="#030604"/>
+  <path d="M319 124 C347 86 393 71 423 88 C399 127 356 148 319 124Z" fill="url(#quoteLeaf-leafFillB)" stroke="#d0dccd" stroke-width="2.8"/>
+  <path d="M322 123 Q374 101 421 88" class="vein-dark"/><path d="M319 120 Q371 98 418 85" class="vein-light"/>
+  <path d="M355 108 Q361 95 370 87 M355 108 Q365 119 375 125 M385 97 Q393 87 400 82" class="vein-fine"/>
+</g>
+<!-- engraved ridge glints to emphasize carved stone relief -->
+<path d="M39 509 C102 450 145 387 182 322 C218 260 254 200 289 140 C317 92 351 51 390 19" fill="none" stroke="#eaf3e7" stroke-width="1.1" stroke-linecap="round" opacity=".56"/>
+</svg>
           <span class="quote-rule"></span><span class="quote-mark" aria-hidden="true">“</span>
           <p>Bersama Ekstrakurikuler, Kita Tumbuh Lebih Baik</p><span class="quote-rule"></span>
         </section>
@@ -215,8 +339,8 @@
     </div>
     <div id="program-popover-content" class="program-popover-scroll"></div>
   </aside>
-  <script src="data.js?v=3.8"></script>
-  <script src="config.js?v=3.8"></script>
-  <script src="script.js?v=3.8"></script>
+  <script src="data.js?v=3.9"></script>
+  <script src="config.js?v=3.9"></script>
+  <script src="script.js?v=3.9"></script>
 </body>
 </html>

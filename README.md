@@ -211,3 +211,11 @@ Cache buster pada HTML diperbarui menjadi V3.6 agar browser tidak menggunakan sc
 
 ### File yang diunggah
 Perbarui seluruh file frontend V3.8 (`index.html`, `style.css`, `script.js`, `data.js`) dan folder `assets/`. `code.gs` dan deployment Apps Script tidak berubah untuk pembaruan UI ini.
+
+
+## Perbaikan V3.9 — daun selalu terlihat
+
+Keluhan daun yang tidak muncul berasal dari dua risiko pada implementasi sebelumnya: gambar dipanggil melalui path relatif `assets/leaf-ornament.svg` (dapat gagal jika subfolder tidak ikut diunggah) dan ornamen kutipan berada di dalam panel pendek dengan `overflow:hidden`, sehingga hampir seluruh gambar terpotong. Pada V3.9, kedua ilustrasi daun sudah ditanam langsung sebagai SVG inline di `index.html`, tanpa request file tambahan dan tanpa lazy loading. Sidebar menggunakan ruang ornamen yang nyata; panel kutipan memakai `overflow:visible` serta ruang kanan khusus untuk daun. Ukuran tetap disesuaikan untuk mobile.
+
+### File update
+Untuk update GitHub, ganti `index.html` dan `style.css` dengan versi V3.9. File `assets/leaf-ornament.svg` boleh tetap disimpan, tetapi tidak lagi menjadi ketergantungan tampilan daun. Backend `code.gs`, `config.js`, dan spreadsheet tidak berubah. Pastikan file `data.js` serta aset lain dari paket lengkap tetap dipertahankan. Setelah commit, lakukan hard refresh.

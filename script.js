@@ -109,6 +109,7 @@
   }
 
   function switchView(name) {
+    closeProgramPopover();
     if (name !== 'absensi') {
       if (checkinInProgress && !checkinSaveInProgress) cancelCheckin();
       else stopCamera();
@@ -128,42 +129,110 @@
 
   function renderPrograms() {
     $('#extracurricular-grid').innerHTML = EXTRACURRICULARS.map((item) => `
-      <article class="program-card neo-card">
-        <div class="program-top">
-          <div class="program-brand">
-            <span class="program-emblem-wrap">
-              <img class="program-emblem" src="${EXTRACURRICULAR_LOGOS[item.id] || ''}" alt="Emblem ${escapeHTML(item.name)}" loading="eager" decoding="async" fetchpriority="high">
-            </span>
-            <div class="program-title-stack">
-              <span class="program-category">${escapeHTML(item.category)}</span>
-              <h3>${escapeHTML(item.name)}</h3>
-              <span class="program-count">${item.count} Anggota</span>
-            </div>
-          </div>
-          <details class="program-detail-toggle">
-            <summary aria-label="Lihat detail ${escapeHTML(item.name)}" title="Lihat detail ${escapeHTML(item.name)}"></summary>
-            <div class="program-details">
-              <p class="program-description">${escapeHTML(item.description)}</p>
-              <div class="program-meta">
-                <div class="meta-item"><span>PEMBINA / COACH</span><strong>${item.coaches.map(escapeHTML).join('<br>')}</strong></div>
-                <div class="meta-item"><span>KETUA / KOORDINATOR</span><strong>${escapeHTML(item.chair)}</strong></div>
-                <div class="meta-item"><span>HARI LATIHAN</span><strong>${escapeHTML(item.schedule)}</strong></div>
-                <div class="meta-item"><span>ANGGOTA AKTIF</span><strong>${item.count} siswa (rujukan laporan)</strong></div>
-              </div>
-              <h4>Visi</h4><p>${escapeHTML(item.vision)}</p>
-              <h4>Misi</h4><ul>${item.missions.map((mission) => `<li>${escapeHTML(mission)}</li>`).join('')}</ul>
-              <h4>Standar kegiatan</h4><ul>${item.activities.map((activity) => `<li>${escapeHTML(activity)}</li>`).join('')}</ul>
-              <h4>Target kejuaraan</h4><p>${escapeHTML(item.competition)}</p>
-              <p class="small-muted">Tanggal sampel absensi pada laporan sumber: ${escapeHTML(item.sampleDates)}.</p>
-            </div>
-          </details>
-        </div>
-      </article>
+      <button class="program-card neo-card program-open" type="button"
+        data-program-open="${escapeHTML(item.id)}" aria-haspopup="dialog" aria-expanded="false"
+        aria-label="Buka informasi ${escapeHTML(item.name)}">
+        <span class="program-brand">
+          <span class="program-emblem-wrap">
+            <img class="program-emblem" src="${EXTRACURRICULAR_LOGOS[item.id] || ''}" alt="Emblem ${escapeHTML(item.name)}" loading="eager" decoding="async">
+          </span>
+          <span class="program-title-stack">
+            <span class="program-category">${escapeHTML(item.category)}</span>
+            <span class="program-title">${escapeHTML(item.name)}</span>
+            <span class="program-count">${item.count} Anggota</span>
+          </span>
+        </span>
+        <span class="program-open-arrow" aria-hidden="true">›</span>
+      </button>
     `).join('');
 
     const select = $('#report-division');
     select.innerHTML = '<option value="Semua Ekstrakurikuler">Semua Ekstrakurikuler</option>' +
       EXTRACURRICULARS.map((item) => `<option value="${escapeHTML(item.name)}">${escapeHTML(item.name)}</option>`).join('');
+  }
+
+  function positionProgramPopover(trigger) {
+    const panel = $('#program-popover');
+    if (!panel || panel.hidden || !trigger) return;
+    panel.style.left = '';
+    panel.style.right = '';
+    panel.style.top = '';
+    panel.style.bottom = '';
+    panel.style.width = '';
+
+    if (window.innerWidth <= 760) {
+      panel.style.left = '12px';
+      panel.style.right = '12px';
+      panel.style.bottom = '12px';
+      panel.style.top = 'auto';
+      panel.style.width = 'auto';
+      return;
+    }
+
+    const anchor = trigger.getBoundingClientRect();
+    const panelRect = panel.getBoundingClientRect();
+    const gap = 16;
+    const edge = 16;
+    let left = anchor.right + gap;
+    if (left + panelRect.width > window.innerWidth - edge) {
+      left = anchor.left - panelRect.width - gap;
+    }
+    if (left < edge) left = Math.max(edge, (window.innerWidth - panelRect.width) / 2);
+
+    let top = anchor.top + (anchor.height - panelRect.height) / 2;
+    top = Math.max(edge, Math.min(top, window.innerHeight - panelRect.height - edge));
+    panel.style.left = `${Math.round(left)}px`;
+    panel.style.top = `${Math.round(top)}px`;
+  }
+
+  function closeProgramPopover(restoreFocus = false) {
+    const panel = $('#program-popover');
+    if (!panel || panel.hidden) return;
+    const activeTrigger = $('[data-program-open][aria-expanded="true"]');
+    if (activeTrigger) activeTrigger.setAttribute('aria-expanded', 'false');
+    panel.classList.remove('is-visible');
+    panel.setAttribute('aria-hidden', 'true');
+    panel.hidden = true;
+    if (restoreFocus && activeTrigger) activeTrigger.focus({ preventScroll: true });
+  }
+
+  function openProgramPopover(id, trigger) {
+    const item = EXTRACURRICULARS.find((entry) => entry.id === id);
+    const panel = $('#program-popover');
+    if (!item || !panel || !trigger) return;
+
+    const previousTrigger = $('[data-program-open][aria-expanded="true"]');
+    if (previousTrigger && previousTrigger !== trigger) previousTrigger.setAttribute('aria-expanded', 'false');
+
+    $('#program-popover-logo').src = EXTRACURRICULAR_LOGOS[item.id] || '';
+    $('#program-popover-logo').alt = `Emblem ${item.name}`;
+    $('#program-popover-title').textContent = item.name;
+    $('#program-popover-subtitle').textContent = `${item.category} · ${item.count} anggota aktif`;
+    $('#program-popover-content').innerHTML = `
+      <div class="program-popover-intro">
+        <p>${escapeHTML(item.description)}</p>
+      </div>
+      <div class="program-popover-facts">
+        <div class="program-popover-fact"><span>PEMBINA / COACH</span><strong>${item.coaches.map(escapeHTML).join('<br>')}</strong></div>
+        <div class="program-popover-fact"><span>KETUA / KOORDINATOR</span><strong>${escapeHTML(item.chair)}</strong></div>
+        <div class="program-popover-fact"><span>HARI LATIHAN</span><strong>${escapeHTML(item.schedule)}</strong></div>
+        <div class="program-popover-fact"><span>ANGGOTA AKTIF</span><strong>${item.count} siswa</strong></div>
+      </div>
+      <section class="program-popover-section"><h3>Visi</h3><p>${escapeHTML(item.vision)}</p></section>
+      <section class="program-popover-section"><h3>Misi</h3><ol>${item.missions.map((entry) => `<li>${escapeHTML(entry)}</li>`).join('')}</ol></section>
+      <section class="program-popover-section"><h3>Standar Kegiatan</h3><ul>${item.activities.map((entry) => `<li>${escapeHTML(entry)}</li>`).join('')}</ul></section>
+      <section class="program-popover-section"><h3>Target Kejuaraan</h3><p>${escapeHTML(item.competition)}</p></section>
+      <p class="program-popover-note">Tanggal sampel absensi pada laporan sumber: ${escapeHTML(item.sampleDates)}.</p>
+    `;
+
+    trigger.setAttribute('aria-expanded', 'true');
+    panel.hidden = false;
+    panel.setAttribute('aria-hidden', 'false');
+    panel.classList.remove('is-visible');
+    // Reflow only the floating panel; the program grid remains untouched.
+    void panel.offsetWidth;
+    panel.classList.add('is-visible');
+    positionProgramPopover(trigger);
   }
 
   function showCoachGate(message) {
@@ -713,6 +782,30 @@
     $('#today-label').textContent = new Intl.DateTimeFormat('id-ID', { dateStyle: 'long', timeZone: 'Asia/Jakarta' }).format(now);
     loadSchoolLogo();
     renderPrograms();
+    $('#extracurricular-grid').addEventListener('click', (event) => {
+      const trigger = event.target.closest('[data-program-open]');
+      if (!trigger) return;
+      event.preventDefault();
+      openProgramPopover(trigger.dataset.programOpen, trigger);
+    });
+    $('#close-program-popover').addEventListener('click', () => closeProgramPopover(true));
+    document.addEventListener('click', (event) => {
+      const panel = $('#program-popover');
+      if (!panel || panel.hidden || panel.contains(event.target)) return;
+      if (event.target.closest('[data-program-open]')) return;
+      closeProgramPopover();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeProgramPopover(true);
+    });
+    window.addEventListener('resize', () => {
+      const active = $('[data-program-open][aria-expanded="true"]');
+      if (active) positionProgramPopover(active);
+    });
+    window.addEventListener('scroll', () => {
+      // Close rather than leaving a detached panel floating over unrelated content.
+      closeProgramPopover();
+    }, { passive: true });
     $('.brand').addEventListener('click', (event) => {
       event.preventDefault();
       switchView('beranda');

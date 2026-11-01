@@ -185,3 +185,29 @@ Cache buster pada HTML diperbarui menjadi V3.6 agar browser tidak menggunakan sc
 
 - `previews/leaf-ornament-on-charcoal.png` memperlihatkan ornamen daun di atas permukaan charcoal.
 - `previews/emblem-spacing.png` memperlihatkan jarak emblem yang sudah diperkecil di dalam medali.
+
+
+## V3.8 — Floating program details
+- Setiap kartu ekstrakurikuler kini berupa tombol akses yang membuka panel detail melayang.
+- Panel tidak mengubah ukuran grid, tidak mendorong kartu lain, dan tidak menggunakan backdrop layar penuh.
+- Klik kartu lain untuk mengganti isi popup; klik area kosong, tombol X, atau Escape untuk menutup.
+- Pada ponsel popup menjadi bottom-sheet yang dapat discroll; kontrol lain di luar panel tetap aktif.
+- Ornamen daun SVG diperjelas dengan warna batu hijau-abu yang lebih terang, bevel kontras, dan urat daun terukir.
+- Hanya HTML/CSS/JS/SVG berubah; backend Apps Script tidak perlu di-deploy ulang.
+
+## V3.8 — Popup detail ekskul dan daun ukiran yang diperjelas
+
+### Popup melayang
+- Klik kartu ekstrakurikuler mana pun untuk membuka informasi detail dalam panel melayang.
+- Grid kartu tidak diperluas, tidak mendorong atau mengubah posisi kartu lain.
+- Panel tidak memakai backdrop layar penuh; kontrol lain yang berada di luar panel tetap bisa digunakan.
+- Klik kartu ekskul lain untuk mengganti informasi di panel yang sama.
+- Tutup dengan tombol `×`, tekan `Escape`, atau klik area kosong di luar panel.
+- Di HP, panel tampil sebagai bottom-sheet dan isi detail bisa digulir.
+
+### Ornamen daun
+- `assets/leaf-ornament.svg` diperbarui dengan permukaan batu hijau-abu yang lebih terang, highlight bevel, bayangan ukir, batang timbul, dan urat daun yang lebih kontras.
+- Ukuran dan opacity ornamen pada sidebar serta panel kutipan ditingkatkan agar tidak tenggelam di latar charcoal.
+
+### File yang diunggah
+Perbarui seluruh file frontend V3.8 (`index.html`, `style.css`, `script.js`, `data.js`) dan folder `assets/`. `code.gs` dan deployment Apps Script tidak berubah untuk pembaruan UI ini.

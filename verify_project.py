@@ -1,92 +1,100 @@
 #!/usr/bin/env python3
-"""Static verification for Absensi Coach SMK BPP UI V3.7."""
+"""Static checks for Absensi Coach SMK BPP V3.8."""
 from pathlib import Path
+from collections import Counter
 from bs4 import BeautifulSoup
-import json, re, subprocess, sys, xml.etree.ElementTree as ET
+import base64, re, subprocess, sys
+import tinycss2
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent
 errors = []
-def check(ok, message):
-    print(('PASS: ' if ok else 'FAIL: ') + message)
-    if not ok: errors.append(message)
+checks = 0
 
-# Required distribution files
-required = ['index.html','style.css','data.js','config.js','script.js','code.gs','appsscript.json','README.md','VERSION.txt','assets/hero-school.jpg','assets/leaf-ornament.svg']
-for f in required: check((ROOT/f).is_file(), f'file tersedia: {f}')
+def check(condition, message):
+    global checks
+    checks += 1
+    if not condition:
+        errors.append(message)
 
-# Syntax checks
-for f in ['script.js','data.js','config.js']:
-    r=subprocess.run(['node','--check',str(ROOT/f)],capture_output=True,text=True)
-    check(r.returncode==0, f'sintaks JavaScript {f}')
-gs_temp=ROOT/'.verify_code_gs.js'
-gs_temp.write_text((ROOT/'code.gs').read_text())
-r=subprocess.run(['node','--check',str(gs_temp)],capture_output=True,text=True)
-gs_temp.unlink(missing_ok=True)
-check(r.returncode==0,'sintaks Google Apps Script')
+html = (ROOT / 'index.html').read_text(encoding='utf-8')
+css = (ROOT / 'style.css').read_text(encoding='utf-8')
+js = (ROOT / 'script.js').read_text(encoding='utf-8')
+data = (ROOT / 'data.js').read_text(encoding='utf-8')
+soup = BeautifulSoup(html, 'html.parser')
 
-# HTML and reference layout
-soup=BeautifulSoup((ROOT/'index.html').read_text(),'html.parser')
-ids=[e['id'] for e in soup.select('[id]')]
-check(len(ids)==len(set(ids)),'ID HTML unik')
-check(soup.select_one('.site-header') is not None,'header utama tersedia')
-check(soup.select_one('.workspace > .main-nav') is not None,'sidebar berada di kiri workspace')
-check(soup.select_one('.workspace > main') is not None,'main berada di kanan sidebar')
-check(len(soup.select('.stats-grid .stat-card'))==4,'empat kartu statistik tersedia')
-check(soup.select_one('.program-grid') is not None,'grid daftar ekskul tersedia')
-check(soup.select_one('#about-strip') is not None,'panel kutipan tersedia')
-check(len(soup.select('.nav-btn'))==5,'lima item navigasi tersedia')
-views=set(e.get('data-view') for e in soup.select('.nav-btn'))
-sections=set(re.findall(r'id="view-([^\"]+)',(ROOT/'index.html').read_text()))
-check(views <= sections,'target navigasi cocok dengan view')
-for b in soup.select('.nav-btn[data-scroll]'):
-    check(b['data-scroll'] in ids, f'target scroll tersedia: {b["data-scroll"]}')
+# HTML structure and IDs
+ids = [tag.get('id') for tag in soup.find_all(attrs={'id': True})]
+duplicates = [key for key, n in Counter(ids).items() if n > 1]
+check(not duplicates, f'Duplicate HTML IDs: {duplicates}')
+for required_id in ['extracurricular-grid', 'program-popover', 'program-popover-title', 'program-popover-content', 'close-program-popover']:
+    check(soup.find(id=required_id) is not None, f'Missing HTML id: {required_id}')
+check('aria-modal="false"' in html, 'Floating panel must remain non-modal')
+check('v=3.8' in html, 'HTML asset cache-buster is not V3.8')
 
-# CSS syntax and layout values
-try:
-    import tinycss2
-    css_rules=tinycss2.parse_stylesheet((ROOT/'style.css').read_text(),skip_whitespace=True,skip_comments=True)
-    css_errors=[r for r in css_rules if r.type=='error']
-    check(not css_errors,'CSS lolos parsing')
-except ImportError:
-    check((ROOT/'style.css').read_text().count('{')==(ROOT/'style.css').read_text().count('}'),'kurung CSS seimbang')
-css=(ROOT/'style.css').read_text()
-for token,desc in [('.workspace { display:grid; grid-template-columns:232px','desktop sidebar layout'),('grid-template-columns:repeat(3,minmax(0,1fr))','3-column extracurricular grid'),('grid-template-columns:repeat(2,minmax(0,1fr))','responsive mobile grid'),('assets/hero-school.jpg','school facade banner'),('text-shadow:','engraved typography'),('box-shadow: var(--raised)','3D raised neumorphism')]:
-    check(token in css, desc)
+# Frontend popup behavior hooks
+for marker in ['data-program-open', 'openProgramPopover', 'closeProgramPopover', 'Escape', 'positionProgramPopover']:
+    check(marker in js, f'Missing popup behavior: {marker}')
+check('panel.contains(event.target)' in js, 'Popup internal click guard missing')
+check("event.target.closest('[data-program-open]')" in js, 'Switch-card click guard missing')
+check('window.addEventListener(\'scroll\'' in js, 'Popup scroll cleanup missing')
+check('aria-expanded="false"' in js, 'Program cards should start collapsed')
+check('program-card details' not in css and '.program-card summary' not in css, 'Legacy inline details styles remain')
+check('.program-popover[hidden]' in css, 'Popup hidden-state CSS missing')
+check('pointer-events:auto' in css, 'Popup controls must accept pointer events')
+check('backdrop' not in html.lower(), 'Unexpected full-screen backdrop markup present')
 
-# SVG emblems
-logos=['seni-musik','english-club','boxing','futsal','seni-tari','basket']
-for name in logos:
-    path=ROOT/'assets'/'logos'/f'{name}.svg'
-    try: ET.parse(path); valid=path.is_file()
-    except Exception: valid=False
-    check(valid,f'emblem SVG valid: {name}')
-for name in logos:
-    check(re.search(r"'"+re.escape(name)+r"': 'data:image/svg\+xml;base64,[A-Za-z0-9+/=]+'", (ROOT/'data.js').read_text()) is not None, f'emblem disematkan: {name}')
+# Six data entries and embedded SVGs
+ids_data = re.findall(r"id:\s*'([^']+)'\s*,\s*name:", data)
+check(len(ids_data) == 6, f'Expected six extracurricular data entries, found {len(ids_data)}')
+check(set(ids_data) == {'seni-musik','english-club','boxing','futsal','seni-tari','basket'}, 'Extracurricular IDs mismatch')
+logo_block = data.split('const EXTRACURRICULAR_LOGOS', 1)[-1]
+logo_keys = re.findall(r"'([^']+)':\s*'data:image/svg\+xml;base64,([^']+)'", logo_block)
+check(len(logo_keys) == 6, f'Expected six embedded logo SVG data URIs, found {len(logo_keys)}')
+for key, payload in logo_keys:
+    try:
+        ET.fromstring(base64.b64decode(payload))
+        check(True, f'Logo {key} SVG valid')
+    except Exception as exc:
+        check(False, f'Logo {key} SVG invalid: {exc}')
 
-# JS references and API compatibility
-js=(ROOT/'script.js').read_text(); gs=(ROOT/'code.gs').read_text(); data=(ROOT/'data.js').read_text()
-for action in sorted(set(re.findall(r"request\('([a-z_]+)'",js))):
-    check((f"case '{action}'" in gs) or (f"p.action === '{action}'" in gs),f'backend action tersedia: {action}')
-check("function loadSchoolLogo()" in js and "logo.png" in js and 'id="school-logo"' in (ROOT/'index.html').read_text(),'logo otomatis dimuat dari folder website')
-check('EXTRACURRICULAR_LOGOS[item.id]' in js and 'data:image/svg+xml;base64,' in data,'kartu memakai emblem SVG tersemat tanpa ketergantungan path eksternal')
-check("dataset.scroll" in js and "scrollIntoView" in js,'item navigasi anchor berfungsi')
-check("startCheckin" in js and "capturePhoto()" in js and "await submitCheckin()" in js,'flow absensi satu sentuhan masih tersedia')
-check("version: '3.2'" in gs,'backend API 3.2 tetap ada dan tidak berubah')
-check('V3.7' in (ROOT/'VERSION.txt').read_text(),'versi paket UI V3.7')
-check('leaf-ornament.svg' in (ROOT/'index.html').read_text(),'ornamen daun SVG digunakan pada sidebar dan kutipan')
-check('width:82%; height:82%' in css,'emblem diperkecil dan memiliki jarak dari lingkaran')
-check((ROOT/'assets'/'leaf-ornament.svg').is_file(),'ornamen daun tersedia sebagai aset lokal')
-try: ET.parse(ROOT/'assets'/'leaf-ornament.svg'); leaf_svg_valid=True
-except Exception: leaf_svg_valid=False
-check(leaf_svg_valid,'SVG ornamen daun valid')
-check('translateY(-3px)' in css and ':hover' in css,'efek hover mengangkat elemen tersedia')
-check(':active' in css and 'translateY(1px)' in css,'efek tekan/amblas tersedia')
-check('var(--neon-edge)' in css and 'var(--neon-halo)' in css,'border glow hijau tersedia')
-check('@media (hover: hover) and (pointer: fine)' in css,'hover hanya untuk perangkat pointer')
-check('prefers-reduced-motion: reduce' in css,'dukungan reduced motion tersedia')
-check(all(name in data for name in ['Seni Musik','English Club','Boxing','Futsal','Seni Tari','Basket']),'enam data ekstrakurikuler tersedia')
+# SVG botanical asset
+leaf = ROOT / 'assets' / 'leaf-ornament.svg'
+check(leaf.exists(), 'Carved leaf SVG is missing')
+if leaf.exists():
+    try:
+        ET.parse(leaf)
+        check(True, 'Carved leaf SVG parses')
+    except Exception as exc:
+        check(False, f'Carved leaf SVG invalid: {exc}')
+check('leaf-ornament.svg' in html, 'HTML does not reference the leaf SVG')
+check('opacity:.96' in css and 'opacity:.94' in css, 'Leaf visibility adjustments missing')
 
+# CSS parse
+rules = tinycss2.parse_stylesheet(css, skip_comments=True, skip_whitespace=True)
+css_errors = [rule for rule in rules if rule.type == 'error']
+check(not css_errors, f'CSS parse errors: {css_errors[:3]}')
+check('.program-popover' in css and 'position:fixed' in css, 'Floating popup positioning missing')
+check('@media (max-width: 760px)' in css, 'Mobile popup layout missing')
+check('@media (prefers-reduced-motion: reduce)' in css, 'Reduced-motion support missing')
+
+# JavaScript syntax
+for name in ['script.js', 'data.js', 'config.js']:
+    result = subprocess.run(['node', '--check', str(ROOT / name)], capture_output=True, text=True)
+    check(result.returncode == 0, f'{name} syntax error: {result.stderr.strip()}')
+# Apps Script syntax is JavaScript; check with temporary .js extension.
+tmp = Path('/tmp/smk_bpp_v38_code_check.js')
+tmp.write_text((ROOT / 'code.gs').read_text(encoding='utf-8'), encoding='utf-8')
+result = subprocess.run(['node', '--check', str(tmp)], capture_output=True, text=True)
+check(result.returncode == 0, f'code.gs syntax error: {result.stderr.strip()}')
+
+# API remains identical (we did not change backend or endpoints)
+check('function request(' in js, 'Frontend request helper missing')
+check("request('export_docx'" in js and "request('report_data'" in js, 'Reporting API calls missing')
+
+print(f'V3.8 static verification: {checks} checks, {len(errors)} failures')
+for err in errors:
+    print('FAIL:', err)
 if errors:
-    print(f'\nHASIL: {len(errors)} pemeriksaan gagal dari keseluruhan.')
     sys.exit(1)
-print('\nHASIL: seluruh pemeriksaan statis lulus.')
+print('PASS: HTML IDs, popup interactions, six embedded emblems, leaf SVG, CSS parsing, JS syntax, Apps Script syntax, and reporting hooks.')

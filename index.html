@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.7">
+  <link rel="stylesheet" href="style.css?v=3.8">
 </head>
 <body>
   <div class="app-shell">
@@ -199,8 +199,24 @@
       </main>
     </div>
   </div>
-  <script src="data.js?v=3.7"></script>
-  <script src="config.js?v=3.7"></script>
-  <script src="script.js?v=3.7"></script>
+
+  <!-- Floating extracurricular details: non-modal, does not reflow the card grid. -->
+  <aside id="program-popover" class="program-popover" role="dialog" aria-modal="false" aria-labelledby="program-popover-title" aria-hidden="true" hidden>
+    <div class="program-popover-head">
+      <div class="program-popover-heading">
+        <span class="program-popover-icon-wrap"><img id="program-popover-logo" alt="" decoding="async"></span>
+        <div class="program-popover-title-copy">
+          <p class="eyebrow">INFORMASI EKSTRAKURIKULER</p>
+          <h2 id="program-popover-title">Detail Ekstrakurikuler</h2>
+          <span id="program-popover-subtitle" class="program-popover-subtitle"></span>
+        </div>
+      </div>
+      <button id="close-program-popover" class="program-popover-close" type="button" aria-label="Tutup detail">×</button>
+    </div>
+    <div id="program-popover-content" class="program-popover-scroll"></div>
+  </aside>
+  <script src="data.js?v=3.8"></script>
+  <script src="config.js?v=3.8"></script>
+  <script src="script.js?v=3.8"></script>
 </body>
 </html>

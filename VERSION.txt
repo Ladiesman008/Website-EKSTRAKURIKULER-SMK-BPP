@@ -1,6 +1,13 @@
 Absensi Coach SMK BPP Bandung
-Paket UI: V3.7 — Smaller Medallion Emblems + Carved Botanical Ornament
-Backend API: V3.2 (tetap kompatibel; tidak ada perubahan backend)
+Paket UI: V3.8 — Floating Extracurricular Details + Carved Botanical Ornament
+Backend API: V3.2 (dipertahankan; tidak ada perubahan endpoint backend)
 Tanggal pembaruan UI: 1 November 2026
 
-Perubahan V3.7: artwork emblem ekstrakurikuler diperkecil menjadi 82% dari ukuran medali agar memiliki jarak visual dari lingkaran. Ornamen daun botani abstrak dibuat sebagai SVG dengan relief batu, bayangan terukir, highlight bevel, urat daun, dan batang berlapis. Ornamen dipasang di sisi bawah sidebar kiri serta sudut kanan bawah panel kutipan. Cache-buster frontend diperbarui ke V3.7.
+Perubahan V3.8:
+- Detail enam ekstrakurikuler dibuka melalui panel floating non-modal.
+- Kartu ekskul tetap pada posisi dan ukuran semula; grid tidak diperluas atau didorong.
+- Klik kartu lain mengganti isi popup; klik area kosong, tombol X, atau Escape menutup popup.
+- Popup desktop diposisikan dekat kartu terpilih; pada mobile tampil sebagai bottom-sheet yang dapat discroll.
+- Popup tidak menggunakan backdrop layar penuh sehingga kontrol di luar panel tetap dapat digunakan.
+- Ornamen daun SVG diperjelas dengan bevel batu, urat daun lebih kontras, highlight dan shadow yang lebih terbaca.
+- Cache-buster frontend diperbarui ke V3.8.

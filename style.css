@@ -1472,3 +1472,196 @@ input::placeholder,textarea::placeholder {
     font-size: 50px !important;
   }
 }
+
+
+/* =====================================================================
+   V3.17 — CALMER, CATCHABLE SINGLE EMOJI + RESPONSIVE MOTION SYSTEM
+   Transform-only movement, smaller translucent target, and unified easing.
+   ===================================================================== */
+:root {
+  --motion-ease: cubic-bezier(.22,.61,.36,1);
+  --motion-standard: cubic-bezier(.4,0,.2,1);
+  --motion-fast: 190ms;
+  --motion-medium: 340ms;
+  --motion-slow: 480ms;
+}
+
+html { scroll-behavior:smooth; }
+.view { animation:fade-up 380ms var(--motion-ease) both; }
+
+/* Keep common interactions consistent without animating expensive layout properties. */
+.nav-btn,
+.program-open,
+.program-open-arrow,
+.button,
+.program-popover,
+.program-popover-close,
+.about-popover,
+.about-popover-close,
+.signature-close,
+.neo-card {
+  transition-timing-function:var(--motion-ease);
+}
+.nav-btn,
+.program-open,
+.program-open-arrow,
+.button,
+.program-popover-close,
+.about-popover-close,
+.signature-close {
+  transition-duration:var(--motion-medium);
+}
+.program-popover,
+.about-popover {
+  transition-duration:var(--motion-slow);
+}
+.neo-card {
+  transition-property:transform,box-shadow,border-color;
+  transition-duration:var(--motion-medium);
+}
+.program-popover { transition-property:opacity,transform; }
+.about-popover { transition-property:opacity,transform; }
+
+@media (hover:hover) and (pointer:fine) {
+  .nav-btn:not(:disabled),
+  .program-open,
+  .button:not(:disabled),
+  .program-popover-close,
+  .about-popover-close,
+  .signature-close {
+    backface-visibility:hidden;
+  }
+}
+
+/* Smaller translucent target with generous hit area and smooth transform-only travel. */
+.emoji-layer { contain:layout style; }
+.float-emoji {
+  left:0 !important;
+  top:0 !important;
+  width:66px !important;
+  height:66px !important;
+  padding:0 !important;
+  font-size:38px !important;
+  line-height:1 !important;
+  opacity:.79 !important;
+  border-color:rgba(190,198,205,.15) !important;
+  background:linear-gradient(145deg,rgba(60,64,69,.72),rgba(22,24,27,.76)) !important;
+  box-shadow:
+    8px 10px 19px rgba(0,0,0,.64),
+    -4px -4px 11px rgba(99,105,112,.13),
+    inset 1px 1px 1px rgba(255,255,255,.08),
+    inset -2px -2px 4px rgba(0,0,0,.78) !important;
+  transform:translate3d(var(--emoji-x,50vw),var(--emoji-y,50vh),0) translate(-50%,-50%);
+  transform-origin:center;
+  will-change:transform,opacity;
+  transition:
+    opacity 280ms var(--motion-ease),
+    filter 300ms var(--motion-ease),
+    box-shadow 300ms var(--motion-ease) !important;
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+  touch-action:manipulation;
+}
+.float-emoji:hover {
+  opacity:.91 !important;
+  filter:brightness(1.06) saturate(.94);
+  transform:translate3d(var(--emoji-x,50vw),var(--emoji-y,50vh),0) translate(-50%,-50%) scale(1.06);
+  box-shadow:
+    9px 11px 20px rgba(0,0,0,.7),
+    -5px -5px 12px rgba(105,111,118,.16),
+    inset 1px 1px 1px rgba(255,255,255,.09),
+    inset -2px -2px 4px rgba(0,0,0,.8) !important;
+}
+.float-emoji:active {
+  opacity:.96 !important;
+  transform:translate3d(var(--emoji-x,50vw),var(--emoji-y,50vh),0) translate(-50%,-50%) scale(.94);
+}
+.float-emoji:focus-visible {
+  opacity:.96 !important;
+  outline:2px solid rgba(172,181,188,.62);
+  outline-offset:4px;
+}
+.float-emoji.is-selected {
+  opacity:.94 !important;
+  transform:translate3d(var(--emoji-x,50vw),var(--emoji-y,50vh),0) translate(-50%,-50%) scale(1.04) !important;
+}
+.emoji-layer.is-paused .float-emoji { pointer-events:none; }
+
+@media (max-width:760px) {
+  .float-emoji {
+    width:58px !important;
+    height:58px !important;
+    font-size:34px !important;
+    opacity:.81 !important;
+  }
+  .float-emoji:hover {
+    transform:translate3d(var(--emoji-x,50vw),var(--emoji-y,50vh),0) translate(-50%,-50%);
+  }
+  .float-emoji:active {
+    transform:translate3d(var(--emoji-x,50vw),var(--emoji-y,50vh),0) translate(-50%,-50%) scale(.94);
+  }
+  .view { animation-duration:340ms; }
+}
+@media (max-width:360px) {
+  .float-emoji {
+    width:54px !important;
+    height:54px !important;
+    font-size:32px !important;
+  }
+}
+@media (hover:none) {
+  .float-emoji:hover {
+    opacity:.81 !important;
+    filter:none;
+    box-shadow:
+      8px 10px 19px rgba(0,0,0,.64),
+      -4px -4px 11px rgba(99,105,112,.13),
+      inset 1px 1px 1px rgba(255,255,255,.08),
+      inset -2px -2px 4px rgba(0,0,0,.78) !important;
+  }
+}
+
+/* Envelope, letter and popovers use longer, softer easing on all viewports. */
+.signature-envelope.is-opening { animation:envelope-arrive .88s var(--motion-ease) forwards; }
+.signature-envelope.is-opening .envelope-flap { animation:envelope-flap-open .74s .18s var(--motion-ease) forwards; }
+.signature-envelope.letter-emerged .envelope-letter { animation:letter-rise .96s .05s var(--motion-ease) forwards; }
+@keyframes envelope-arrive {
+  0% { opacity:0; transform:translate(calc(-50% + var(--origin-x,0px)),calc(-50% + var(--origin-y,0px))) scale(.2) rotate(-7deg); }
+  76% { opacity:1; transform:translate(-50%,-50%) scale(1.018) rotate(1deg); }
+  100% { opacity:1; transform:translate(-50%,-50%) scale(1) rotate(0); }
+}
+@keyframes envelope-flap-open {
+  0% { transform:rotateX(0); z-index:5; }
+  100% { transform:rotateX(178deg); z-index:1; }
+}
+@keyframes letter-rise {
+  0% { opacity:0; transform:translate(-50%,58px) scale(.97); }
+  72% { opacity:1; transform:translate(-50%,-37px) scale(1.008); }
+  100% { opacity:1; transform:translate(-50%,-32px) scale(1); }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  html { scroll-behavior:auto !important; }
+  .view { animation:none !important; }
+  .nav-btn,
+  .program-open,
+  .program-open-arrow,
+  .button,
+  .program-popover,
+  .program-popover-close,
+  .about-popover,
+  .about-popover-close,
+  .signature-close,
+  .neo-card,
+  .float-emoji {
+    transition:none !important;
+    animation:none !important;
+    scroll-behavior:auto !important;
+  }
+  .nav-btn:hover,
+  .program-open:hover,
+  .button:hover { transform:none !important; }
+  .float-emoji:hover {
+    transform:translate3d(var(--emoji-x,50vw),var(--emoji-y,50vh),0) translate(-50%,-50%) !important;
+  }
+}

@@ -1,1 +1,1 @@
-3.16 - One larger glasses emoji with fast randomized movement (112px desktop, 96px mobile, 88px compact screens), pause-on-tap envelope signature, and stronger site-wide recessed graphite stone typography.
+3.17 - Smaller semi-transparent single glasses emoji (66px desktop / 58px mobile / 54px compact), slower catchable transform-based movement, visibility/resize handling, and unified smooth responsive motion system.

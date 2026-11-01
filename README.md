@@ -1,12 +1,24 @@
+# Absensi Coach SMK BPP — V3.17
+
+## Catatan pembaruan V3.17
+- Emoji tunggal 🤓 diperkecil menjadi 66 px desktop, 58 px ponsel, dan 54 px layar kecil.
+- Emoji dibuat semi-transparan (sekitar 79–81%) agar tidak terlalu mendominasi layar.
+- Gerakan acak diperlambat menjadi 1,45–2,15 detik per lintasan desktop dan 1,75–2,50 detik pada layout sentuh, dengan jeda 140–320 ms agar lebih mudah ditekan.
+- Gerakan memakai animasi `transform` (bukan animasi `left/top`) agar lebih ringan dan halus. Posisi tetap berada di dalam batas layar, disesuaikan ulang ketika ukuran layar berubah, dan gerakan berhenti saat tab tidak terlihat.
+- Transisi navigasi, kartu, popup, envelope, dan perpindahan halaman diseragamkan dengan easing yang lebih halus. `prefers-reduced-motion` tetap dihormati.
+- Perubahan ini hanya pada frontend; `code.gs`, `config.js`, `data.js`, dan manifest tetap sama dengan V3.16. Tidak perlu deploy ulang Apps Script.
+
+---
+
 # Sistem Absensi Coach & Evaluasi Ekstrakurikuler — SMK BPP Bandung
 
-**Versi 3.14 — About Popup & Interactive Envelope Reveal**
+**Riwayat desain: V3.14 — About Popup & Interactive Envelope Reveal**
 
 Versi ini mempertahankan struktur dan fungsi V3.12, tetapi mengganti keseluruhan sistem visual menjadi neumorphism hitam-charcoal dengan material batu berlapis: kartu dan tombol tampak menonjol melalui bayangan luar dan bevel halus, sedangkan input serta tipografi memakai efek cekung/ukiran. Aksen hijau neon diminimalkan dan diganti highlight graphite/netral. Layout beranda, enam emblem ekstrakurikuler, popup melayang, ornamen daun, absensi kamera-GPS, penilaian anggota, dan ekspor DOCX tetap dipertahankan. Backend dan endpoint Google Apps Script tidak berubah.
 
-## Cara memperbarui website ke V3.15
+## Cara memperbarui website ke V3.17
 
-Untuk GitHub Pages, unggah ulang `index.html` dan `style.css` dari paket ini. Pastikan seluruh folder `assets/` yang sudah ada tetap dipertahankan, karena berisi foto banner, enam logo ekskul, dan ornamen. `data.js`, `script.js`, `config.js`, dan `code.gs` tidak berubah pada pembaruan visual ini (query cache pada HTML dinaikkan ke versi 3.14). Karena perubahan hanya pada frontend, Google Apps Script tidak perlu di-deploy ulang. Setelah commit, lakukan hard refresh (`Ctrl + Shift + R`) agar browser memuat `style.css?v=3.14`.
+Untuk GitHub Pages, ganti `index.html`, `style.css`, dan `script.js` dengan versi V3.17. Pertahankan `data.js`, `config.js`, `code.gs`, `appsscript.json`, serta seluruh folder `assets/`. Query cache frontend sudah dinaikkan menjadi `v=3.17`. Perubahan ini hanya menyentuh frontend, sehingga Google Apps Script tidak perlu di-deploy ulang. Setelah commit, lakukan hard refresh (`Ctrl + Shift + R)`.
 
 ## Pembaruan fitur V3.15
 
@@ -275,9 +287,9 @@ Unggah ulang `index.html` dan `style.css` dari paket V3.13. File `assets/leaf-bo
 - **Aksesibilitas:** panel menggunakan dialog non-modal agar kontrol lain di luar panel tidak terkunci. Animasi mengikuti preferensi `prefers-reduced-motion`, dan tombol emoji dapat diakses dengan keyboard.
 - **Backend tidak berubah:** tambahan ini hanya pada frontend; Google Apps Script tidak perlu di-deploy ulang.
 
-## Memperbarui ke V3.15
+## Memperbarui ke V3.17
 
-Ganti `index.html`, `style.css`, dan `script.js` dengan file V3.15. File `data.js`, `config.js`, `code.gs`, serta folder `assets/` tetap dipakai seperti sebelumnya. Setelah upload ke GitHub Pages, lakukan hard refresh agar file dengan cache versi 3.15 dimuat.
+Ganti `index.html`, `style.css`, dan `script.js` dengan file V3.17. File `data.js`, `config.js`, `code.gs`, serta folder `assets/` tetap dipakai seperti sebelumnya. Setelah upload ke GitHub Pages, lakukan hard refresh agar file dengan cache versi 3.17 dimuat.
 
 
 ## Hasil pemeriksaan V3.15
@@ -295,3 +307,13 @@ Ganti `index.html`, `style.css`, dan `script.js` dengan file V3.15. File `data.j
 
 ### File untuk pembaruan GitHub
 Ganti `index.html`, `style.css`, dan `script.js` dari paket V3.16. Pertahankan `data.js`, `config.js`, folder `assets/`, serta backend Apps Script yang sedang digunakan.
+
+
+## Pembaruan V3.17 — gerakan lebih mudah ditangkap dan animasi lebih halus
+
+- Emoji tunggal 🤓 kini berukuran 66 px di desktop, 58 px di ponsel, dan 54 px di layar sangat kecil. Opasitas diturunkan ke sekitar 79–81% agar tampil lebih ringan.
+- Lintasan gerak acak diperlambat menjadi 1,45–2,15 detik di desktop dan 1,75–2,50 detik pada perangkat sentuh. Jeda antarlintasan 140–320 ms memberi kesempatan lebih besar untuk menekan emoji.
+- Posisi emoji dianimasikan melalui `transform` agar gerak lebih halus dan mengurangi layout repaint. Titik tujuan dijaga di dalam batas viewport dan disesuaikan ketika ukuran layar berubah.
+- Saat tab browser tidak terlihat, emoji dibekukan; gerakan dilanjutkan saat tab kembali aktif. Saat emoji ditekan, posisi dibekukan untuk memulai animasi amplop.
+- Transisi navigasi, kartu, panel popup, dan envelope menggunakan kurva easing yang lebih lembut. Pengaturan aksesibilitas `prefers-reduced-motion` tetap dipatuhi.
+- Hanya `index.html`, `style.css`, dan `script.js` yang berubah untuk rilis ini. Backend, database, konfigurasi, dan data enam ekstrakurikuler tidak diubah.

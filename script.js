@@ -19,6 +19,7 @@
   let aboutCloseTimer = 0;
   let signatureCloseTimer = 0;
   let emojiMotion = null;
+  let emojiMoveTimer = 0;
   const SIGNATURE_YEAR = '2026';
 
   const escapeHTML = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => ({
@@ -273,63 +274,130 @@
     if (restoreFocus) trigger?.focus({ preventScroll: true });
   }
 
-  // One oversized glasses emoji moves rapidly along a new random path each time.
-  // The Web Animations API lets us freeze it exactly where the user taps.
+  // A single translucent glasses emoji glides between reachable points.
+  // Movement uses transform-only Web Animations for smoother rendering on phones.
+  function floatingEmojiSize() {
+    if (window.matchMedia('(max-width: 360px)').matches) return 54;
+    if (window.matchMedia('(max-width: 760px)').matches) return 58;
+    return 66;
+  }
+
+  function setEmojiCenter(button, x, y) {
+    button.style.setProperty('--emoji-x', `${Math.round(x)}px`);
+    button.style.setProperty('--emoji-y', `${Math.round(y)}px`);
+  }
+
+  function emojiTransform(x, y) {
+    return `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+  }
+
+  function clearEmojiMotion(button = $('.float-emoji')) {
+    window.clearTimeout(emojiMoveTimer);
+    emojiMoveTimer = 0;
+    if (button?.getAnimations) {
+      button.getAnimations().forEach((animation) => animation.cancel());
+    }
+    emojiMotion = null;
+  }
+
+  function freezeFloatingEmoji(button) {
+    if (!button?.isConnected) return { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    const rect = button.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    clearEmojiMotion(button);
+    setEmojiCenter(button, x, y);
+    return { x, y };
+  }
+
   function moveFloatingEmoji(button) {
-    if (!button?.isConnected || $('#emoji-layer')?.classList.contains('is-paused')) return;
+    const layer = $('#emoji-layer');
+    if (!button?.isConnected || !layer || layer.classList.contains('is-paused') || document.hidden) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const emojiSize = window.matchMedia('(max-width: 380px)').matches ? 88 : (window.matchMedia('(max-width: 760px)').matches ? 96 : 112);
-    const margin = Math.max(Math.ceil(emojiSize / 2) + 18, Math.round(Math.min(window.innerWidth, window.innerHeight) * 0.075));
-    const maxX = Math.max(margin, window.innerWidth - margin);
-    const maxY = Math.max(margin + 24, window.innerHeight - margin);
-    const fromX = Number.parseFloat(button.style.left) || window.innerWidth / 2;
-    const fromY = Number.parseFloat(button.style.top) || window.innerHeight / 2;
-    let toX = margin + Math.random() * (maxX - margin);
-    let toY = margin + Math.random() * (maxY - margin);
+    window.clearTimeout(emojiMoveTimer);
+    emojiMoveTimer = 0;
 
-    // Avoid tiny movements so the emoji visibly darts to another part of the screen.
-    if (Math.hypot(toX - fromX, toY - fromY) < Math.min(window.innerWidth, window.innerHeight) * .24) {
-      toX = toX < window.innerWidth / 2 ? maxX : margin;
-      toY = toY < window.innerHeight / 2 ? maxY : margin;
+    const rect = button.getBoundingClientRect();
+    const width = rect.width || floatingEmojiSize();
+    const height = rect.height || floatingEmojiSize();
+    const viewportWidth = Math.max(1, window.innerWidth);
+    const viewportHeight = Math.max(1, window.innerHeight);
+    const padX = Math.min(width / 2 + 14, viewportWidth / 2);
+    const padY = Math.min(height / 2 + 24, viewportHeight / 2);
+    const minX = padX;
+    const maxX = Math.max(minX, viewportWidth - padX);
+    const minY = padY;
+    const maxY = Math.max(minY, viewportHeight - padY);
+
+    const storedX = Number.parseFloat(button.style.getPropertyValue('--emoji-x'));
+    const storedY = Number.parseFloat(button.style.getPropertyValue('--emoji-y'));
+    const fromX = Number.isFinite(storedX) ? Math.min(maxX, Math.max(minX, storedX)) : Math.min(maxX, Math.max(minX, rect.left + width / 2));
+    const fromY = Number.isFinite(storedY) ? Math.min(maxY, Math.max(minY, storedY)) : Math.min(maxY, Math.max(minY, rect.top + height / 2));
+
+    let toX = minX + Math.random() * Math.max(0, maxX - minX);
+    let toY = minY + Math.random() * Math.max(0, maxY - minY);
+    const minDistance = Math.min(viewportWidth, viewportHeight) * 0.10;
+    if (Math.hypot(toX - fromX, toY - fromY) < minDistance) {
+      const candidates = [
+        { x: minX, y: minY }, { x: maxX, y: minY },
+        { x: minX, y: maxY }, { x: maxX, y: maxY },
+        { x: (minX + maxX) / 2, y: minY },
+        { x: (minX + maxX) / 2, y: maxY }
+      ].filter((point) => Math.hypot(point.x - fromX, point.y - fromY) >= minDistance);
+      if (candidates.length) {
+        const candidate = candidates[Math.floor(Math.random() * candidates.length)];
+        toX = candidate.x;
+        toY = candidate.y;
+      }
     }
 
-    const duration = 300 + Math.random() * 220;
+    // Deliberately slower, longer travel paths make the emoji easier to tap.
+    const isTouchLayout = window.matchMedia('(max-width: 760px), (pointer: coarse)').matches;
+    const duration = isTouchLayout ? 1750 + Math.random() * 750 : 1450 + Math.random() * 700;
     const motion = button.animate([
-      { left: `${fromX}px`, top: `${fromY}px` },
-      { left: `${toX}px`, top: `${toY}px` }
+      { transform: emojiTransform(fromX, fromY) },
+      { transform: emojiTransform(toX, toY) }
     ], {
       duration,
-      easing: 'cubic-bezier(.18,.72,.28,1)',
+      easing: 'cubic-bezier(.4, 0, .2, 1)',
       fill: 'forwards'
     });
     emojiMotion = motion;
     motion.onfinish = () => {
-      if (!button.isConnected || $('#emoji-layer')?.classList.contains('is-paused')) return;
-      button.style.left = `${toX}px`;
-      button.style.top = `${toY}px`;
-      motion.cancel();
+      if (!button.isConnected || layer.classList.contains('is-paused') || document.hidden) return;
+      setEmojiCenter(button, toX, toY);
       if (emojiMotion === motion) emojiMotion = null;
-      window.setTimeout(() => moveFloatingEmoji(button), 18 + Math.random() * 42);
+      motion.cancel();
+      emojiMoveTimer = window.setTimeout(
+        () => moveFloatingEmoji(button),
+        140 + Math.random() * 180
+      );
     };
   }
 
   function spawnFloatingEmojis() {
     const layer = $('#emoji-layer');
     if (!layer) return;
+    clearEmojiMotion();
     layer.classList.remove('is-paused');
     layer.innerHTML = '';
-    emojiMotion = null;
 
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'float-emoji';
     button.textContent = '🤓';
     button.setAttribute('aria-label', 'Tekan untuk membuka pesan dari pembuat website');
-    const safeX = Math.max(76, window.innerWidth * .12);
-    const safeY = Math.max(76, window.innerHeight * .12);
-    button.style.left = `${Math.round(safeX + Math.random() * Math.max(1, window.innerWidth - safeX * 2))}px`;
-    button.style.top = `${Math.round(safeY + Math.random() * Math.max(1, window.innerHeight - safeY * 2))}px`;
+
+    const size = floatingEmojiSize();
+    const half = size / 2;
+    const minX = Math.min(window.innerWidth / 2, half + 14);
+    const maxX = Math.max(minX, window.innerWidth - half - 14);
+    const minY = Math.min(window.innerHeight / 2, half + 24);
+    const maxY = Math.max(minY, window.innerHeight - half - 24);
+    const startX = minX + Math.random() * Math.max(0, maxX - minX);
+    const startY = minY + Math.random() * Math.max(0, maxY - minY);
+    setEmojiCenter(button, startX, startY);
     button.addEventListener('click', () => revealSignature(button));
     layer.appendChild(button);
     moveFloatingEmoji(button);
@@ -339,13 +407,9 @@
     const layer = $('#emoji-layer');
     const envelope = $('#signature-envelope');
     if (!layer || !envelope || !envelope.hidden) return;
-    const rect = sourceButton.getBoundingClientRect();
-    sourceButton.getAnimations().forEach((animation) => animation.cancel());
-    sourceButton.style.left = `${rect.left + rect.width / 2}px`;
-    sourceButton.style.top = `${rect.top + rect.height / 2}px`;
-    emojiMotion = null;
-    const originX = rect.left + rect.width / 2 - window.innerWidth / 2;
-    const originY = rect.top + rect.height / 2 - window.innerHeight / 2;
+    const frozen = freezeFloatingEmoji(sourceButton);
+    const originX = frozen.x - window.innerWidth / 2;
+    const originY = frozen.y - window.innerHeight / 2;
     envelope.style.setProperty('--origin-x', `${originX}px`);
     envelope.style.setProperty('--origin-y', `${originY}px`);
     envelope.hidden = false;
@@ -396,12 +460,43 @@
     });
     $('#close-signature')?.addEventListener('click', closeSignatureExperience);
     spawnFloatingEmojis();
+
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const syncMotionPreference = () => {
+      const button = $('.float-emoji', $('#emoji-layer'));
+      if (!button || $('#emoji-layer')?.classList.contains('is-paused')) return;
+      if (motionPreference.matches) freezeFloatingEmoji(button);
+      else moveFloatingEmoji(button);
+    };
+    if (motionPreference.addEventListener) motionPreference.addEventListener('change', syncMotionPreference);
+    else motionPreference.addListener?.(syncMotionPreference);
+
     let resizeTimer = 0;
     window.addEventListener('resize', () => {
       window.clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(() => {
-        if ($('#signature-envelope')?.hidden) spawnFloatingEmojis();
+        if (!$('#signature-envelope')?.hidden) return;
+        const button = $('.float-emoji', $('#emoji-layer'));
+        if (!button) {
+          spawnFloatingEmojis();
+          return;
+        }
+        const frozen = freezeFloatingEmoji(button);
+        const rect = button.getBoundingClientRect();
+        const padX = Math.min(rect.width / 2 + 14, window.innerWidth / 2);
+        const padY = Math.min(rect.height / 2 + 24, window.innerHeight / 2);
+        const x = Math.min(window.innerWidth - padX, Math.max(padX, frozen.x));
+        const y = Math.min(window.innerHeight - padY, Math.max(padY, frozen.y));
+        setEmojiCenter(button, x, y);
+        moveFloatingEmoji(button);
       }, 180);
+    }, { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+      const button = $('.float-emoji', $('#emoji-layer'));
+      if (!button || !$('#signature-envelope')?.hidden) return;
+      if (document.hidden) freezeFloatingEmoji(button);
+      else moveFloatingEmoji(button);
     });
   }
 

@@ -1,7 +1,6 @@
 Absensi Coach SMK BPP Bandung
-Paket UI: V3.2.1
-Backend API: V3.2
+Paket UI: V3.3
+Backend API: V3.2 (kompatibel; tidak ada perubahan backend)
 Tanggal pembaruan UI: 1 November 2026
 
-Perubahan V3.2.1: memperbesar logo, banner header, tulisan identitas sekolah, dan heading beranda; penyetelan responsif desktop, tablet, dan ponsel.
-Alur absensi dan backend tetap kompatibel dengan V3.2.
+Perubahan V3.3: enam emblem ekstrakurikuler SVG 3D masing-masing, logo utama sekolah diperbesar, tipografi efek ukiran batu, dan neumorphism dengan kontras serta kedalaman yang diperkuat.

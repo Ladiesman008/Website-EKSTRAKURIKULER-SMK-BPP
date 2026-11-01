@@ -122,11 +122,20 @@
   }
 
   function renderPrograms() {
-    const symbols = { Seni: '✧', Bahasa: '文', Olahraga: '◉' };
-    $('#extracurricular-grid').innerHTML = EXTRACURRICULARS.map((item, index) => `
+    $('#extracurricular-grid').innerHTML = EXTRACURRICULARS.map((item) => `
       <article class="program-card neo-card">
-        <div class="program-top"><span class="program-symbol">${symbols[item.category] || '✦'}</span><span class="program-count">${item.count} partisipasi</span></div>
-        <h3>${escapeHTML(item.name)}</h3>
+        <div class="program-top">
+          <div class="program-brand">
+            <span class="program-emblem-wrap">
+              <img class="program-emblem" src="assets/logos/${encodeURIComponent(item.id)}.svg" alt="Emblem ${escapeHTML(item.name)}" loading="lazy" decoding="async">
+            </span>
+            <div class="program-title-stack">
+              <span class="program-category">${escapeHTML(item.category)}</span>
+              <h3>${escapeHTML(item.name)}</h3>
+            </div>
+          </div>
+          <span class="program-count">${item.count} partisipasi</span>
+        </div>
         <p>${escapeHTML(item.description)}</p>
         <div class="program-meta">
           <div class="meta-item"><span>PEMBINA / COACH</span><strong>${item.coaches.map(escapeHTML).join('<br>')}</strong></div>

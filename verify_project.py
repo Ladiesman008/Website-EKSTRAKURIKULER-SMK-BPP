@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pemeriksaan statis paket Absensi Coach SMK BPP V3.2."""
+"""Pemeriksaan statis paket Absensi Coach SMK BPP V3.3."""
 from pathlib import Path
 import json, re, subprocess, sys
 
@@ -54,6 +54,21 @@ check('camera-countdown' in html and 'cancel-checkin' in html, 'hitung mundur da
 check('capture-photo' not in html and 'retake-photo' not in html, 'tidak ada lagi langkah manual ambil foto/ulang foto')
 check('LockService.getScriptLock()' in gs, 'backend mengunci transaksi untuk mencegah check-in ganda')
 check('--accent: #65b77e' in (ROOT / 'style.css').read_text(), 'palet aksen hijau tua aktif')
+check('program-emblem' in js and 'assets/logos/${encodeURIComponent(item.id)}.svg' in js, 'emblem tiap ekstrakurikuler dipanggil dari aset SVG unik')
+logo_ids = ['seni-musik', 'english-club', 'boxing', 'futsal', 'seni-tari', 'basket']
+logo_dir = ROOT / 'assets' / 'logos'
+check(all((logo_dir / f'{logo_id}.svg').is_file() for logo_id in logo_ids), 'enam file emblem SVG tersedia')
+try:
+    import xml.etree.ElementTree as ET
+    for logo_id in logo_ids:
+        ET.parse(logo_dir / f'{logo_id}.svg')
+    check(True, 'seluruh enam SVG valid secara XML')
+except Exception as exc:
+    check(False, f'validasi SVG ({exc})')
+check('width: clamp(136px, 12vw, 160px)' in (ROOT / 'style.css').read_text(), 'logo sekolah utama diperbesar untuk desktop')
+check('width:112px; height:112px' in (ROOT / 'style.css').read_text(), 'logo sekolah utama diperbesar untuk mobile')
+check('text-shadow: -1.15px -1.15px 1px' in (ROOT / 'style.css').read_text(), 'efek ukiran diterapkan pada tipografi')
+check('V3.3' in (ROOT / 'VERSION.txt').read_text(), 'versi paket UI V3.3')
 
 try:
     import tinycss2

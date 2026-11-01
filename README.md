@@ -1,6 +1,6 @@
 # Sistem Absensi Coach & Evaluasi Ekstrakurikuler — SMK BPP Bandung
 
-Versi 3.2 ini memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
+Versi 3.3 menyempurnakan identitas visual dengan enam emblem khusus ekstrakurikuler, efek ukiran pada tipografi, serta lapisan neumorphism yang lebih berdimensi. Backend tetap kompatibel dengan API V3.2. Versi ini mempertahankan alur absensi one-tap dan memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
 
 ## Fitur utama
 
@@ -26,12 +26,21 @@ Total di dokumen sumber adalah **162 entri partisipasi aktif**. Karena dokumen j
 
 Dokumen sumber berisi jumlah anggota dan struktur pembina, tetapi tidak menyertakan daftar lengkap nama anggota per ekstrakurikuler. Karena itu, roster tidak diisi dengan nama contoh atau data rekaan. Pengelola harus mengisi daftar nama siswa pada sheet `AnggotaAktif` sebelum coach dapat mengabsen anggota.
 
+## Pembaruan tampilan V3.3
+
+- Logo sekolah utama memakai kotak logo 160 px pada desktop, 112 px pada ponsel, dan 96 px untuk layar sangat kecil; gambar menggunakan `object-fit: contain` agar logo tidak terpotong.
+- Setiap ekstrakurikuler memiliki emblem SVG khusus di `assets/logos/`: not musik, buku terbuka untuk English Club, sarung tinju, bola futsal, figur tari, dan bola basket.
+- Emblem menggunakan bahan visual yang sama: medali batu gelap, rim hijau, highlight bevel, dan bayangan timbul 3D. Bentuk simbol dibedakan agar tetap mudah dikenali.
+- Tipografi memakai bayangan ukiran/engraving dengan highlight halus dan bayangan gelap. Panel, kartu, medali, dan tombol memakai beberapa lapis outer shadow dan inset highlight untuk kedalaman neumorphism.
+- Tidak ada perubahan backend; semua fungsi absensi satu sentuhan, kamera, GPS, roster, penilaian, dan DOCX tetap menggunakan API V3.2.
+
 ## Isi paket
 
 - `index.html` — struktur halaman website.
 - `style.css` — dark neumorphism hitam/charcoal, layout responsif, dan area logo.
 - `logo.png` / `logo.svg` / `logo.webp` / `logo.jpg` / `logo.jpeg` (juga AVIF/GIF) — letakkan file logo sekolah di folder yang sama dengan `index.html`. Frontend akan mencoba nama-nama ini otomatis. Nama file harus huruf kecil `logo` diikuti ekstensi; format PNG transparan atau SVG disarankan.
 - `data.js` — data deskripsi enam ekstrakurikuler dari dokumen sumber.
+- `assets/logos/` — enam emblem SVG khusus (Seni Musik, English Club, Boxing, Futsal, Seni Tari, Basket), dengan gaya medali batu gelap dan aksen hijau. Pastikan folder `assets` ikut diunggah ke GitHub pada path yang sama dengan `index.html`.
 - `script.js` — navigasi, izin kamera/lokasi, pengambilan foto, pengiriman check-in, kehadiran/nilai anggota, login admin, rekap, dan unduh DOCX.
 - `config.js` — URL Web App Google Apps Script.
 - `code.gs` — backend Apps Script, database Sheets, pembuatan link coach, upload foto ke Drive, timestamp server, dan generator DOCX.
@@ -73,9 +82,9 @@ Dokumen sumber berisi jumlah anggota dan struktur pembina, tetapi tidak menyerta
 3. Pastikan `WEBSITE_URL` pada Script Properties menunjuk ke alamat publik website yang sama.
 4. Buka website melalui URL publik. Uji menu Beranda, lalu buka link coach dari sheet `Coach`.
 
-## Pemeriksaan setelah update V3.2
+## Pemeriksaan setelah update V3.3
 
-- Buka website di desktop dan HP; pastikan logo terlihat di kiri atas. Jika belum, periksa apakah nama file benar-benar `logo.png` (atau salah satu ekstensi yang didukung) dan berada satu folder dengan `index.html`.
+- Buka website di desktop dan HP; pastikan logo sekolah terlihat besar di kiri atas dan keenam emblem tampil pada kartu program. Jika emblem tidak muncul, pastikan folder `assets/logos/` ikut diunggah dengan nama file dan struktur folder yang sama. Jika belum, periksa apakah nama file benar-benar `logo.png` (atau salah satu ekstensi yang didukung) dan berada satu folder dengan `index.html`.
 - Klik ketiga menu navigasi dan tombol “Buka portal coach”.
 - Buka link coach; pastikan nama coach dan ekskul berhasil diverifikasi.
 - Tekan “Absen Sekarang” satu kali dan izinkan kamera serta lokasi. Setelah hitung mundur 3 detik, foto harus terambil dan dikirim otomatis. Pastikan satu baris muncul pada `AbsensiCoach`.

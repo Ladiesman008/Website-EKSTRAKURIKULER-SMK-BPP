@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.1">
+  <link rel="stylesheet" href="style.css?v=3.2">
 </head>
 <body>
   <div class="app-shell">
@@ -84,14 +84,14 @@
           </section>
 
           <section class="neo-card checkin-card">
-            <div class="form-heading"><div><p class="eyebrow">COACH CHECK-IN</p><h2>Absen Sekarang</h2><p class="muted">Foto dan lokasi diperlukan sebagai bukti kehadiran coach.</p></div><span class="step-number">01</span></div>
+            <div class="form-heading"><div><p class="eyebrow">COACH CHECK-IN</p><h2>Absen Sekarang</h2><p class="muted">Tekan satu kali. Kamera dan lokasi akan aktif, foto diambil otomatis, lalu absensi langsung disimpan.</p></div><span class="step-number">01</span></div>
             <div id="checkin-existing" class="existing-checkin" hidden>
               <div class="success-icon">✓</div>
               <div><strong>Absensi hari ini sudah tercatat.</strong><p id="checkin-existing-info" class="muted"></p><a id="checkin-existing-map" href="#" target="_blank" rel="noopener" hidden>Lihat lokasi di peta ↗</a></div>
             </div>
             <div id="checkin-start-area">
-              <p class="small-muted">Tekan tombol di bawah untuk meminta izin kamera dan lokasi dari perangkat.</p>
-              <button id="start-checkin" class="button button-primary" type="button">Absen Sekarang <span>→</span></button>
+              <p class="small-muted">Pastikan kamu berada di tempat latihan. Setelah izin kamera dan lokasi diberikan, foto akan diambil otomatis dan langsung dikirim.</p>
+              <button id="start-checkin" class="button button-primary checkin-start-button" type="button"><span aria-hidden="true">◉</span> Absen Sekarang <span aria-hidden="true">→</span></button>
             </div>
             <div id="capture-area" class="capture-area" hidden>
               <div class="capture-layout">
@@ -99,14 +99,17 @@
                   <video id="camera-preview" autoplay playsinline muted></video>
                   <img id="photo-preview" alt="Foto absensi yang diambil" hidden>
                   <div id="camera-placeholder" class="camera-placeholder"><span>◎</span><small>Kamera belum aktif</small></div>
+                  <div id="camera-countdown" class="camera-countdown" hidden aria-live="assertive"></div>
                   <canvas id="photo-canvas" hidden></canvas>
                 </div>
                 <div class="capture-info">
                   <div class="permission-row"><span class="permission-icon">⌖</span><div><strong>Lokasi perangkat</strong><small id="location-status">Meminta izin lokasi…</small></div></div>
                   <div class="permission-row"><span class="permission-icon">◉</span><div><strong>Kamera</strong><small id="camera-status">Menunggu izin kamera…</small></div></div>
-                  <p class="small-muted">Pastikan foto menampilkan coach dengan jelas. Lokasi, akurasi GPS, dan waktu server akan tersimpan bersama absensi.</p>
-                  <div class="capture-buttons"><button id="capture-photo" class="button button-secondary" type="button" disabled>Ambil Foto</button><button id="retake-photo" class="button button-quiet" type="button" hidden>Ulangi Foto</button></div>
-                  <button id="submit-checkin" class="button button-primary full-width" type="button" disabled>Kirim Absensi <span>→</span></button>
+                  <p class="small-muted">Foto, koordinat GPS, akurasi lokasi, serta tanggal dan jam server akan tersimpan sebagai satu catatan absensi.</p>
+                  <div class="capture-buttons">
+                    <button id="cancel-checkin" class="button button-quiet" type="button">Batalkan</button>
+                    <button id="submit-checkin" class="button button-primary" type="button" hidden>Coba Simpan Lagi</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -162,8 +165,8 @@
       </section>
     </main>
   </div>
-  <script src="data.js?v=3.1"></script>
-  <script src="config.js?v=3.1"></script>
-  <script src="script.js?v=3.1"></script>
+  <script src="data.js?v=3.2"></script>
+  <script src="config.js?v=3.2"></script>
+  <script src="script.js?v=3.2"></script>
 </body>
 </html>

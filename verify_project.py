@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pemeriksaan statis paket Absensi Coach SMK BPP V3.1."""
+"""Pemeriksaan statis paket Absensi Coach SMK BPP V3.2."""
 from pathlib import Path
 import json, re, subprocess, sys
 
@@ -44,11 +44,16 @@ check(views <= sections, 'seluruh target navigasi tersedia')
 frontend_actions = set(re.findall(r"request\('([a-z_]+)'", js))
 backend_actions = set(re.findall(r"case '([a-z_]+)'", gs)) | set(re.findall(r"p\.action === '([a-z_]+)'", gs))
 check(frontend_actions <= backend_actions, 'seluruh action frontend tersedia di backend' + (f': {sorted(frontend_actions-backend_actions)}' if frontend_actions-backend_actions else ''))
-check("p.action === 'health'" in gs and "version: '3.1'" in gs, 'endpoint health V3.1 tersedia')
+check("p.action === 'health'" in gs and "version: '3.2'" in gs, 'endpoint health V3.2 tersedia')
 check("new Intl.DateTimeFormat('id-ID', { dateStyle: 'long', timeZone: 'Asia/Jakarta' })" in js, 'tanggal UI menggunakan zona waktu Jakarta')
 check("row.score !== '' && row.score != null" in js, 'nilai kosong tidak dihitung sebagai nol')
 check("function loadSchoolLogo()" in js and 'id="school-logo"' in html, 'logo dimuat otomatis dari file lokal')
 check('logo.png' in js and 'logo.svg' in js and 'logo.webp' in js, 'fallback ekstensi logo umum tersedia')
+check('startCheckin' in js and 'capturePhoto()' in js and 'await submitCheckin()' in js, 'tombol satu sentuhan mengambil foto dan menyimpan otomatis')
+check('camera-countdown' in html and 'cancel-checkin' in html, 'hitung mundur dan tombol batalkan tersedia')
+check('capture-photo' not in html and 'retake-photo' not in html, 'tidak ada lagi langkah manual ambil foto/ulang foto')
+check('LockService.getScriptLock()' in gs, 'backend mengunci transaksi untuk mencegah check-in ganda')
+check('--accent: #65b77e' in (ROOT / 'style.css').read_text(), 'palet aksen hijau tua aktif')
 
 try:
     import tinycss2

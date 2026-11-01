@@ -11,6 +11,9 @@
   let cameraStream = null;
   let currentLocation = null;
   let capturedPhoto = '';
+  let checkinAttempt = 0;
+  let checkinInProgress = false;
+  let checkinSaveInProgress = false;
   let adminToken = '';
   let currentReport = null;
 
@@ -69,7 +72,7 @@
     }
     if (!result || typeof result !== 'object') throw new Error('Respons server tidak valid.');
     if (result.result === 'error' && /^Aksi (GET|POST) tidak dikenal/i.test(String(result.message || ''))) {
-      result.message = 'Backend masih menggunakan versi lama. Deploy ulang file code.gs V3.1 melalui Manage deployments → Edit → New version.';
+      result.message = 'Backend masih menggunakan versi lama. Deploy ulang file code.gs V3.2 melalui Manage deployments → Edit → New version.';
     }
     return result;
   }
@@ -107,8 +110,11 @@
 
   function switchView(name) {
     if (name !== 'absensi') {
-      stopCamera();
-      if (!checkin) resetCaptureFlow();
+      if (checkinInProgress && !checkinSaveInProgress) cancelCheckin();
+      else stopCamera();
+      // Jangan menghapus foto saat request penyimpanan berlangsung; foto masih
+      // dibutuhkan untuk percobaan ulang bila jaringan terputus.
+      if (!checkin && !checkinSaveInProgress) resetCaptureFlow();
     }
     $$('.view').forEach((section) => section.classList.toggle('active', section.id === `view-${name}`));
     $$('.nav-btn').forEach((button) => button.classList.toggle('active', button.dataset.view === name));
@@ -193,6 +199,7 @@
       startArea.hidden = true;
       captureArea.hidden = true;
       memberWorkspace.hidden = false;
+      $('#submit-checkin').hidden = true;
       const photoAt = checkin.waktuLabel || 'Waktu tercatat oleh server';
       $('#checkin-existing-info').textContent = `${photoAt} · Akurasi lokasi ±${checkin.akurasi || '—'} m`;
       const map = $('#checkin-existing-map');
@@ -202,9 +209,7 @@
       startArea.hidden = false;
       captureArea.hidden = true;
       memberWorkspace.hidden = true;
-      $('#capture-photo').disabled = true;
-      $('#submit-checkin').disabled = true;
-      $('#retake-photo').hidden = true;
+      $('#submit-checkin').hidden = true;
     }
   }
 
@@ -225,17 +230,18 @@
     $('#camera-preview').hidden = false;
     $('#photo-preview').hidden = true;
     $('#camera-placeholder').hidden = false;
-    $('#capture-photo').disabled = true;
-    $('#submit-checkin').disabled = true;
-    $('#retake-photo').hidden = true;
-    $('#camera-status').textContent = 'Menunggu izin kamera…';
+    $('#camera-countdown').hidden = true;
+    $('#camera-countdown').textContent = '';
     $('#location-status').textContent = 'Menunggu izin lokasi…';
+    $('#camera-status').textContent = 'Menunggu izin kamera…';
+    $('#submit-checkin').hidden = true;
+    $('#cancel-checkin').hidden = false;
   }
 
   function getPosition() {
     return new Promise((resolve, reject) => {
       if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-        return reject(new Error('Kamera dan GPS memerlukan HTTPS. Buka website melalui alamat GitHub Pages/hosting HTTPS, bukan HTTP atau file lokal.'));
+        return reject(new Error('Kamera dan GPS memerlukan HTTPS. Buka website melalui GitHub Pages/hosting HTTPS, bukan HTTP atau file lokal.'));
       }
       if (!navigator.geolocation) return reject(new Error('Browser ini tidak mendukung akses lokasi.'));
       navigator.geolocation.getCurrentPosition(
@@ -257,66 +263,21 @@
     });
   }
 
-  async function startCheckin() {
-    if (!coach || checkin) return;
-    const button = $('#start-checkin');
-    setBusy(button, true, 'Meminta izin…');
-    showMessage($('#checkin-message'), 'Browser akan meminta izin kamera dan lokasi. Pilih Izinkan pada kedua permintaan.');
-    $('#checkin-start-area').hidden = true;
-    $('#capture-area').hidden = false;
-    $('#camera-placeholder').hidden = false;
-    $('#camera-status').textContent = 'Mengaktifkan kamera…';
-    $('#location-status').textContent = 'Mengambil koordinat GPS…';
-    $('#capture-photo').disabled = true;
-    $('#submit-checkin').disabled = true;
-    capturedPhoto = '';
-    currentLocation = null;
-    $('#photo-preview').hidden = true;
-    $('#camera-preview').hidden = false;
-    $('#retake-photo').hidden = true;
-    try {
-      const cameraPromise = navigator.mediaDevices && navigator.mediaDevices.getUserMedia
-        ? navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'user' }, width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false })
-        : Promise.reject(new Error('Browser tidak mendukung kamera. Buka website melalui HTTPS dan gunakan browser modern.'));
-      const results = await Promise.allSettled([cameraPromise, getPosition()]);
-      if (results[0].status === 'fulfilled') cameraStream = results[0].value;
-      if (results[1].status === 'fulfilled') currentLocation = results[1].value;
-      const failed = results.find((item) => item.status === 'rejected');
-      if (failed) throw failed.reason;
-      const video = $('#camera-preview');
-      video.srcObject = cameraStream;
-      await video.play();
-      $('#camera-placeholder').hidden = true;
-      $('#camera-status').textContent = 'Kamera aktif.';
-      $('#location-status').textContent = `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)} · akurasi ±${currentLocation.accuracy} m`;
-      $('#capture-photo').disabled = false;
-      showMessage($('#checkin-message'), 'Lokasi berhasil diperoleh. Ambil foto untuk melanjutkan.');
-    } catch (error) {
-      stopCamera();
-      $('#camera-status').textContent = 'Kamera/lokasi belum siap.';
-      showMessage($('#checkin-message'), error.message || 'Tidak dapat mengakses kamera atau lokasi.', 'error');
-      $('#capture-area').hidden = false;
-      $('#checkin-start-area').hidden = false;
-    } finally {
-      setBusy(button, false);
-    }
+  function wait(ms) {
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
   }
 
   function capturePhoto() {
     const video = $('#camera-preview');
     const canvas = $('#photo-canvas');
     if (!video.videoWidth || !video.videoHeight) {
-      showMessage($('#checkin-message'), 'Tunggu hingga gambar kamera terlihat, lalu ambil foto.', 'error');
-      return;
+      throw new Error('Kamera belum menghasilkan gambar. Tekan Absen Sekarang untuk mencoba kembali.');
     }
     const maxDimension = 1280;
     let scale = Math.min(1, maxDimension / Math.max(video.videoWidth, video.videoHeight));
     const context = canvas.getContext('2d', { alpha: false });
-    if (!context) {
-      showMessage($('#checkin-message'), 'Perangkat tidak dapat memproses foto. Muat ulang halaman lalu coba kembali.', 'error');
-      return;
-    }
-    const maxBase64Length = 1450000; // buffer aman di bawah batas server 1.600.000 karakter
+    if (!context) throw new Error('Perangkat tidak dapat memproses foto. Muat ulang halaman lalu coba kembali.');
+    const maxBase64Length = 1450000;
     const encodeAtScale = (nextScale, qualities) => {
       canvas.width = Math.max(1, Math.round(video.videoWidth * nextScale));
       canvas.height = Math.max(1, Math.round(video.videoHeight * nextScale));
@@ -327,60 +288,125 @@
       }
       return '';
     };
-    capturedPhoto = encodeAtScale(scale, [0.76, 0.68, 0.60, 0.52]);
-    if (!capturedPhoto) {
+    let dataUrl = encodeAtScale(scale, [0.76, 0.68, 0.60, 0.52]);
+    if (!dataUrl) {
       scale *= 0.78;
-      capturedPhoto = encodeAtScale(scale, [0.68, 0.58, 0.50]);
+      dataUrl = encodeAtScale(scale, [0.68, 0.58, 0.50]);
     }
-    if (!capturedPhoto) {
-      showMessage($('#checkin-message'), 'Ukuran foto masih terlalu besar. Coba ambil foto dengan latar yang lebih sederhana atau perangkat lain.', 'error');
-      return;
-    }
-    $('#photo-preview').src = capturedPhoto;
-    $('#photo-preview').hidden = false;
-    video.hidden = true;
-    $('#retake-photo').hidden = false;
-    $('#capture-photo').disabled = true;
-    $('#submit-checkin').disabled = !currentLocation;
-    stopCamera();
-    showMessage($('#checkin-message'), 'Foto berhasil diambil. Periksa hasil foto lalu kirim absensi.');
+    if (!dataUrl) throw new Error('Ukuran foto masih terlalu besar. Coba lagi dengan pencahayaan lebih baik.');
+    return dataUrl;
   }
 
-  async function retakePhoto() {
-    capturedPhoto = '';
+  async function startCheckin() {
+    if (!coach || checkin || checkinInProgress) return;
+    const attempt = ++checkinAttempt;
+    const button = $('#start-checkin');
+    checkinInProgress = true;
+    setBusy(button, true, 'Mengaktifkan kamera…');
+    showMessage($('#checkin-message'), 'Izinkan akses kamera dan lokasi pada permintaan browser. Setelah keduanya siap, foto akan diambil otomatis.');
+    $('#checkin-start-area').hidden = true;
+    $('#capture-area').hidden = false;
+    $('#camera-placeholder').hidden = false;
+    $('#camera-countdown').hidden = true;
+    $('#cancel-checkin').hidden = false;
+    $('#camera-status').textContent = 'Membuka kamera…';
+    $('#location-status').textContent = 'Mengambil koordinat GPS…';
     $('#photo-preview').hidden = true;
     $('#camera-preview').hidden = false;
-    $('#camera-placeholder').hidden = true;
-    $('#retake-photo').hidden = true;
-    $('#capture-photo').disabled = true;
-    $('#submit-checkin').disabled = true;
+    $('#submit-checkin').hidden = true;
+    capturedPhoto = '';
+    currentLocation = null;
+
+    let pendingCameraStream = null;
     try {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error('Browser tidak menyediakan akses kamera. Gunakan browser modern melalui HTTPS.');
+      // Panggilan kamera dan geolokasi dimulai langsung dari klik coach.
+      const cameraPromise = navigator.mediaDevices && navigator.mediaDevices.getUserMedia
+        ? navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: 'user' }, width: { ideal: 1280 }, height: { ideal: 960 } },
+            audio: false
+          })
+        : Promise.reject(new Error('Browser tidak mendukung kamera. Buka website melalui HTTPS dan gunakan browser modern.'));
+      const locationPromise = getPosition();
+      const results = await Promise.allSettled([cameraPromise, locationPromise]);
+      if (results[0].status === 'fulfilled') pendingCameraStream = results[0].value;
+      if (attempt !== checkinAttempt) {
+        if (pendingCameraStream) pendingCameraStream.getTracks().forEach((track) => track.stop());
+        return;
       }
-      cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'user' }, width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false });
+      const failed = results.find((item) => item.status === 'rejected');
+      if (failed) throw failed.reason;
+
+      cameraStream = pendingCameraStream;
+      currentLocation = results[1].value;
       const video = $('#camera-preview');
       video.srcObject = cameraStream;
       await video.play();
-      $('#capture-photo').disabled = false;
-      $('#camera-status').textContent = 'Kamera aktif.';
-    } catch (error) {
+      await wait(450); // beri waktu sensor kamera menstabilkan frame pertama
+      if (attempt !== checkinAttempt) return;
+
+      $('#camera-placeholder').hidden = true;
+      $('#camera-status').textContent = 'Kamera aktif. Posisikan wajah di tengah.';
+      $('#location-status').textContent = `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)} · akurasi ±${currentLocation.accuracy} m`;
+      showMessage($('#checkin-message'), 'Foto akan diambil otomatis. Posisikan wajah di tengah kamera.');
+
+      const countdown = $('#camera-countdown');
+      countdown.hidden = false;
+      for (let seconds = 3; seconds >= 1; seconds -= 1) {
+        if (attempt !== checkinAttempt) return;
+        countdown.textContent = String(seconds);
+        $('#camera-status').textContent = `Foto otomatis dalam ${seconds} detik…`;
+        await wait(1000);
+      }
+      if (attempt !== checkinAttempt) return;
+
+      capturedPhoto = capturePhoto();
+      $('#cancel-checkin').hidden = true;
+      $('#photo-preview').src = capturedPhoto;
+      $('#photo-preview').hidden = false;
+      video.hidden = true;
+      countdown.hidden = true;
       stopCamera();
-      $('#capture-area').hidden = true;
-      $('#checkin-start-area').hidden = false;
-      $('#start-checkin').hidden = false;
-      showMessage($('#checkin-message'), (error.message || 'Kamera tidak dapat dibuka kembali.') + ' Tekan Absen Sekarang untuk mengulangi proses izin.', 'error');
+      $('#camera-status').textContent = 'Foto berhasil diambil.';
+      showMessage($('#checkin-message'), 'Foto berhasil diambil. Menyimpan absensi, lokasi, dan waktu server…');
+      await submitCheckin();
+    } catch (error) {
+      if (attempt !== checkinAttempt) {
+        if (pendingCameraStream) pendingCameraStream.getTracks().forEach((track) => track.stop());
+        return;
+      }
+      if (pendingCameraStream) pendingCameraStream.getTracks().forEach((track) => track.stop());
+      stopCamera();
+      resetCaptureFlow();
+      showMessage($('#checkin-message'), error.message || 'Tidak dapat mengakses kamera atau lokasi.', 'error');
+    } finally {
+      if (attempt === checkinAttempt) {
+        checkinInProgress = false;
+        setBusy(button, false);
+      }
     }
   }
 
+  function cancelCheckin() {
+    if (!checkinInProgress) return;
+    checkinAttempt += 1;
+    checkinInProgress = false;
+    stopCamera();
+    resetCaptureFlow();
+    setBusy($('#start-checkin'), false);
+    showMessage($('#checkin-message'), 'Absensi dibatalkan. Foto dan lokasi tidak dikirim.');
+  }
+
   async function submitCheckin() {
+    if (checkinSaveInProgress) return;
     if (!coachToken || !currentLocation || !capturedPhoto) {
-      showMessage($('#checkin-message'), 'Foto dan lokasi wajib tersedia sebelum mengirim absensi.', 'error');
+      showMessage($('#checkin-message'), 'Foto dan lokasi wajib tersedia sebelum menyimpan absensi.', 'error');
       return;
     }
     const button = $('#submit-checkin');
+    checkinSaveInProgress = true;
     setBusy(button, true, 'Menyimpan absensi…');
-    showMessage($('#checkin-message'), 'Mengunggah foto dan menyimpan lokasi serta waktu server…');
+    button.hidden = true;
+    showMessage($('#checkin-message'), 'Menyimpan foto, lokasi, dan waktu server…');
     try {
       const photoBase64 = capturedPhoto.split(',')[1] || '';
       const result = await request('save_coach_checkin', {
@@ -407,9 +433,16 @@
       $('#capture-area').hidden = true;
       await refreshCoachHistory();
     } catch (error) {
-      showMessage($('#checkin-message'), error.message || 'Gagal mengirim absensi.', 'error');
-    } finally {
       setBusy(button, false);
+      button.textContent = 'Coba Simpan Lagi';
+      button.hidden = false;
+      showMessage($('#checkin-message'), `${error.message || 'Gagal menyimpan absensi.'} Foto tetap tersedia; tekan Coba Simpan Lagi tanpa mengambil foto ulang.`, 'error');
+    } finally {
+      checkinSaveInProgress = false;
+      if (checkin) {
+        setBusy(button, false);
+        button.hidden = true;
+      }
     }
   }
 
@@ -673,8 +706,7 @@
     $$('.nav-btn').forEach((button) => button.addEventListener('click', () => switchView(button.dataset.view)));
     $$('[data-go]').forEach((button) => button.addEventListener('click', () => switchView(button.dataset.go)));
     $('#start-checkin').addEventListener('click', startCheckin);
-    $('#capture-photo').addEventListener('click', capturePhoto);
-    $('#retake-photo').addEventListener('click', retakePhoto);
+    $('#cancel-checkin').addEventListener('click', cancelCheckin);
     $('#submit-checkin').addEventListener('click', submitCheckin);
     $('#save-members').addEventListener('click', saveMembers);
     $('#admin-login-form').addEventListener('submit', adminLogin);

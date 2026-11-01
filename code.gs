@@ -287,41 +287,52 @@ function saveCoachCheckin_(p) {
   const lat = Number(p.latitude), lon = Number(p.longitude), accuracy = Number(p.accuracy);
   if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lon) || lon < -180 || lon > 180) return fail_('Koordinat lokasi tidak valid.');
   if (!Number.isFinite(accuracy) || accuracy < 0) return fail_('Akurasi GPS tidak valid.');
-  const now = new Date(); // Satu timestamp server untuk tanggal dan jam yang sama.
-  const today = Utilities.formatDate(now, TZ, 'yyyy-MM-dd');
-  const existing = checkinRowForCoachDate_(coach.id, today);
-  if (existing) return fail_('Absensi coach untuk hari ini sudah tercatat.', { alreadyCheckedIn: true, checkin: checkinPublic_(existing) });
-  const photo = savePhoto_(p.photoBase64, p.photoMime, coach.nama, today);
-  const id = uuid_();
-  const sh = sheet_('AbsensiCoach');
+
+  // Kunci server mencegah dua tab/perangkat mencatat check-in harian ganda.
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  let photo = null;
   try {
-    appendObject_(sh, {
-      'ID Absensi Coach': id,
-      Tanggal: today,
-      'Waktu Server': now,
-      'ID Coach': coach.id,
-      'Nama Coach': coach.nama,
-      Ekstrakurikuler: coach.ekstrakurikuler,
-      Latitude: lat,
-      Longitude: lon,
-      'Akurasi GPS (m)': accuracy,
-      'Link Peta': mapUrl_(lat, lon),
-      'ID Foto Drive': photo.id,
-      'URL Foto': photo.url
-    });
-  } catch (error) {
-    try { DriveApp.getFileById(photo.id).setTrashed(true); } catch (cleanupError) { Logger.log(cleanupError); }
-    throw error;
+    const now = new Date(); // Satu timestamp server untuk tanggal dan jam yang sama.
+    const today = Utilities.formatDate(now, TZ, 'yyyy-MM-dd');
+    const existing = checkinRowForCoachDate_(coach.id, today);
+    if (existing) return fail_('Absensi coach untuk hari ini sudah tercatat.', { alreadyCheckedIn: true, checkin: checkinPublic_(existing) });
+
+    photo = savePhoto_(p.photoBase64, p.photoMime, coach.nama, today);
+    const id = uuid_();
+    const sh = sheet_('AbsensiCoach');
+    try {
+      appendObject_(sh, {
+        'ID Absensi Coach': id,
+        Tanggal: today,
+        'Waktu Server': now,
+        'ID Coach': coach.id,
+        'Nama Coach': coach.nama,
+        Ekstrakurikuler: coach.ekstrakurikuler,
+        Latitude: lat,
+        Longitude: lon,
+        'Akurasi GPS (m)': accuracy,
+        'Link Peta': mapUrl_(lat, lon),
+        'ID Foto Drive': photo.id,
+        'URL Foto': photo.url
+      });
+    } catch (error) {
+      try { DriveApp.getFileById(photo.id).setTrashed(true); } catch (cleanupError) { Logger.log(cleanupError); }
+      throw error;
+    }
+
+    const saved = {
+      id: id,
+      date: today,
+      waktuLabel: dateTimeLabel_(now),
+      akurasi: Math.round(accuracy),
+      mapUrl: mapUrl_(lat, lon),
+      photoUrl: photo.url
+    };
+    return ok_({ message: 'Absensi coach berhasil disimpan dengan waktu server.', checkin: saved });
+  } finally {
+    lock.releaseLock();
   }
-  const saved = {
-    id: id,
-    date: today,
-    waktuLabel: dateTimeLabel_(now),
-    akurasi: Math.round(accuracy),
-    mapUrl: mapUrl_(lat, lon),
-    photoUrl: photo.url
-  };
-  return ok_({ message: 'Absensi coach berhasil disimpan dengan waktu server.', checkin: saved });
 }
 
 // ----------------------- Member attendance / scores -----------------------
@@ -446,7 +457,7 @@ function coachInfo_(token) {
 function doGet(e) {
   const p = e && e.parameter ? e.parameter : {};
   try {
-    if (p.action === 'health') return ok_({ service: 'Absensi Coach SMK BPP', version: '3.1', timezone: TZ });
+    if (p.action === 'health') return ok_({ service: 'Absensi Coach SMK BPP', version: '3.2', timezone: TZ });
     if (p.action === 'coach_info') return coachInfo_(p.coach);
     return fail_('Aksi GET tidak dikenal.');
   } catch (error) {

@@ -1,11 +1,11 @@
 # Sistem Absensi Coach & Evaluasi Ekstrakurikuler — SMK BPP Bandung
 
-Versi 3.1 ini memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
+Versi 3.2 ini memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
 
 ## Fitur utama
 
 1. **Beranda** menampilkan Seni Musik, English Club, Boxing, Futsal, Seni Tari, dan Basket; termasuk pembina/coach, ketua, partisipasi aktif, jadwal, visi, misi, kegiatan, dan target kejuaraan.
-2. **Absensi Coach tanpa login** melalui link rahasia per coach. Coach menekan *Absen Sekarang*, memberikan izin kamera dan lokasi, mengambil foto, lalu mengirim absensi.
+2. **Absensi Coach tanpa login** melalui link rahasia per coach. Coach menekan *Absen Sekarang* satu kali; browser meminta izin kamera dan lokasi, menampilkan hitung mundur 3 detik, mengambil foto otomatis, lalu langsung menyimpan absensi ke server.
 3. **Timestamp server** disimpan dalam zona waktu `Asia/Jakarta`; tanggal dan jam tidak diambil dari jam perangkat coach.
 4. **Bukti foto dan lokasi** disimpan ke Google Drive pribadi pemilik spreadsheet. Data koordinat, akurasi GPS, tautan peta, ID foto, dan URL foto tercatat di Google Sheets.
 5. Setelah check-in berhasil, coach dapat mengisi **kehadiran dan nilai anggota aktif** (status Hadir/Izin/Sakit/Alpa, nilai 0–100 opsional, dan catatan).
@@ -64,7 +64,7 @@ Dokumen sumber berisi jumlah anggota dan struktur pembina, tetapi tidak menyerta
    - **Execute as:** akun pemilik script.
    - **Who has access:** Anyone, karena coach tidak menggunakan login Google.
 10. Buka **Deploy → Manage deployments → Edit** pada deployment yang dipakai website, pilih **New version**, lalu deploy ulang `code.gs` terbaru. Dengan mengedit deployment yang sama, URL `/exec` biasanya tetap sama. Jika membuat deployment baru, salin URL `/exec` baru ke `SCRIPT_URL` di `config.js`.
-11. Setelah deploy, uji endpoint kesehatan dengan membuka `URL_WEB_APP/exec?action=health`. Respons yang benar memuat `service: Absensi Coach SMK BPP` dan `version: 3.1`. Jika respons berbeda, frontend masih mengarah ke backend versi lama.
+11. Setelah deploy, uji endpoint kesehatan dengan membuka `URL_WEB_APP/exec?action=health`. Respons yang benar memuat `service: Absensi Coach SMK BPP` dan `version: 3.2`. Jika respons berbeda, frontend masih mengarah ke backend versi lama.
 
 ## Instalasi website
 
@@ -73,22 +73,22 @@ Dokumen sumber berisi jumlah anggota dan struktur pembina, tetapi tidak menyerta
 3. Pastikan `WEBSITE_URL` pada Script Properties menunjuk ke alamat publik website yang sama.
 4. Buka website melalui URL publik. Uji menu Beranda, lalu buka link coach dari sheet `Coach`.
 
-## Pemeriksaan setelah update V3.1
+## Pemeriksaan setelah update V3.2
 
 - Buka website di desktop dan HP; pastikan logo terlihat di kiri atas. Jika belum, periksa apakah nama file benar-benar `logo.png` (atau salah satu ekstensi yang didukung) dan berada satu folder dengan `index.html`.
 - Klik ketiga menu navigasi dan tombol “Buka portal coach”.
 - Buka link coach; pastikan nama coach dan ekskul berhasil diverifikasi.
-- Tekan “Absen Sekarang”, izinkan kamera dan lokasi, ambil foto, lalu kirim. Pastikan satu baris muncul pada `AbsensiCoach`.
+- Tekan “Absen Sekarang” satu kali dan izinkan kamera serta lokasi. Setelah hitung mundur 3 detik, foto harus terambil dan dikirim otomatis. Pastikan satu baris muncul pada `AbsensiCoach`.
 - Isi status seluruh anggota aktif dan simpan; pastikan data masuk ke `AbsensiAnggota` dan `Penilaian`.
 - Login administrator, tampilkan rekap, lalu unduh DOCX.
-- Jika muncul pesan koneksi, periksa `SCRIPT_URL` dan endpoint `?action=health`; deployment backend harus versi 3.1.
+- Jika muncul pesan koneksi, periksa `SCRIPT_URL` dan endpoint `?action=health`; deployment backend harus versi 3.2.
 
 ## Cara kerja absensi coach
 
 1. Coach membuka URL pribadi yang memuat token `?coach=...`.
-2. Coach menekan **Absen Sekarang**. Browser meminta izin kamera dan lokasi.
-3. Setelah izin diberikan, kamera menampilkan pratinjau. Sistem mendapatkan koordinat dan estimasi akurasi GPS.
-4. Coach menekan **Ambil Foto**, memeriksa pratinjau, lalu menekan **Kirim Absensi**.
+2. Coach menekan **Absen Sekarang** satu kali. Browser meminta izin kamera dan lokasi.
+3. Setelah kedua izin diberikan, kamera menampilkan pratinjau dan sistem mendapatkan koordinat serta estimasi akurasi GPS.
+4. Hitung mundur 3 detik berjalan, foto diambil otomatis, lalu absensi langsung disimpan. Jika unggahan gagal karena jaringan, tombol **Coba Simpan Lagi** muncul tanpa perlu mengambil foto ulang.
 5. Apps Script mencatat waktu server, tanggal, koordinat, akurasi, coach, ekstrakurikuler, serta menyimpan foto ke folder Drive pribadi.
 6. Satu coach hanya dapat membuat satu check-in per tanggal. Pengiriman ulang pada hari yang sama akan dikenali sebagai duplikat, bukan membuat baris baru.
 7. Setelah check-in tercatat, coach dapat memilih kehadiran setiap anggota dan memberikan nilai/catatan.
@@ -114,3 +114,12 @@ File yang diberikan adalah **Laporan Evaluasi & Kinerja Ekstrakurikuler TA 2025/
 - Penggunaan kamera dan GPS memerlukan koneksi HTTPS dan izin pengguna. Di ponsel, gunakan browser yang mendukung `getUserMedia` dan Geolocation API.
 - Nilai anggota bersifat opsional dan harus berada pada rentang 0–100 jika diisi. Status kehadiran wajib dipilih.
 - Aplikasi ini tidak mengirim laporan otomatis ke kepala sekolah. Administrator mengunduh DOCX lalu menyerahkannya melalui prosedur sekolah.
+
+
+## Perubahan V3.2
+
+- Tombol **Absen Sekarang** menjalankan alur satu sentuhan: izin kamera/GPS → hitung mundur 3 detik → foto otomatis → simpan otomatis ke backend.
+- Tidak ada lagi tombol Ambil Foto dan Kirim Absensi pada alur normal. Jika penyimpanan gagal, tombol **Coba Simpan Lagi** akan mengirim ulang foto yang sama.
+- Tombol **Batalkan** tersedia sebelum foto diambil. Berpindah menu saat proses berlangsung akan menghentikan sesi kamera.
+- Aksen ungu diganti menjadi hijau tua.
+- Endpoint health backend mengembalikan versi `3.2`.

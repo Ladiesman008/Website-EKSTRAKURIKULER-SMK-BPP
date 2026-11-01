@@ -1,3 +1,16 @@
+# Absensi Coach SMK BPP — V3.20
+
+## Catatan pembaruan V3.20 — emblem administrator
+- Pada halaman **Tarik Data & Laporan**, di atas judul **Akses administrator** ditambahkan ikon dasi berbasis SVG inline.
+- Ikon ditempatkan di dalam kotak berbingkai dengan nuansa arang/abu batu agar selaras dengan tema gelap.
+- Efek cekung (inset) dan guratan terang-gelap pada ikon memberi kesan ukiran batu; ukurannya menyesuaikan layar HP.
+- Perubahan hanya pada `index.html` dan `style.css`. Alur login administrator, pelaporan, absensi, dan backend tidak diubah.
+
+### Cara memperbarui website ke V3.20
+Ganti `index.html` dan `style.css` dengan file V3.20. Pertahankan `script.js`, `data.js`, `config.js`, `code.gs`, `appsscript.json`, dan seluruh folder `assets/`. Tidak perlu deploy ulang Google Apps Script. Setelah commit ke GitHub Pages, lakukan hard refresh atau buka ulang halaman agar CSS terbaru dimuat.
+
+---
+
 # Absensi Coach SMK BPP — V3.19
 
 ## Catatan pembaruan V3.19 — layout orientasi HP

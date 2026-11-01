@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.19">
+  <link rel="stylesheet" href="style.css?v=3.20">
 </head>
 <body>
   <div class="app-shell">
@@ -168,7 +168,19 @@
       <section id="view-laporan" class="view">
         <div class="page-heading"><p class="eyebrow">BIDANG KESISWAAN</p><h1>Tarik Data & Laporan</h1><p>Rekap absensi coach, lokasi, foto bukti, kehadiran anggota, dan penilaian berdasarkan periode.</p></div>
         <div id="admin-auth" class="neo-card auth-card">
-          <div class="auth-symbol">⌑</div><h2>Akses administrator</h2><p class="muted">Masuk menggunakan akun pengelola yang disimpan pada Script Properties Google Apps Script.</p>
+          <div class="auth-symbol" aria-hidden="true">
+            <svg viewBox="0 0 46 46" role="img" focusable="false">
+              <g class="tie-cut">
+                <path d="M12 8.5 19 12.5 23 10 27 12.5 34 8.5 29.5 18 23 21 16.5 18Z" />
+                <path d="M19.5 18.5 23 21.5 26.5 18.5 25 27 29 35.5 23 41 17 35.5 21 27Z" />
+              </g>
+              <g class="tie-highlight">
+                <path d="M12 8.5 19 12.5 23 10 27 12.5 34 8.5 29.5 18 23 21 16.5 18Z" />
+                <path d="M19.5 18.5 23 21.5 26.5 18.5 25 27 29 35.5 23 41 17 35.5 21 27Z" />
+              </g>
+            </svg>
+          </div>
+          <h2>Akses administrator</h2><p class="muted">Masuk menggunakan akun pengelola yang disimpan pada Script Properties Google Apps Script.</p>
           <form id="admin-login-form">
             <div class="field"><label for="admin-username">Username</label><input id="admin-username" class="field-input" autocomplete="username" required></div>
             <div class="field"><label for="admin-password">Password</label><input id="admin-password" class="field-input" type="password" autocomplete="current-password" required></div>
@@ -262,8 +274,8 @@
     </div>
   </div>
 
-  <script src="data.js?v=3.19"></script>
-  <script src="config.js?v=3.19"></script>
-  <script src="script.js?v=3.19"></script>
+  <script src="data.js?v=3.20"></script>
+  <script src="config.js?v=3.20"></script>
+  <script src="script.js?v=3.20"></script>
 </body>
 </html>

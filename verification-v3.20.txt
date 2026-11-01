@@ -1,0 +1,13 @@
+V3.20 static verification
+- Administrator heading remains “Akses administrator”.
+- Tie emblem is inline SVG, directly above the administrator heading inside #admin-auth.
+- Emblem is framed with a subtle double border and inset charcoal-stone shadowing.
+- SVG uses two-tone highlight/shadow paths for the engraved appearance.
+- Mobile sizing is adjusted under the 680px breakpoint.
+- All cache-busting references in index.html are updated to v=3.20.
+- No JavaScript, data, or Google Apps Script logic was changed.
+- node --check script.js: passed.
+- node --check data.js: passed.
+- HTML parsing and unique ID check: passed.
+- CSS brace balance: passed.
+- Browser visual verification was not available in this environment.

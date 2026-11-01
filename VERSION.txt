@@ -1,1 +1,5 @@
-3.19 - Orientation-aware responsive UI: landscape retains the left navigation / right dashboard composition; portrait stacks content, keeps thumb-friendly sticky navigation, uses 2x2 stats and single-column activity cards; safe-area support for modern phones.
+V3.20 — Administrator tie emblem
+- Tarik Data login card adds a tie SVG emblem above “Akses administrator”.
+- Framed square surface uses inset charcoal-stone shadows and engraved SVG highlights.
+- Responsive size for phone widths.
+- Frontend-only change; authentication flow, reporting, attendance, backend, and orientation layouts remain unchanged.

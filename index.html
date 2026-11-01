@@ -8,63 +8,95 @@
   <title>Ekstrakurikuler SMK BPP Bandung — Absensi Coach</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.3">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3.4">
 </head>
 <body>
   <div class="app-shell">
     <header class="site-header neo-card">
-      <a class="brand" href="#beranda" aria-label="Beranda SMK BPP">
-        <span class="brand-logo-wrap" aria-label="Logo ekstrakurikuler SMK BPP">
-          <img id="school-logo" class="brand-logo" alt="Logo Ekstrakurikuler SMK BPP Bandung" decoding="async" fetchpriority="high" hidden>
+      <a class="brand" href="#beranda" aria-label="Beranda SMK BPP Bandung">
+        <span class="brand-logo-wrap" aria-label="Logo SMK BPP Bandung">
+          <img id="school-logo" class="brand-logo" alt="Logo SMK BPP Bandung" decoding="async" fetchpriority="high" hidden>
           <span id="brand-fallback" class="brand-mark" aria-hidden="true">BPP</span>
         </span>
-        <span class="brand-copy"><strong>SMK BALAI PERGURUAN PUTRI</strong><small>BANDUNG · EKSTRAKURIKULER</small></span>
+        <span class="brand-copy">
+          <strong>SMK BPP BANDUNG</strong>
+          <small>EXTRACURRICULAR MANAGEMENT</small>
+        </span>
       </a>
-      <div class="header-meta"><span class="live-indicator"></span><span id="today-label">Memuat tanggal…</span></div>
+      <div class="header-meta">
+        <span class="calendar-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M7.5 3v4M16.5 3v4M4 9.5h16M8 13h2M14 13h2M8 17h2"/></svg>
+        </span>
+        <span id="today-label">Memuat tanggal…</span>
+        <span class="header-divider" aria-hidden="true"></span>
+        <span class="system-status"><i></i>Aktif</span>
+      </div>
     </header>
 
-    <nav class="main-nav neo-card" aria-label="Navigasi utama">
-      <button class="nav-btn active" type="button" data-view="beranda"><span>⌂</span>Beranda</button>
-      <button class="nav-btn" type="button" data-view="absensi"><span>▣</span>Absensi Coach</button>
-      <button class="nav-btn" type="button" data-view="laporan"><span>⇩</span>Tarik Data</button>
-    </nav>
+    <div class="workspace">
+      <nav class="main-nav neo-card" aria-label="Navigasi utama">
+        <div class="nav-main-links">
+          <button class="nav-btn active" type="button" data-view="beranda" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Beranda</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="absensi">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M8 13l2.5 2.5L16.5 10"/></svg><span>Absensi Coach</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="absensi" data-scroll="member-workspace">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V11M10 20V5M16 20V8M22 20V2"/><path d="M2 20h21"/></svg><span>Penilaian Anggota</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="laporan">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h8"/></svg><span>Tarik Data</span>
+          </button>
+        </div>
+        <div class="nav-separator"></div>
+        <button class="nav-btn nav-about" type="button" data-view="beranda" data-scroll="about-strip">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5h.01"/></svg><span>Tentang</span>
+        </button>
+        <div class="nav-ornament" aria-hidden="true"><span></span><span></span><span></span></div>
+      </nav>
 
-    <main>
+      <main>
       <section id="view-beranda" class="view active">
-        <section class="hero neo-card">
+        <section class="hero neo-card" aria-label="Ekstrakurikuler SMK BPP Bandung">
+          <div class="hero-photo" aria-hidden="true"></div>
           <div class="hero-copy">
-            <p class="eyebrow">STUDENT DEVELOPMENT · TA 2025/2026 REFERENCE</p>
-            <h1>Ruang untuk<br><span>Bertumbuh & Berprestasi.</span></h1>
-            <p class="hero-text">Enam program ekstrakurikuler SMK Balai Perguruan Putri Bandung menjadi ruang pembinaan minat, bakat, karakter, keterampilan, dan prestasi peserta didik.</p>
-            <button class="button button-primary" type="button" data-go="absensi">Buka portal coach <span>↗</span></button>
+            <p class="eyebrow">PROGRAM PENGEMBANGAN DIRI · SMK BPP</p>
+            <h1>EKSTRAKURIKULER<br><span>SMK BPP BANDUNG</span></h1>
+            <p class="hero-text">“Mengembangkan Bakat, Membangun Karakter, Meraih Prestasi”</p>
           </div>
-          <div class="hero-art" aria-hidden="true">
-            <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
-            <div class="art-core"><span>6</span><small>PROGRAM<br>EKSKUL</small></div>
-            <div class="art-label art-label-top">SMK BPP</div><div class="art-label art-label-bottom">DISCIPLINE · CREATIVITY · ACHIEVEMENT</div>
-          </div>
-          <div class="hero-bottom"><span>PROGRAM KESISWAAN · BANDUNG</span><span>01 / 03</span></div>
         </section>
 
         <section class="stats-grid" aria-label="Ringkasan ekstrakurikuler">
-          <article class="stat-card neo-card"><span class="stat-label">TOTAL EKSTRAKURIKULER</span><strong>06</strong><small>Bidang aktif</small></article>
-          <article class="stat-card neo-card"><span class="stat-label">PARTISIPASI AKTIF</span><strong>162</strong><small>Entri partisipasi siswa</small></article>
-          <article class="stat-card neo-card"><span class="stat-label">EKSKUL TERFAVORIT</span><strong class="stat-word">Seni Musik</strong><small>44 siswa · 27,2%</small></article>
-          <article class="stat-card neo-card"><span class="stat-label">JADWAL LATIHAN</span><strong class="stat-word">Terintegrasi</strong><small>Senin – Kamis</small></article>
+          <article class="stat-card neo-card">
+            <span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 19c0-3.2 2.6-5.5 6-5.5s6 2.3 6 5.5M14 14c3.5-.9 7 .9 7 4.5"/></svg></span>
+            <span class="stat-content"><strong>6</strong><small>Bidang Ekstrakurikuler</small></span>
+          </article>
+          <article class="stat-card neo-card">
+            <span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 4h10v3a5 5 0 0 1-10 0zM7 6H4v1a4 4 0 0 0 4 4M17 6h3v1a4 4 0 0 1-4 4M12 12v5M8 21h8M9 17h6v4H9z"/></svg></span>
+            <span class="stat-content"><strong>162</strong><small>Total Partisipasi</small></span>
+          </article>
+          <article class="stat-card neo-card">
+            <span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2-4.5-4.4 6.3-.9z"/></svg></span>
+            <span class="stat-content"><strong>44</strong><small>Partisipasi Aktif · 27,2%</small></span>
+          </article>
+          <article class="stat-card neo-card">
+            <span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M7 14h2M12 14h2M17 14h.01M7 18h2"/></svg></span>
+            <span class="stat-content"><strong class="stat-word">Terintegrasi</strong><small>Jadwal Absensi · Jul 2025 – Jan 2026</small></span>
+          </article>
         </section>
 
-        <div class="section-heading">
-          <div><p class="eyebrow">OUR EXTRACURRICULARS</p><h2>Enam bidang, satu ruang berkembang.</h2></div>
-          <p class="section-note">Data pembina, ketua, jumlah partisipasi, dan jadwal mengacu pada laporan TA 2025/2026.</p>
-        </div>
-        <section id="extracurricular-grid" class="program-grid" aria-label="Daftar ekstrakurikuler">
-          <div class="empty-state">Memuat program ekstrakurikuler…</div>
+        <section class="program-panel neo-card" aria-label="Daftar ekstrakurikuler">
+          <div class="program-panel-heading"><span class="heading-marker"></span><h2>Daftar Ekstrakurikuler</h2></div>
+          <section id="extracurricular-grid" class="program-grid">
+            <div class="empty-state">Memuat program ekstrakurikuler…</div>
+          </section>
         </section>
 
-        <section class="about-strip neo-card">
-          <div><p class="eyebrow">PRESENSI TERINTEGRASI</p><h2>Catat kegiatan dengan lebih tertib.</h2></div>
-          <p>Coach dapat melakukan absensi dengan foto dan lokasi, memeriksa kehadiran anggota, serta mencatat evaluasi. Pengelola dapat mengunduh rekap untuk pelaporan Bidang Kesiswaan.</p>
+        <section id="about-strip" class="quote-strip neo-card">
+          <span class="quote-rule"></span><span class="quote-mark" aria-hidden="true">“</span>
+          <p>Bersama Ekstrakurikuler, Kita Tumbuh Lebih Baik</p><span class="quote-rule"></span>
         </section>
         <footer class="site-footer"><span>© <span id="year"></span> SMK Balai Perguruan Putri Bandung</span><span>Sistem Absensi & Evaluasi Ekstrakurikuler</span></footer>
       </section>
@@ -163,10 +195,11 @@
           </section>
         </div>
       </section>
-    </main>
+      </main>
+    </div>
   </div>
-  <script src="data.js?v=3.3"></script>
-  <script src="config.js?v=3.3"></script>
-  <script src="script.js?v=3.3"></script>
+  <script src="data.js?v=3.4"></script>
+  <script src="config.js?v=3.4"></script>
+  <script src="script.js?v=3.4"></script>
 </body>
 </html>

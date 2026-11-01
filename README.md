@@ -1,6 +1,6 @@
 # Sistem Absensi Coach & Evaluasi Ekstrakurikuler — SMK BPP Bandung
 
-Versi 3.3 menyempurnakan identitas visual dengan enam emblem khusus ekstrakurikuler, efek ukiran pada tipografi, serta lapisan neumorphism yang lebih berdimensi. Backend tetap kompatibel dengan API V3.2. Versi ini mempertahankan alur absensi one-tap dan memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
+Versi 3.4 menyusun ulang beranda agar mengikuti komposisi gambar referensi: header besar di atas, navigasi vertikal di kiri, banner foto gedung, empat kartu statistik, enam kartu ekstrakurikuler dalam grid 3×2, dan panel kutipan. Enam emblem SVG khusus, efek ukiran pada tipografi, serta lapisan neumorphism 3D tetap dipertahankan. Backend tetap kompatibel dengan API V3.2. Versi ini mempertahankan alur absensi one-tap dan memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
 
 ## Fitur utama
 
@@ -26,13 +26,14 @@ Total di dokumen sumber adalah **162 entri partisipasi aktif**. Karena dokumen j
 
 Dokumen sumber berisi jumlah anggota dan struktur pembina, tetapi tidak menyertakan daftar lengkap nama anggota per ekstrakurikuler. Karena itu, roster tidak diisi dengan nama contoh atau data rekaan. Pengelola harus mengisi daftar nama siswa pada sheet `AnggotaAktif` sebelum coach dapat mengabsen anggota.
 
-## Pembaruan tampilan V3.3
+## Pembaruan tampilan V3.4
 
-- Logo sekolah utama memakai kotak logo 160 px pada desktop, 112 px pada ponsel, dan 96 px untuk layar sangat kecil; gambar menggunakan `object-fit: contain` agar logo tidak terpotong.
+- Logo sekolah utama memakai medali 132 px pada desktop, 88 px pada ponsel, dan 75 px untuk layar sangat kecil; gambar menggunakan `object-fit: contain` agar logo tidak terpotong.
 - Setiap ekstrakurikuler memiliki emblem SVG khusus di `assets/logos/`: not musik, buku terbuka untuk English Club, sarung tinju, bola futsal, figur tari, dan bola basket.
 - Emblem menggunakan bahan visual yang sama: medali batu gelap, rim hijau, highlight bevel, dan bayangan timbul 3D. Bentuk simbol dibedakan agar tetap mudah dikenali.
 - Tipografi memakai bayangan ukiran/engraving dengan highlight halus dan bayangan gelap. Panel, kartu, medali, dan tombol memakai beberapa lapis outer shadow dan inset highlight untuk kedalaman neumorphism.
-- Tidak ada perubahan backend; semua fungsi absensi satu sentuhan, kamera, GPS, roster, penilaian, dan DOCX tetap menggunakan API V3.2.
+- Foto gedung pada banner utama disimpan sebagai `assets/hero-school.jpg` dan merupakan crop dari referensi yang diberikan pengguna.
+- Tidak ada perubahan backend; semua fungsi absensi satu sentuhan, kamera, GPS, roster, penilaian, dan DOCX tetap menggunakan API V3.2. Detail setiap ekskul kini dibuka melalui tombol panah pada kartu, supaya beranda tetap ringkas seperti referensi.
 
 ## Isi paket
 
@@ -46,6 +47,16 @@ Dokumen sumber berisi jumlah anggota dan struktur pembina, tetapi tidak menyerta
 - `code.gs` — backend Apps Script, database Sheets, pembuatan link coach, upload foto ke Drive, timestamp server, dan generator DOCX.
 - `appsscript.json` — manifest Apps Script.
 - `Template_Laporan_Absensi_Ekstrakurikuler.docx` — contoh layout laporan kosong yang mengikuti identitas visual dokumen sekolah.
+
+## Kesesuaian layout V3.4 dengan gambar referensi
+
+- Header sekolah memenuhi lebar halaman, logo berada di kiri, judul sekolah dan tanggal di sisi kanan.
+- Sidebar navigasi berada di kiri pada desktop; pada HP berubah menjadi navigasi horizontal yang tetap dapat disentuh.
+- Banner beranda menggunakan foto fasad gedung yang dipotong dari gambar referensi yang diunggah, ditempatkan pada `assets/hero-school.jpg`.
+- Statistik ditampilkan dalam empat kartu sejajar pada desktop.
+- Enam ekstrakurikuler ditampilkan dalam grid 3 kolom × 2 baris pada desktop; pada layar kecil grid berubah menjadi dua kolom atau satu kolom.
+- Tombol panah di kartu membuka detail pembina, ketua, jadwal, visi, misi, kegiatan, dan target kejuaraan.
+- Panel kutipan diletakkan di bawah grid seperti komposisi referensi.
 
 ## Instalasi Google Sheets dan Apps Script
 
@@ -82,7 +93,7 @@ Dokumen sumber berisi jumlah anggota dan struktur pembina, tetapi tidak menyerta
 3. Pastikan `WEBSITE_URL` pada Script Properties menunjuk ke alamat publik website yang sama.
 4. Buka website melalui URL publik. Uji menu Beranda, lalu buka link coach dari sheet `Coach`.
 
-## Pemeriksaan setelah update V3.3
+## Pemeriksaan setelah update V3.4
 
 - Buka website di desktop dan HP; pastikan logo sekolah terlihat besar di kiri atas dan keenam emblem tampil pada kartu program. Jika emblem tidak muncul, pastikan folder `assets/logos/` ikut diunggah dengan nama file dan struktur folder yang sama. Jika belum, periksa apakah nama file benar-benar `logo.png` (atau salah satu ekstensi yang didukung) dan berada satu folder dengan `index.html`.
 - Klik ketiga menu navigasi dan tombol “Buka portal coach”.
@@ -134,10 +145,8 @@ File yang diberikan adalah **Laporan Evaluasi & Kinerja Ekstrakurikuler TA 2025/
 - Endpoint health backend mengembalikan versi `3.2`.
 
 
-## Pembaruan tampilan V3.2.1
-- Logo header diperbesar hingga maksimum 118 px pada desktop dan 82 px pada ponsel (74 px pada layar sangat kecil).
-- Banner header diperbesar dengan tinggi minimum 164 px pada desktop, menyesuaikan otomatis pada ponsel.
-- Nama sekolah dan subjudul header diperbesar serta ditata ulang agar tetap terbaca pada layar sempit.
-- Heading hero beranda diperbesar.
+## Catatan perubahan sebelumnya V3.2.1
+- Logo utama kemudian disetel ulang pada V3.4 menjadi 132 px pada desktop dan 88 px pada ponsel.
+- Struktur header V3.4 mengikuti gambar referensi: logo besar di kiri, nama sekolah di sampingnya, serta tanggal dan status di sisi kanan.
 - Backend tetap versi API 3.2; tidak perlu deployment Code.gs baru untuk perubahan visual ini.
-- Setelah mengganti file, lakukan hard refresh atau bersihkan cache browser agar style.css?v=3.2.1 termuat.
+- Setelah mengganti file V3.4, lakukan hard refresh agar style.css?v=3.4 termuat.

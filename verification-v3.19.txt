@@ -1,0 +1,12 @@
+V3.19 — Orientation-aware responsive layout verification
+
+Static checks: see verification performed during packaging.
+- Landscape breakpoint preserves sidebar-left / content-right composition.
+- Narrow landscape breakpoint retains compact top navigation for very narrow horizontal screens.
+- Portrait breakpoint stacks page content, preserves sticky top navigation, uses 2-column stats and 1-column activity cards.
+- Operational pages include mobile spacing, stacked forms, camera sizing, and horizontally scrollable report tables.
+- viewport-fit=cover is enabled and safe-area insets are used.
+- No orientation lock or forced rotation is applied.
+- Backend files and application logic are unchanged from V3.18.
+
+Live-browser visual test was not performed in this environment; layout rules were validated statically.

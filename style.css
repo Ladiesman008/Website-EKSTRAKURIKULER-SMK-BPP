@@ -1665,3 +1665,427 @@ html { scroll-behavior:smooth; }
     transform:translate3d(var(--emoji-x,50vw),var(--emoji-y,50vh),0) translate(-50%,-50%) !important;
   }
 }
+
+
+/* =====================================================================
+   V3.18 — PRECISELY CENTERED SIGNATURE CLOSE CONTROL
+   SVG cross avoids font-baseline drift inside the circular button.
+   ===================================================================== */
+.signature-glass-banner {
+  position:relative;
+  padding-top:24px;
+  padding-right:54px;
+}
+.signature-close {
+  position:absolute !important;
+  top:10px !important;
+  right:10px !important;
+  width:34px !important;
+  height:34px !important;
+  min-width:34px !important;
+  min-height:34px !important;
+  max-width:34px !important;
+  max-height:34px !important;
+  box-sizing:border-box !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:0 !important;
+  margin:0 !important;
+  border-width:1px !important;
+  border-style:solid !important;
+  border-color:rgba(200,207,214,.19) !important;
+  border-radius:50% !important;
+  line-height:0 !important;
+  font-size:0 !important;
+  text-align:center !important;
+  vertical-align:middle !important;
+  transform:none;
+  cursor:pointer;
+  pointer-events:auto;
+}
+.signature-close svg {
+  display:block !important;
+  width:14px !important;
+  height:14px !important;
+  min-width:14px !important;
+  min-height:14px !important;
+  margin:0 !important;
+  overflow:visible;
+}
+.signature-close svg path {
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.signature-close:hover {
+  filter:brightness(1.12);
+}
+.signature-close:active {
+  transform:scale(.94) !important;
+}
+.signature-close:focus-visible {
+  outline:2px solid rgba(170,180,188,.58);
+  outline-offset:3px;
+}
+@media (max-width:760px) {
+  .signature-glass-banner { padding:22px 48px 15px 15px !important; }
+  .signature-close {
+    top:8px !important;
+    right:8px !important;
+    width:32px !important;
+    height:32px !important;
+    min-width:32px !important;
+    min-height:32px !important;
+    max-width:32px !important;
+    max-height:32px !important;
+  }
+  .signature-close svg { width:13px !important; height:13px !important; min-width:13px !important; min-height:13px !important; }
+}
+
+
+/* =====================================================================
+   V3.19 — ORIENTATION-AWARE RESPONSIVE LAYOUT
+   Landscape keeps the dashboard's left-sidebar / right-content structure.
+   Portrait reflows content into a readable, thumb-friendly single column.
+   No orientation lock: the UI responds automatically when the device turns.
+   ===================================================================== */
+
+/* Shared mobile ergonomics and safe-area handling. */
+@supports (padding: max(0px)) {
+  body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+}
+html { min-width: 320px; }
+body { overflow-x: hidden; }
+button, a, input, select, textarea { touch-action: manipulation; }
+
+/* PHONE PORTRAIT — stacked content, persistent top navigation, clear cards. */
+@media screen and (orientation: portrait) and (max-width: 760px) {
+  html { scroll-padding-top: calc(82px + env(safe-area-inset-top)); }
+  .app-shell {
+    width: min(calc(100% - 22px), 560px);
+    padding-top: calc(10px + env(safe-area-inset-top));
+    padding-bottom: calc(28px + env(safe-area-inset-bottom));
+  }
+  .site-header {
+    gap: 8px 12px;
+    padding: 10px 12px;
+    border-radius: 20px;
+  }
+  .brand { gap: 11px; }
+  .brand-logo-wrap { width: 68px; height: 68px; flex-basis: 68px; }
+  .brand-copy strong { font-size: clamp(17px, 4.7vw, 23px); line-height: 1.2; }
+  .brand-copy small { margin-top: 4px; font-size: 8px; letter-spacing: .09em; }
+  .header-meta {
+    min-height: 36px;
+    padding: 4px 9px;
+    gap: 7px;
+    font-size: 9px;
+  }
+  .workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .main-nav {
+    position: sticky;
+    top: calc(env(safe-area-inset-top) + 5px);
+    z-index: 40;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-height: 0;
+    gap: 5px;
+    padding: 6px;
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .nav-main-links {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: row;
+    min-width: 0;
+    gap: 3px;
+  }
+  .nav-btn {
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 54px;
+    gap: 3px;
+    padding: 5px 2px;
+    border-radius: 12px;
+    font-size: clamp(7px, 2.05vw, 9px);
+    line-height: 1.16;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+  .nav-btn svg { width: 18px; height: 18px; flex: 0 0 18px; }
+  .nav-separator { width: 1px; height: 30px; flex: 0 0 1px; margin: 0 1px; }
+  .nav-about { flex: 0 0 46px; min-height: 54px; }
+  .nav-about span { max-width: 100%; }
+  .nav-ornament { display: none !important; }
+  main { width: 100%; }
+  .hero {
+    min-height: clamp(176px, 48vw, 218px);
+    padding: 22px 15px;
+    border-radius: 20px;
+  }
+  .hero-copy { max-width: 100%; text-align: center; }
+  .hero .eyebrow { font-size: 8px; letter-spacing: .12em; line-height: 1.5; }
+  .hero h1 { font-size: clamp(23px, 6.7vw, 34px); line-height: 1.16; overflow-wrap: anywhere; }
+  .hero-text { max-width: 34em; margin: 9px auto 0; font-size: 11px; line-height: 1.55; }
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 11px 0;
+  }
+  .stat-card {
+    min-height: 86px;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 16px;
+  }
+  .stat-icon { width: 42px; height: 42px; flex-basis: 42px; }
+  .stat-icon svg { width: 22px; height: 22px; }
+  .stat-content { gap: 3px; }
+  .stat-content strong { font-size: clamp(20px, 5.2vw, 25px); line-height: 1.12; }
+  .stat-content strong.stat-word { font-size: clamp(11px, 3.2vw, 14px); }
+  .stat-content small { font-size: 9px; line-height: 1.35; overflow-wrap: anywhere; }
+  .program-panel { padding: 13px 11px; border-radius: 19px; }
+  .program-panel-heading { margin: 0 0 11px 2px; }
+  .program-panel-heading h2 { font-size: 16px; }
+  .program-grid { grid-template-columns: minmax(0, 1fr); gap: 9px; }
+  .program-card.program-open {
+    min-height: 86px;
+    padding: 9px 10px;
+    border-radius: 16px;
+  }
+  .program-open .program-brand {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 12px;
+  }
+  .program-emblem-wrap { width: 62px; height: 62px; flex: 0 0 62px; }
+  .program-open .program-title-stack { flex: 1 1 auto; width: auto; text-align: left !important; }
+  .program-open .program-title {
+    margin: 0 0 4px;
+    font-size: clamp(14px, 3.9vw, 17px);
+    line-height: 1.25;
+  }
+  .program-open .program-count { font-size: 10px; line-height: 1.35; }
+  .program-open .program-open-arrow { flex-basis: 34px; width: 34px; height: 34px; font-size: 28px; }
+  .quote-strip {
+    min-height: 82px;
+    gap: 7px;
+    margin-top: 11px;
+    padding: 10px 62px 10px 8px;
+    border-radius: 16px;
+  }
+  .quote-rule { width: 6%; }
+  .quote-mark { font-size: 30px; }
+  .quote-strip p { max-width: calc(100% - 32px); font-size: 10px; line-height: 1.45; }
+  .quote-leaf-ornament { right: 0; bottom: 0; width: 61px; height: 78px; opacity: .72; }
+  .site-footer { gap: 4px; margin: 12px 3px 0; font-size: 8px; line-height: 1.5; }
+
+  /* The same portrait flow is kept on operational pages. */
+  .page-heading { margin: 4px 2px 14px; }
+  .page-heading h1 { font-size: clamp(23px, 6vw, 29px); }
+  .page-heading > p:last-child { font-size: 12px; line-height: 1.6; }
+  .coach-banner { align-items: flex-start; gap: 10px; padding: 14px; }
+  .coach-banner h2 { font-size: 17px; overflow-wrap: anywhere; }
+  .checkin-card, .form-card, .report-card { padding: 14px 12px; border-radius: 18px; }
+  .form-heading { gap: 10px; margin-bottom: 14px; }
+  .form-heading h2 { font-size: 17px; }
+  .form-heading .muted, .small-muted { font-size: 11px; line-height: 1.6; }
+  .checkin-start-button, .button { min-height: 46px; }
+  .capture-layout { grid-template-columns: minmax(0, 1fr); gap: 13px; }
+  .camera-frame { width: 100%; min-height: 0; aspect-ratio: 4 / 3; }
+  .camera-frame video, .camera-frame img { max-height: min(58dvh, 390px); }
+  .capture-buttons { gap: 8px; }
+  .capture-buttons .button { flex: 1 1 100%; }
+  .member-row { grid-template-columns: minmax(0, 1fr); gap: 9px; padding: 12px; }
+  .member-id { grid-column: auto; }
+  .member-id strong { font-size: 13px; }
+  .member-field label, .field label { font-size: 10px; }
+  .field-input { min-height: 45px; font-size: 13px; }
+  .field-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .form-actions, .download-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  .form-actions .button, .download-row .button { width: 100%; }
+  .report-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat-box { min-width: 0; padding: 10px; }
+  .table-wrap { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+  table { min-width: 620px; }
+  .about-popover { width: calc(100vw - 22px); max-height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+  .program-popover { width: calc(100vw - 24px); max-height: calc(82dvh - env(safe-area-inset-bottom)); }
+}
+
+/* NARROW LANDSCAPE PHONES — keep controls at the top while using the wider frame. */
+@media screen and (orientation: landscape) and (max-width: 680px) and (max-height: 600px) {
+  .app-shell { width: calc(100% - 18px); padding: 8px 0 16px; }
+  .site-header { min-height: 74px; padding: 7px 10px; flex-wrap: nowrap; gap: 8px; }
+  .brand { gap: 9px; }
+  .brand-logo-wrap { width: 58px; height: 58px; flex-basis: 58px; }
+  .brand-copy strong { font-size: clamp(15px, 3vw, 20px); }
+  .brand-copy small { margin-top: 3px; font-size: 7px; letter-spacing: .08em; }
+  .header-meta { min-height: 32px; padding: 3px 7px; gap: 5px; font-size: 8px; }
+  .calendar-badge { width: 24px; height: 24px; }
+  .calendar-badge svg { width: 14px; height: 14px; }
+  .workspace { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .main-nav { position: sticky; top: 5px; z-index: 40; flex-direction: row; min-height: 0; padding: 5px; gap: 4px; border-radius: 13px; }
+  .nav-main-links { flex-direction: row; gap: 3px; }
+  .nav-btn { min-height: 43px; padding: 3px 2px; font-size: 7px; gap: 2px; }
+  .nav-btn svg { width: 15px; height: 15px; flex-basis: 15px; }
+  .nav-separator { height: 24px; margin: 0 1px; }
+  .nav-about { flex: 0 0 40px; min-height: 43px; }
+  .nav-ornament { display: none !important; }
+  .hero { min-height: 138px; padding: 15px 12px; border-radius: 16px; }
+  .hero h1 { font-size: clamp(20px, 4.4vw, 28px); }
+  .hero-text { margin-top: 6px; font-size: 9px; }
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin: 9px 0; }
+  .stat-card { min-height: 66px; padding: 7px; gap: 6px; border-radius: 13px; }
+  .stat-icon { width: 34px; height: 34px; flex-basis: 34px; }
+  .stat-icon svg { width: 19px; height: 19px; }
+  .stat-content strong { font-size: 19px; }
+  .stat-content small { font-size: 8px; }
+  .program-panel { padding: 10px; border-radius: 15px; }
+  .program-panel-heading h2 { font-size: 14px; }
+  .program-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .program-card.program-open { min-height: 68px; padding: 6px; border-radius: 12px; }
+  .program-open .program-brand { flex-direction: row; gap: 6px; }
+  .program-emblem-wrap { width: 42px; height: 42px; flex-basis: 42px; }
+  .program-open .program-title { font-size: 11px; margin-bottom: 2px; }
+  .program-open .program-count { font-size: 8px; }
+  .program-open .program-open-arrow { flex-basis: 24px; width: 24px; height: 24px; font-size: 21px; }
+  .quote-strip { min-height: 58px; padding: 7px 48px 7px 7px; gap: 5px; }
+  .quote-strip p { font-size: 8px; }
+  .quote-mark { font-size: 24px; }
+  .quote-leaf-ornament { width: 48px; height: 58px; }
+  .site-footer { font-size: 7px; }
+  .page-heading { margin: 3px 0 10px; }
+  .page-heading h1 { font-size: 22px; }
+  .checkin-card, .form-card, .report-card { padding: 12px; }
+  .capture-layout { grid-template-columns: minmax(0, 1fr) minmax(180px, .8fr); gap: 12px; }
+  .camera-frame { min-height: 0; aspect-ratio: 4 / 3; }
+  .member-row { grid-template-columns: minmax(0, 1fr) minmax(115px, .8fr); }
+  .member-id { grid-column: 1 / -1; }
+  .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* REGULAR MOBILE LANDSCAPE — restore the desktop sidebar / content composition. */
+@media screen and (orientation: landscape) and (min-width: 681px) and (max-width: 1100px) and (max-height: 650px) {
+  html { scroll-padding-top: 12px; }
+  .app-shell { width: calc(100% - 20px); padding: 9px 0 16px; }
+  .site-header { min-height: 84px; padding: 8px 14px; gap: 12px; border-radius: 20px; }
+  .brand { gap: 12px; }
+  .brand-logo-wrap { width: 66px; height: 66px; flex-basis: 66px; padding: 4px; }
+  .brand-copy strong { font-size: clamp(17px, 2.45vw, 25px); }
+  .brand-copy small { margin-top: 4px; font-size: 8px; letter-spacing: .1em; }
+  .header-meta { min-height: 37px; padding: 4px 9px; gap: 6px; font-size: 9px; }
+  .calendar-badge { width: 27px; height: 27px; }
+  .calendar-badge svg { width: 15px; height: 15px; }
+  .workspace {
+    display: grid;
+    grid-template-columns: 142px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    margin-top: 12px;
+  }
+  .main-nav {
+    position: sticky;
+    top: 8px;
+    z-index: 25;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    width: 100%;
+    max-height: calc(100dvh - 104px);
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 8px 6px;
+    border-radius: 17px;
+  }
+  .nav-main-links { flex-direction: column; gap: 5px; }
+  .nav-btn {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    min-height: 43px;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: 12px;
+    font-size: 9px;
+    line-height: 1.2;
+    text-align: left;
+  }
+  .nav-btn svg { width: 17px; height: 17px; flex: 0 0 17px; }
+  .nav-separator { width: auto; height: 1px; margin: 3px 5px; }
+  .nav-about { min-height: 40px; }
+  .nav-ornament { display: none !important; }
+  main { min-width: 0; }
+  .hero { min-height: 150px; padding: 16px 18px 16px 34%; border-radius: 18px; }
+  .hero h1 { font-size: clamp(21px, 3vw, 30px); }
+  .hero-text { margin-top: 7px; font-size: 10px; }
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+  .stat-card { min-height: 73px; gap: 8px; padding: 8px; border-radius: 14px; }
+  .stat-icon { width: 40px; height: 40px; flex-basis: 40px; }
+  .stat-icon svg { width: 22px; height: 22px; }
+  .stat-content strong { font-size: 22px; }
+  .stat-content strong.stat-word { font-size: 12px; }
+  .stat-content small { font-size: 8px; }
+  .program-panel { padding: 11px; border-radius: 17px; }
+  .program-panel-heading { margin-bottom: 8px; }
+  .program-panel-heading h2 { font-size: 14px; }
+  .program-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .program-card.program-open { min-height: 78px; padding: 7px; border-radius: 13px; }
+  .program-open .program-brand { gap: 7px; }
+  .program-emblem-wrap { width: 52px; height: 52px; flex-basis: 52px; }
+  .program-open .program-title { font-size: 12px; margin-bottom: 2px; }
+  .program-open .program-count { font-size: 8px; }
+  .program-open .program-open-arrow { flex-basis: 27px; width: 27px; height: 27px; font-size: 22px; }
+  .quote-strip { min-height: 65px; margin-top: 9px; padding: 8px 65px 8px 10px; gap: 8px; }
+  .quote-strip p { font-size: 9px; }
+  .quote-mark { font-size: 28px; }
+  .quote-leaf-ornament { width: 57px; height: 68px; }
+  .site-footer { font-size: 7px; }
+  .capture-layout { grid-template-columns: minmax(0, 1fr) minmax(180px, .8fr); gap: 12px; }
+  .camera-frame { min-height: 0; aspect-ratio: 4 / 3; }
+  .checkin-card, .form-card, .report-card { padding: 14px; }
+  .member-row { grid-template-columns: minmax(0, 1fr) minmax(115px, .8fr); }
+  .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Wide landscape phones can fit three activity cards without squeezing labels. */
+@media screen and (orientation: landscape) and (min-width: 900px) and (max-width: 1100px) and (max-height: 650px) {
+  .workspace { grid-template-columns: 154px minmax(0, 1fr); }
+  .program-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .program-card.program-open { min-height: 88px; padding: 7px; }
+  .program-emblem-wrap { width: 48px; height: 48px; flex-basis: 48px; }
+  .program-open .program-title { font-size: 11px; }
+  .program-open .program-open-arrow { flex-basis: 24px; width: 24px; height: 24px; }
+}
+
+/* Very small portrait devices: avoid squeezed text and keep one card per row. */
+@media screen and (orientation: portrait) and (max-width: 360px) {
+  .app-shell { width: calc(100% - 16px); }
+  .brand-logo-wrap { width: 58px; height: 58px; flex-basis: 58px; }
+  .brand-copy strong { font-size: 16px; }
+  .brand-copy small { font-size: 7px; }
+  .header-meta { font-size: 8px; }
+  .nav-btn { font-size: 7px; }
+  .nav-btn svg { width: 16px; height: 16px; flex-basis: 16px; }
+  .nav-about { flex-basis: 39px; }
+  .stat-card { padding: 8px; }
+  .stat-icon { width: 36px; height: 36px; flex-basis: 36px; }
+  .stat-content small { font-size: 8px; }
+  .program-emblem-wrap { width: 56px; height: 56px; flex-basis: 56px; }
+  .program-open .program-title { font-size: 13px; }
+  .program-open .program-count { font-size: 9px; }
+}

@@ -1,0 +1,15 @@
+V3.18 — Signature close alignment verification
+
+Checks passed:
+1. index.html contains exactly one #close-signature button.
+2. The close icon is an inline SVG (no font glyph baseline dependency).
+3. The close button has explicit border-box sizing, zero padding/margin, fixed square dimensions, and CSS grid centering.
+4. The SVG is centered via display:block and explicit dimensions.
+5. Desktop and mobile have explicit top/right offsets and dimensions.
+6. Signature banner padding reserves space for the close control.
+7. HTML IDs are unique.
+8. CSS braces are balanced.
+9. JavaScript syntax checks are clean.
+10. Frontend asset cache version is 3.18.
+
+Browser rendering test was attempted with Chromium but navigation to the local test server was blocked by the environment (ERR_BLOCKED_BY_ADMINISTRATOR). Therefore, no live-browser visual test is claimed.

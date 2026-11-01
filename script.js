@@ -3,29 +3,20 @@
 
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-  const DIVISIONS = [
-    'Musik Modern',
-    'Musik Tradisional (Angklung & Gamelan)',
-    'Olah Vokal & Paduan Suara'
-  ];
-  const ATTENDANCE_STATUSES = ['Hadir', 'Izin', 'Sakit', 'Alpa'];
+  const STATUSES = ['Hadir', 'Izin', 'Sakit', 'Alpa'];
   const coachToken = new URLSearchParams(window.location.search).get('coach') || '';
-
   let coach = null;
   let members = [];
+  let checkin = null;
+  let cameraStream = null;
+  let currentLocation = null;
+  let capturedPhoto = '';
   let adminToken = '';
   let currentReport = null;
 
   const escapeHTML = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[ch]);
-
-  function localDateString(date = new Date()) {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
-  }
 
   function showMessage(element, message, kind = '') {
     if (!element) return;
@@ -49,10 +40,7 @@
   }
 
   async function request(action, data = {}, method = 'POST') {
-    if (typeof SCRIPT_URL === 'undefined' || !SCRIPT_URL) {
-      throw new Error('URL backend belum diatur di config.js.');
-    }
-
+    if (typeof SCRIPT_URL === 'undefined' || !SCRIPT_URL) throw new Error('URL backend belum diatur di config.js.');
     let url = SCRIPT_URL;
     const options = { method };
     if (method === 'GET') {
@@ -62,7 +50,6 @@
       options.headers = { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' };
       options.body = new URLSearchParams({ action, ...data });
     }
-
     const response = await fetch(url, options);
     if (!response.ok) throw new Error(`Server merespons HTTP ${response.status}.`);
     const result = await response.json();
@@ -76,154 +63,353 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function renderMembers() {
-    const list = $('#member-list');
-    $('#member-count').textContent = `${members.length} anggota aktif pada divisi ini`;
-
-    if (!members.length) {
-      list.innerHTML = '<div class="empty-state">Belum ada anggota aktif yang terdaftar pada divisi coach ini.</div>';
-      return;
-    }
-
-    list.innerHTML = members.map((member, index) => `
-      <article class="member-row" data-member-id="${escapeHTML(member.id)}">
-        <div class="member-id">
-          <strong>${escapeHTML(member.nama)}</strong>
-          <span>${escapeHTML(member.kelas || 'Kelas belum diisi')} · ${escapeHTML(member.divisi || '')}</span>
+  function renderPrograms() {
+    const symbols = { Seni: '✧', Bahasa: '文', Olahraga: '◉' };
+    $('#extracurricular-grid').innerHTML = EXTRACURRICULARS.map((item, index) => `
+      <article class="program-card neo-card">
+        <div class="program-top"><span class="program-symbol">${symbols[item.category] || '✦'}</span><span class="program-count">${item.count} partisipasi</span></div>
+        <h3>${escapeHTML(item.name)}</h3>
+        <p>${escapeHTML(item.description)}</p>
+        <div class="program-meta">
+          <div class="meta-item"><span>PEMBINA / COACH</span><strong>${item.coaches.map(escapeHTML).join('<br>')}</strong></div>
+          <div class="meta-item"><span>KETUA / KOORDINATOR</span><strong>${escapeHTML(item.chair)}</strong></div>
+          <div class="meta-item"><span>HARI LATIHAN</span><strong>${escapeHTML(item.schedule)}</strong></div>
+          <div class="meta-item"><span>ANGGOTA AKTIF</span><strong>${item.count} siswa (rujukan laporan)</strong></div>
         </div>
-        <div class="member-field">
-          <label for="status-${index}">KEHADIRAN</label>
-          <select class="field-input attendance-status" id="status-${index}" required>
-            <option value="">Pilih status</option>
-            ${ATTENDANCE_STATUSES.map((status) => `<option value="${status}">${status}</option>`).join('')}
-          </select>
-        </div>
-        <div class="member-field">
-          <label for="score-${index}">NILAI (0–100)</label>
-          <input class="field-input member-score" id="score-${index}" type="number" min="0" max="100" step="1" inputmode="numeric" placeholder="0–100" required>
-        </div>
-        <div class="member-field">
-          <label for="note-${index}">CATATAN COACH</label>
-          <input class="field-input member-note" id="note-${index}" type="text" maxlength="180" placeholder="Catatan singkat">
-        </div>
+        <details>
+          <summary>Lihat visi, misi & kegiatan</summary>
+          <div class="program-details">
+            <h4>Visi</h4><p>${escapeHTML(item.vision)}</p>
+            <h4>Misi</h4><ul>${item.missions.map((mission) => `<li>${escapeHTML(mission)}</li>`).join('')}</ul>
+            <h4>Standar kegiatan</h4><ul>${item.activities.map((activity) => `<li>${escapeHTML(activity)}</li>`).join('')}</ul>
+            <h4>Target kejuaraan</h4><p>${escapeHTML(item.competition)}</p>
+            <p class="small-muted">Tanggal sampel absensi pada laporan sumber: ${escapeHTML(item.sampleDates)}.</p>
+          </div>
+        </details>
       </article>
     `).join('');
+
+    const select = $('#report-division');
+    select.innerHTML = '<option value="Semua Ekstrakurikuler">Semua Ekstrakurikuler</option>' +
+      EXTRACURRICULARS.map((item) => `<option value="${escapeHTML(item.name)}">${escapeHTML(item.name)}</option>`).join('');
   }
 
-  async function loadCoach() {
-    const gate = $('#coach-gate');
-    const workspace = $('#coach-workspace');
-    if (!coachToken) {
-      gate.hidden = false;
-      workspace.hidden = true;
-      return;
-    }
-
-    gate.hidden = true;
-    workspace.hidden = false;
-    $('#coach-name').textContent = 'Memverifikasi link…';
-    $('#coach-division').textContent = '';
-    $('#member-list').innerHTML = '<div class="empty-state">Mengambil daftar anggota…</div>';
-
-    try {
-      const result = await request('coach_info', { coach: coachToken }, 'GET');
-      if (result.result !== 'success') throw new Error(result.message || 'Link coach tidak valid atau sudah dinonaktifkan.');
-      coach = result.coach;
-      members = Array.isArray(result.members) ? result.members : [];
-      $('#coach-name').textContent = coach.nama;
-      $('#coach-division').textContent = coach.divisi;
-      renderMembers();
-      renderCoachHistory(Array.isArray(result.recent) ? result.recent : []);
-    } catch (error) {
-      workspace.hidden = true;
-      gate.hidden = false;
-      gate.innerHTML = `
-        <div class="gate-icon">!</div>
-        <h2>Link coach tidak dapat digunakan</h2>
-        <p>${escapeHTML(error.message || 'Terjadi kesalahan saat memverifikasi link.')}</p>
-        <p class="small-muted">Hubungi pengelola ekstrakurikuler untuk memeriksa atau menerbitkan link akses baru.</p>
+  function showCoachGate(message) {
+    $('#coach-workspace').hidden = true;
+    $('#coach-gate').hidden = false;
+    if (message) {
+      $('#coach-gate').innerHTML = `
+        <div class="gate-icon">!</div><h2>Link coach tidak dapat digunakan</h2>
+        <p>${escapeHTML(message)}</p><p class="small-muted">Hubungi pengelola untuk memeriksa atau menerbitkan ulang link akses.</p>
       `;
     }
   }
 
-
-  function renderCoachHistory(rows) {
-    const panel = $('#coach-monitor');
-    const body = $('#coach-history-rows');
-    if (!rows.length) {
-      panel.hidden = false;
-      body.innerHTML = '<tr><td colspan="5">Belum ada riwayat penilaian.</td></tr>';
+  async function loadCoach() {
+    if (!coachToken) {
+      showCoachGate('Halaman ini menggunakan link pribadi yang diterbitkan pengelola. Coach tidak perlu membuat akun atau memasukkan kata sandi.');
       return;
     }
-    panel.hidden = false;
-    body.innerHTML = rows.map((row) => `
-      <tr>
-        <td>${escapeHTML(row.dateLabel)}</td>
-        <td><strong>${escapeHTML(row.member)}</strong></td>
-        <td><span class="status-text status-${escapeHTML(row.status)}">${escapeHTML(row.status)}</span></td>
-        <td>${escapeHTML(row.score)}</td>
-        <td>${escapeHTML(row.note || '—')}</td>
-      </tr>
+    $('#coach-gate').hidden = true;
+    $('#coach-workspace').hidden = false;
+    $('#coach-name').textContent = 'Memverifikasi link…';
+    $('#coach-division').textContent = '';
+    try {
+      const result = await request('coach_info', { coach: coachToken }, 'GET');
+      if (result.result !== 'success') throw new Error(result.message || 'Link coach tidak valid.');
+      coach = result.coach;
+      members = Array.isArray(result.members) ? result.members : [];
+      checkin = result.checkin || null;
+      $('#coach-name').textContent = coach.nama;
+      $('#coach-division').textContent = coach.ekstrakurikuler;
+      renderCheckinState();
+      renderMembers();
+      renderHistory(Array.isArray(result.recent) ? result.recent : []);
+      renderCheckinHistory(Array.isArray(result.checkinRecent) ? result.checkinRecent : []);
+    } catch (error) {
+      showCoachGate(error.message || 'Terjadi kesalahan saat memverifikasi link.');
+    }
+  }
+
+  function renderCheckinState() {
+    const existing = $('#checkin-existing');
+    const startArea = $('#checkin-start-area');
+    const captureArea = $('#capture-area');
+    const memberWorkspace = $('#member-workspace');
+    if (checkin) {
+      existing.hidden = false;
+      startArea.hidden = true;
+      captureArea.hidden = true;
+      memberWorkspace.hidden = false;
+      const photoAt = checkin.waktuLabel || 'Waktu tercatat oleh server';
+      $('#checkin-existing-info').textContent = `${photoAt} · Akurasi lokasi ±${checkin.akurasi || '—'} m`;
+      const map = $('#checkin-existing-map');
+      if (checkin.mapUrl) { map.href = checkin.mapUrl; map.hidden = false; } else { map.hidden = true; }
+    } else {
+      existing.hidden = true;
+      startArea.hidden = false;
+      captureArea.hidden = true;
+      memberWorkspace.hidden = true;
+    }
+  }
+
+  function stopCamera() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop());
+      cameraStream = null;
+    }
+    const video = $('#camera-preview');
+    if (video) video.srcObject = null;
+  }
+
+  function getPosition() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) return reject(new Error('Browser ini tidak mendukung akses lokasi.'));
+      navigator.geolocation.getCurrentPosition(
+        (position) => resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: Math.round(position.coords.accuracy || 0)
+        }),
+        (error) => {
+          const messages = {
+            1: 'Izin lokasi ditolak. Izinkan akses lokasi pada pengaturan browser.',
+            2: 'Lokasi perangkat tidak tersedia. Coba aktifkan GPS dan ulangi.',
+            3: 'Permintaan lokasi melewati batas waktu. Coba lagi.'
+          };
+          reject(new Error(messages[error.code] || 'Gagal mendapatkan lokasi perangkat.'));
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+      );
+    });
+  }
+
+  async function startCheckin() {
+    if (!coach || checkin) return;
+    const button = $('#start-checkin');
+    setBusy(button, true, 'Meminta izin…');
+    showMessage($('#checkin-message'), 'Browser akan meminta izin kamera dan lokasi. Pilih Izinkan pada kedua permintaan.');
+    $('#capture-area').hidden = false;
+    $('#camera-placeholder').hidden = false;
+    $('#camera-status').textContent = 'Mengaktifkan kamera…';
+    $('#location-status').textContent = 'Mengambil koordinat GPS…';
+    $('#capture-photo').disabled = true;
+    $('#submit-checkin').disabled = true;
+    capturedPhoto = '';
+    currentLocation = null;
+    $('#photo-preview').hidden = true;
+    $('#camera-preview').hidden = false;
+    $('#retake-photo').hidden = true;
+    try {
+      const cameraPromise = navigator.mediaDevices && navigator.mediaDevices.getUserMedia
+        ? navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'user' }, width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false })
+        : Promise.reject(new Error('Browser tidak mendukung kamera. Buka website melalui HTTPS dan gunakan browser modern.'));
+      const results = await Promise.allSettled([cameraPromise, getPosition()]);
+      if (results[0].status === 'fulfilled') cameraStream = results[0].value;
+      if (results[1].status === 'fulfilled') currentLocation = results[1].value;
+      const failed = results.find((item) => item.status === 'rejected');
+      if (failed) throw failed.reason;
+      const video = $('#camera-preview');
+      video.srcObject = cameraStream;
+      await video.play();
+      $('#camera-placeholder').hidden = true;
+      $('#camera-status').textContent = 'Kamera aktif.';
+      $('#location-status').textContent = `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)} · akurasi ±${currentLocation.accuracy} m`;
+      $('#capture-photo').disabled = false;
+      showMessage($('#checkin-message'), 'Lokasi berhasil diperoleh. Ambil foto untuk melanjutkan.');
+    } catch (error) {
+      stopCamera();
+      $('#camera-status').textContent = 'Kamera/lokasi belum siap.';
+      showMessage($('#checkin-message'), error.message || 'Tidak dapat mengakses kamera atau lokasi.', 'error');
+      $('#capture-area').hidden = false;
+    } finally {
+      setBusy(button, false);
+    }
+  }
+
+  function capturePhoto() {
+    const video = $('#camera-preview');
+    const canvas = $('#photo-canvas');
+    if (!video.videoWidth || !video.videoHeight) {
+      showMessage($('#checkin-message'), 'Tunggu hingga gambar kamera terlihat, lalu ambil foto.', 'error');
+      return;
+    }
+    const maxDimension = 1280;
+    const scale = Math.min(1, maxDimension / Math.max(video.videoWidth, video.videoHeight));
+    canvas.width = Math.round(video.videoWidth * scale);
+    canvas.height = Math.round(video.videoHeight * scale);
+    const context = canvas.getContext('2d', { alpha: false });
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    capturedPhoto = canvas.toDataURL('image/jpeg', 0.78);
+    $('#photo-preview').src = capturedPhoto;
+    $('#photo-preview').hidden = false;
+    video.hidden = true;
+    $('#retake-photo').hidden = false;
+    $('#capture-photo').disabled = true;
+    $('#submit-checkin').disabled = !currentLocation;
+    stopCamera();
+    showMessage($('#checkin-message'), 'Foto berhasil diambil. Periksa hasil foto lalu kirim absensi.');
+  }
+
+  async function retakePhoto() {
+    capturedPhoto = '';
+    $('#photo-preview').hidden = true;
+    $('#camera-preview').hidden = false;
+    $('#camera-placeholder').hidden = true;
+    $('#retake-photo').hidden = true;
+    $('#capture-photo').disabled = true;
+    $('#submit-checkin').disabled = true;
+    try {
+      cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'user' }, width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false });
+      const video = $('#camera-preview');
+      video.srcObject = cameraStream;
+      await video.play();
+      $('#capture-photo').disabled = false;
+      $('#camera-status').textContent = 'Kamera aktif.';
+    } catch (error) {
+      showMessage($('#checkin-message'), 'Kamera tidak dapat dibuka kembali. Tekan Absen Sekarang untuk mengulangi proses izin.', 'error');
+      $('#capture-area').hidden = true;
+      $('#start-checkin').hidden = false;
+    }
+  }
+
+  async function submitCheckin() {
+    if (!coachToken || !currentLocation || !capturedPhoto) {
+      showMessage($('#checkin-message'), 'Foto dan lokasi wajib tersedia sebelum mengirim absensi.', 'error');
+      return;
+    }
+    const button = $('#submit-checkin');
+    setBusy(button, true, 'Menyimpan absensi…');
+    showMessage($('#checkin-message'), 'Mengunggah foto dan menyimpan lokasi serta waktu server…');
+    try {
+      const photoBase64 = capturedPhoto.split(',')[1] || '';
+      const result = await request('save_coach_checkin', {
+        coach: coachToken,
+        latitude: String(currentLocation.latitude),
+        longitude: String(currentLocation.longitude),
+        accuracy: String(currentLocation.accuracy),
+        photoMime: 'image/jpeg',
+        photoBase64
+      });
+      if (result.result !== 'success' && result.alreadyCheckedIn && result.checkin) {
+        checkin = result.checkin;
+        renderCheckinState();
+        stopCamera();
+        showMessage($('#checkin-message'), 'Absensi hari ini sudah tercatat sebelumnya.', 'success');
+        await refreshCoachHistory();
+        return;
+      }
+      if (result.result !== 'success') throw new Error(result.message || 'Absensi gagal disimpan.');
+      checkin = result.checkin;
+      renderCheckinState();
+      showMessage($('#checkin-message'), result.message || 'Absensi coach berhasil tersimpan.', 'success');
+      stopCamera();
+      $('#capture-area').hidden = true;
+      await refreshCoachHistory();
+    } catch (error) {
+      showMessage($('#checkin-message'), error.message || 'Gagal mengirim absensi.', 'error');
+    } finally {
+      setBusy(button, false);
+    }
+  }
+
+  function renderMembers() {
+    const list = $('#member-list');
+    $('#member-count').textContent = `${members.length} nama anggota aktif pada ${coach ? coach.ekstrakurikuler : 'ekstrakurikuler ini'}`;
+    if (!members.length) {
+      list.innerHTML = '<div class="empty-state">Belum ada nama anggota pada sheet AnggotaAktif untuk ekstrakurikuler ini. Pengelola perlu mengisi roster terlebih dahulu; jumlah agregat pada laporan sumber tidak memuat daftar nama siswa.</div>';
+      $('#save-members').disabled = true;
+      return;
+    }
+    $('#save-members').disabled = false;
+    list.innerHTML = members.map((member, index) => `
+      <article class="member-row" data-member-id="${escapeHTML(member.id)}">
+        <div class="member-id"><strong>${escapeHTML(member.nama)}</strong><span>${escapeHTML(member.kelas || 'Kelas belum diisi')}</span></div>
+        <div class="member-field"><label for="status-${index}">KEHADIRAN</label><select class="field-input attendance-status" id="status-${index}" required><option value="">Pilih status</option>${STATUSES.map((status) => `<option value="${status}">${status}</option>`).join('')}</select></div>
+        <div class="member-field"><label for="score-${index}">NILAI (0–100)</label><input class="field-input member-score" id="score-${index}" type="number" min="0" max="100" step="1" inputmode="numeric" placeholder="Opsional"></div>
+        <div class="member-field"><label for="note-${index}">CATATAN</label><input class="field-input member-note" id="note-${index}" type="text" maxlength="250" placeholder="Catatan coach (opsional)"></div>
+      </article>
     `).join('');
   }
 
-  async function saveAttendance(event) {
-    event.preventDefault();
-    const button = $('#save-attendance');
-    const message = $('#attendance-message');
-    if (!coach || !members.length) {
-      showMessage(message, 'Data coach atau anggota belum tersedia.', 'error');
-      return;
-    }
-
-    const date = $('#session-date').value;
-    const session = $('#session-name').value.trim();
-    if (!date || !session) {
-      showMessage(message, 'Tanggal dan nama sesi wajib diisi.', 'error');
-      return;
-    }
-
+  async function saveMembers() {
+    if (!coach || !checkin || !members.length) return;
     const records = [];
     const cards = $$('.member-row');
-    for (let i = 0; i < cards.length; i += 1) {
-      const card = cards[i];
+    for (let index = 0; index < cards.length; index += 1) {
+      const card = cards[index];
       const status = $('.attendance-status', card).value;
-      const scoreText = $('.member-score', card).value;
-      const score = Number(scoreText);
-      if (!status || !ATTENDANCE_STATUSES.includes(status)) {
-        showMessage(message, `Pilih status kehadiran untuk ${members[i].nama}.`, 'error');
+      const scoreText = $('.member-score', card).value.trim();
+      const score = scoreText === '' ? '' : Number(scoreText);
+      if (!STATUSES.includes(status)) {
+        showMessage($('#member-message'), `Pilih status kehadiran untuk ${members[index].nama}.`, 'error');
         $('.attendance-status', card).focus();
         return;
       }
-      if (scoreText === '' || !Number.isFinite(score) || score < 0 || score > 100) {
-        showMessage(message, `Masukkan nilai 0–100 untuk ${members[i].nama}.`, 'error');
+      if (scoreText !== '' && (!Number.isInteger(score) || score < 0 || score > 100)) {
+        showMessage($('#member-message'), `Nilai ${members[index].nama} harus berupa bilangan bulat 0 sampai 100.`, 'error');
         $('.member-score', card).focus();
         return;
       }
       records.push({
-        memberId: members[i].id,
+        memberId: members[index].id,
         status,
-        score,
+        score: scoreText === '' ? '' : String(score),
         note: $('.member-note', card).value.trim()
       });
     }
 
+    const button = $('#save-members');
     setBusy(button, true, 'Menyimpan data…');
-    showMessage(message, 'Data sedang disimpan ke database…');
+    showMessage($('#member-message'), 'Menyimpan kehadiran dan penilaian anggota…');
     try {
-      const result = await request('save_attendance', {
+      const result = await request('save_member_records', {
         coach: coachToken,
-        date,
-        session,
+        checkinId: checkin.id,
         records: JSON.stringify(records)
       });
-      if (result.result !== 'success') throw new Error(result.message || 'Data gagal disimpan.');
-      showMessage(message, result.message || 'Absensi dan penilaian berhasil disimpan.', 'success');
+      if (result.result !== 'success') throw new Error(result.message || 'Data anggota gagal disimpan.');
+      showMessage($('#member-message'), result.message || 'Kehadiran dan evaluasi anggota tersimpan.', 'success');
+      await refreshCoachHistory();
     } catch (error) {
-      showMessage(message, error.message || 'Terjadi kesalahan saat menyimpan data.', 'error');
+      showMessage($('#member-message'), error.message || 'Gagal menyimpan data anggota.', 'error');
     } finally {
       setBusy(button, false);
     }
+  }
+
+  async function refreshCoachHistory() {
+    if (!coachToken) return;
+    const result = await request('coach_info', { coach: coachToken }, 'GET');
+    if (result.result === 'success') {
+      checkin = result.checkin || checkin;
+      renderCheckinHistory(result.checkinRecent || []);
+      renderHistory(result.recent || []);
+      renderCheckinState();
+    }
+  }
+
+  function renderCheckinHistory(rows) {
+    const container = $('#coach-checkin-history');
+    if (!rows.length) {
+      container.innerHTML = '<div class="empty-state">Belum ada riwayat absensi coach.</div>';
+      return;
+    }
+    container.innerHTML = rows.map((row) => `
+      <div class="history-item"><div><strong>${escapeHTML(row.dateTimeLabel)}</strong><small>${escapeHTML(row.ekstrakurikuler)} · Akurasi ±${escapeHTML(row.accuracy || '—')} m</small></div>${row.mapUrl ? `<a href="${escapeHTML(row.mapUrl)}" target="_blank" rel="noopener">Peta ↗</a>` : ''}</div>
+    `).join('');
+  }
+
+  function renderHistory(rows) {
+    const body = $('#coach-history-rows');
+    $('#coach-monitor').hidden = false;
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="5">Belum ada data kehadiran atau penilaian anggota.</td></tr>';
+      return;
+    }
+    body.innerHTML = rows.map((row) => `
+      <tr><td>${escapeHTML(row.dateLabel)}</td><td><strong>${escapeHTML(row.member)}</strong></td><td><span class="status-text status-${escapeHTML(row.status)}">${escapeHTML(row.status)}</span></td><td>${escapeHTML(row.score === '' || row.score == null ? '—' : row.score)}</td><td>${escapeHTML(row.note || '—')}</td></tr>
+    `).join('');
   }
 
   async function adminLogin(event) {
@@ -241,9 +427,10 @@
       $('#admin-auth').hidden = true;
       $('#report-workspace').hidden = false;
       $('#admin-password').value = '';
-      const today = localDateString();
-      $('#date-from').value = today.slice(0, 8) + '01';
-      $('#date-to').value = today;
+      const today = new Date();
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      $('#date-from').value = todayStr.slice(0, 8) + '01';
+      $('#date-to').value = todayStr;
       showMessage($('#admin-auth-message'), '');
       await loadReport();
     } catch (error) {
@@ -262,38 +449,30 @@
     $('#admin-login-form').reset();
   }
 
-  function statMarkup(label, value) {
-    return `<div class="stat-box"><span>${escapeHTML(label)}</span><strong>${escapeHTML(value)}</strong></div>`;
-  }
-
   function renderReport(data) {
-    const rows = Array.isArray(data.rows) ? data.rows : [];
-    const present = rows.filter((r) => r.status === 'Hadir').length;
-    const permission = rows.filter((r) => r.status === 'Izin').length;
-    const sick = rows.filter((r) => r.status === 'Sakit').length;
-    const absent = rows.filter((r) => r.status === 'Alpa').length;
-    const scores = rows.map((r) => Number(r.score)).filter((n) => Number.isFinite(n));
+    const coachRows = Array.isArray(data.coachRows) ? data.coachRows : [];
+    const memberRows = Array.isArray(data.memberRows) ? data.memberRows : [];
+    const counts = { Hadir: 0, Izin: 0, Sakit: 0, Alpa: 0 };
+    memberRows.forEach((row) => { if (Object.prototype.hasOwnProperty.call(counts, row.status)) counts[row.status] += 1; });
+    const scores = memberRows.map((row) => Number(row.score)).filter((value) => Number.isFinite(value));
     const average = scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : '—';
-
     $('#report-stats').innerHTML = [
-      statMarkup('TOTAL CATATAN', rows.length),
-      statMarkup('HADIR', present),
-      statMarkup('IZIN / SAKIT / ALPA', `${permission} / ${sick} / ${absent}`),
-      statMarkup('RATA-RATA NILAI', average)
-    ].join('');
+      ['ABSENSI COACH', coachRows.length],
+      ['CATATAN ANGGOTA', memberRows.length],
+      ['HADIR / IZIN', `${counts.Hadir} / ${counts.Izin}`],
+      ['SAKIT / ALPA', `${counts.Sakit} / ${counts.Alpa}`],
+      ['RATA-RATA NILAI', average]
+    ].map(([label, value]) => `<div class="stat-box"><span>${escapeHTML(label)}</span><strong>${escapeHTML(value)}</strong></div>`).join('');
 
-    $('#report-rows').innerHTML = rows.length ? rows.map((row) => `
-      <tr>
-        <td>${escapeHTML(row.dateLabel)}</td>
-        <td>${escapeHTML(row.coach)}</td>
-        <td><strong>${escapeHTML(row.member)}</strong><br><span class="muted">${escapeHTML(row.className || '')}</span></td>
-        <td>${escapeHTML(row.division)}</td>
-        <td><span class="status-text status-${escapeHTML(row.status)}">${escapeHTML(row.status)}</span></td>
-        <td>${escapeHTML(row.score ?? '—')}</td>
-      </tr>
-    `).join('') : '<tr><td colspan="6">Tidak ada data pada periode dan divisi tersebut.</td></tr>';
+    $('#report-coach-rows').innerHTML = coachRows.length ? coachRows.map((row) => `
+      <tr><td>${escapeHTML(row.dateLabel)}</td><td>${escapeHTML(row.timeLabel)}</td><td><strong>${escapeHTML(row.coach)}</strong></td><td>${escapeHTML(row.ekstrakurikuler)}</td><td>${escapeHTML(row.latitude)}, ${escapeHTML(row.longitude)}<br><span class="muted">±${escapeHTML(row.accuracy)} m</span>${row.mapUrl ? `<br><a href="${escapeHTML(row.mapUrl)}" target="_blank" rel="noopener">Buka peta ↗</a>` : ''}</td><td>${row.photoUrl ? `<a href="${escapeHTML(row.photoUrl)}" target="_blank" rel="noopener">Foto bukti ↗</a>` : '—'}</td></tr>
+    `).join('') : '<tr><td colspan="6">Belum ada absensi coach pada periode ini.</td></tr>';
 
-    $('#report-period').textContent = `${data.fromLabel} — ${data.toLabel} · ${data.division}`;
+    $('#report-member-rows').innerHTML = memberRows.length ? memberRows.map((row) => `
+      <tr><td>${escapeHTML(row.dateLabel)}</td><td>${escapeHTML(row.coach)}</td><td><strong>${escapeHTML(row.member)}</strong><br><span class="muted">${escapeHTML(row.className || '')}</span></td><td>${escapeHTML(row.ekstrakurikuler)}</td><td><span class="status-text status-${escapeHTML(row.status)}">${escapeHTML(row.status)}</span></td><td>${escapeHTML(row.score === '' || row.score == null ? '—' : row.score)}</td></tr>
+    `).join('') : '<tr><td colspan="6">Belum ada catatan anggota pada periode ini.</td></tr>';
+
+    $('#report-period').textContent = `${data.fromLabel} — ${data.toLabel} · ${data.ekstrakurikuler}`;
     $('#report-result').hidden = false;
   }
 
@@ -301,20 +480,23 @@
     if (!adminToken) return;
     const from = $('#date-from').value;
     const to = $('#date-to').value;
-    const division = $('#report-division').value;
+    const extracurricular = $('#report-division').value;
     const button = $('#load-report');
     if (!from || !to || from > to) {
       showMessage($('#report-message'), 'Periksa tanggal awal dan akhir laporan.', 'error');
       return;
     }
     setBusy(button, true, 'Mengambil rekap…');
-    showMessage($('#report-message'), 'Mengambil data dari database…');
+    showMessage($('#report-message'), 'Mengambil data absensi dan penilaian…');
     try {
-      const result = await request('report_data', { adminToken, from, to, division });
-      if (result.result !== 'success') throw new Error(result.message || 'Data laporan gagal dimuat.');
-      currentReport = { from, to, division };
+      const result = await request('report_data', { adminToken, from, to, extracurricular });
+      if (result.result !== 'success') {
+        if (result.expired) { logoutAdmin(); throw new Error('Sesi administrator berakhir. Silakan masuk kembali.'); }
+        throw new Error(result.message || 'Data laporan gagal dimuat.');
+      }
+      currentReport = { from, to, extracurricular };
       renderReport(result);
-      showMessage($('#report-message'), `Berhasil memuat ${result.rows.length} catatan.`, 'success');
+      showMessage($('#report-message'), `Berhasil memuat ${result.coachRows.length} absensi coach dan ${result.memberRows.length} catatan anggota.`, 'success');
     } catch (error) {
       showMessage($('#report-message'), error.message || 'Gagal memuat laporan.', 'error');
     } finally {
@@ -325,32 +507,36 @@
   function base64ToBlob(base64, mimeType) {
     const binary = window.atob(base64);
     const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+    for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
     return new Blob([bytes], { type: mimeType });
   }
 
   async function downloadDocx() {
     if (!adminToken || !currentReport) return;
     const button = $('#download-docx');
-    setBusy(button, true, 'Membuat DOCX…');
+    setBusy(button, true, 'Membuat dokumen Word…');
+    showMessage($('#report-message'), 'Menyusun laporan dan bukti foto…');
     try {
       const result = await request('export_docx', {
         adminToken,
         from: currentReport.from,
         to: currentReport.to,
-        division: currentReport.division
+        extracurricular: currentReport.extracurricular
       });
-      if (result.result !== 'success' || !result.base64) throw new Error(result.message || 'Dokumen gagal dibuat.');
+      if (result.result !== 'success' || !result.base64) {
+        if (result.expired) logoutAdmin();
+        throw new Error(result.message || 'Dokumen gagal dibuat.');
+      }
       const blob = base64ToBlob(result.base64, result.mimeType || 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
       const objectUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = objectUrl;
-      link.download = result.filename || 'Laporan_Absensi_Coach.docx';
+      link.download = result.filename || 'Laporan_Absensi_Ekstrakurikuler.docx';
       document.body.appendChild(link);
       link.click();
       link.remove();
-      URL.revokeObjectURL(objectUrl);
-      showMessage($('#report-message'), 'Laporan DOCX berhasil dibuat.', 'success');
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+      showMessage($('#report-message'), 'Laporan DOCX berhasil dibuat dan diunduh.', 'success');
     } catch (error) {
       showMessage($('#report-message'), error.message || 'Gagal mengunduh laporan DOCX.', 'error');
     } finally {
@@ -359,18 +545,23 @@
   }
 
   function init() {
-    $('#year').textContent = new Date().getFullYear();
-    $('#today-label').textContent = new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(new Date());
-    $('#session-date').value = localDateString();
-
+    const now = new Date();
+    $('#year').textContent = now.getFullYear();
+    $('#today-label').textContent = new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(now);
+    renderPrograms();
     $$('.nav-btn').forEach((button) => button.addEventListener('click', () => switchView(button.dataset.view)));
     $$('[data-go]').forEach((button) => button.addEventListener('click', () => switchView(button.dataset.go)));
-    $('#attendance-form').addEventListener('submit', saveAttendance);
+    $('#start-checkin').addEventListener('click', startCheckin);
+    $('#capture-photo').addEventListener('click', capturePhoto);
+    $('#retake-photo').addEventListener('click', retakePhoto);
+    $('#submit-checkin').addEventListener('click', submitCheckin);
+    $('#save-members').addEventListener('click', saveMembers);
     $('#admin-login-form').addEventListener('submit', adminLogin);
     $('#admin-logout').addEventListener('click', logoutAdmin);
     $('#load-report').addEventListener('click', loadReport);
     $('#download-docx').addEventListener('click', downloadDocx);
-
+    window.addEventListener('beforeunload', stopCamera);
+    if (coachToken) switchView('absensi');
     loadCoach();
   }
 

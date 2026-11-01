@@ -1,140 +1,135 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101114">
-  <meta name="description" content="Sistem absensi dan evaluasi coach Ekstrakurikuler SMK BPP Bandung.">
-  <title>Absensi Coach — Ekstrakurikuler SMK BPP Bandung</title>
+  <meta name="description" content="Sistem absensi coach dan evaluasi anggota ekstrakurikuler SMK Balai Perguruan Putri Bandung.">
+  <title>Ekstrakurikuler SMK BPP Bandung — Absensi Coach</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app-shell">
-    <header class="topbar neo-card">
-      <a class="brand" href="#beranda" aria-label="Beranda Ekstrakurikuler SMK BPP Bandung">
-        <div class="brand-mark" aria-hidden="true">BPP</div>
-        <div class="brand-copy">
-          <strong>SMK BPP BANDUNG</strong>
-          <span>EKSTRAKURIKULER MUSIK</span>
-        </div>
+    <header class="site-header neo-card">
+      <a class="brand" href="#beranda" aria-label="Beranda SMK BPP">
+        <span class="brand-mark">BPP</span>
+        <span class="brand-copy"><strong>SMK BALAI PERGURUAN PUTRI</strong><small>BANDUNG · EKSTRAKURIKULER</small></span>
       </a>
-      <div class="topbar-meta">
-        <span class="live-dot"></span>
-        <span id="today-label">Sistem Absensi Coach</span>
-      </div>
+      <div class="header-meta"><span class="live-indicator"></span><span id="today-label">Memuat tanggal…</span></div>
     </header>
 
     <nav class="main-nav neo-card" aria-label="Navigasi utama">
       <button class="nav-btn active" type="button" data-view="beranda"><span>⌂</span>Beranda</button>
-      <button class="nav-btn" type="button" data-view="absensi"><span>▤</span>Absensi Coach</button>
+      <button class="nav-btn" type="button" data-view="absensi"><span>▣</span>Absensi Coach</button>
       <button class="nav-btn" type="button" data-view="laporan"><span>⇩</span>Tarik Data</button>
     </nav>
 
     <main>
-      <!-- BERANDA -->
       <section id="view-beranda" class="view active">
         <section class="hero neo-card">
           <div class="hero-copy">
-            <p class="eyebrow">MUSIC · DISCIPLINE · GROWTH</p>
-            <h1>Ruang Bertumbuh<br><span>Melalui Musik.</span></h1>
-            <p class="hero-text">Ekstrakurikuler Musik SMK BPP Bandung menjadi ruang untuk belajar, berkolaborasi, melestarikan budaya, dan mengembangkan potensi musikal siswa.</p>
+            <p class="eyebrow">STUDENT DEVELOPMENT · TA 2025/2026 REFERENCE</p>
+            <h1>Ruang untuk<br><span>Bertumbuh & Berprestasi.</span></h1>
+            <p class="hero-text">Enam program ekstrakurikuler SMK Balai Perguruan Putri Bandung menjadi ruang pembinaan minat, bakat, karakter, keterampilan, dan prestasi peserta didik.</p>
             <button class="button button-primary" type="button" data-go="absensi">Buka portal coach <span>↗</span></button>
           </div>
           <div class="hero-art" aria-hidden="true">
-            <div class="art-orbit orbit-one"></div>
-            <div class="art-orbit orbit-two"></div>
-            <div class="art-disc"><span>♫</span></div>
-            <div class="art-label">EST. SMK BPP</div>
+            <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+            <div class="art-core"><span>6</span><small>PROGRAM<br>EKSKUL</small></div>
+            <div class="art-label art-label-top">SMK BPP</div><div class="art-label art-label-bottom">DISCIPLINE · CREATIVITY · ACHIEVEMENT</div>
           </div>
-          <div class="hero-bottom"><span>EKSTRAKURIKULER SMK BPP BANDUNG</span><span>01 / 03</span></div>
+          <div class="hero-bottom"><span>PROGRAM KESISWAAN · BANDUNG</span><span>01 / 03</span></div>
+        </section>
+
+        <section class="stats-grid" aria-label="Ringkasan ekstrakurikuler">
+          <article class="stat-card neo-card"><span class="stat-label">TOTAL EKSTRAKURIKULER</span><strong>06</strong><small>Bidang aktif</small></article>
+          <article class="stat-card neo-card"><span class="stat-label">PARTISIPASI AKTIF</span><strong>162</strong><small>Entri partisipasi siswa</small></article>
+          <article class="stat-card neo-card"><span class="stat-label">EKSKUL TERFAVORIT</span><strong class="stat-word">Seni Musik</strong><small>44 siswa · 27,2%</small></article>
+          <article class="stat-card neo-card"><span class="stat-label">JADWAL LATIHAN</span><strong class="stat-word">Terintegrasi</strong><small>Senin – Kamis</small></article>
         </section>
 
         <div class="section-heading">
-          <div><p class="eyebrow">OUR PROGRAMS</p><h2>Kenali Divisi Musik</h2></div>
-          <p class="section-note">Belajar dari dasar, berkembang bersama.</p>
+          <div><p class="eyebrow">OUR EXTRACURRICULARS</p><h2>Enam bidang, satu ruang berkembang.</h2></div>
+          <p class="section-note">Data pembina, ketua, jumlah partisipasi, dan jadwal mengacu pada laporan TA 2025/2026.</p>
         </div>
-        <section class="division-grid" aria-label="Divisi ekstrakurikuler">
-          <article class="division-card neo-card">
-            <div class="division-icon">♫</div><span class="division-number">01</span>
-            <h3>Musik Modern</h3>
-            <p>Belajar bermain band dari dasar hingga tampil bersama di panggung sekolah dan kegiatan lainnya.</p>
-            <ul><li>Gitar, bass, keyboard, dan drum</li><li>Chord dan notasi sederhana</li><li>Tempo, dinamika, dan penampilan</li></ul>
-          </article>
-          <article class="division-card neo-card">
-            <div class="division-icon">◉</div><span class="division-number">02</span>
-            <h3>Musik Tradisional</h3>
-            <p>Mengenal dan melestarikan alat musik tradisional Nusantara melalui permainan bersama.</p>
-            <ul><li>Angklung dan teknik memainkannya</li><li>Waditra serta pola tabuhan gamelan</li><li>Lagu-lagu daerah</li></ul>
-          </article>
-          <article class="division-card neo-card">
-            <div class="division-icon">〽</div><span class="division-number">03</span>
-            <h3>Olah Vokal & Paduan Suara</h3>
-            <p>Melatih suara yang sehat dan terarah, baik untuk penampilan solo maupun kelompok.</p>
-            <ul><li>Pernapasan dan pemanasan suara</li><li>Artikulasi dan ketepatan nada</li><li>Harmonisasi suara</li></ul>
-          </article>
+        <section id="extracurricular-grid" class="program-grid" aria-label="Daftar ekstrakurikuler">
+          <div class="empty-state">Memuat program ekstrakurikuler…</div>
         </section>
 
         <section class="about-strip neo-card">
-          <div><p class="eyebrow">OUR PURPOSE</p><h2>Bukan sekadar latihan.</h2></div>
-          <p>Setiap pertemuan menjadi kesempatan untuk membangun disiplin, tanggung jawab, kerja sama, kreativitas, dan keberanian untuk tampil.</p>
+          <div><p class="eyebrow">PRESENSI TERINTEGRASI</p><h2>Catat kegiatan dengan lebih tertib.</h2></div>
+          <p>Coach dapat melakukan absensi dengan foto dan lokasi, memeriksa kehadiran anggota, serta mencatat evaluasi. Pengelola dapat mengunduh rekap untuk pelaporan Bidang Kesiswaan.</p>
         </section>
-        <footer class="site-footer"><span>© <span id="year"></span> Ekstrakurikuler Musik SMK BPP Bandung</span><span>Coach Attendance & Evaluation System</span></footer>
+        <footer class="site-footer"><span>© <span id="year"></span> SMK Balai Perguruan Putri Bandung</span><span>Sistem Absensi & Evaluasi Ekstrakurikuler</span></footer>
       </section>
 
-      <!-- ABSENSI COACH -->
       <section id="view-absensi" class="view">
-        <div class="page-heading">
-          <p class="eyebrow">COACH PORTAL</p>
-          <h1>Absensi & Evaluasi</h1>
-          <p>Periksa kehadiran anggota aktif dan catat penilaian pada pertemuan latihan.</p>
-        </div>
+        <div class="page-heading"><p class="eyebrow">COACH PORTAL</p><h1>Absensi Coach</h1><p>Coach membuka link pribadi, mengambil foto, dan mengirim lokasi. Waktu absensi dicatat otomatis oleh server.</p></div>
         <div id="coach-gate" class="neo-card gate-card">
-          <div class="gate-icon">⌁</div>
-          <h2>Link akses coach diperlukan</h2>
-          <p>Halaman absensi dibuka melalui link khusus yang dibagikan kepada coach. Coach tidak perlu membuat akun atau memasukkan kata sandi.</p>
-          <p class="small-muted">Buka kembali link pribadi dari pengelola ekstrakurikuler untuk mengakses daftar anggota.</p>
+          <div class="gate-icon">⌁</div><h2>Link coach diperlukan</h2>
+          <p>Halaman ini menggunakan link pribadi yang diterbitkan pengelola. Coach tidak perlu membuat akun atau memasukkan kata sandi.</p>
+          <p class="small-muted">Buka tautan khusus dari pengelola ekstrakurikuler untuk melanjutkan absensi.</p>
         </div>
 
         <div id="coach-workspace" hidden>
-          <div class="coach-banner neo-card">
-            <div><p class="eyebrow">AKSES COACH TERVERIFIKASI</p><h2 id="coach-name">—</h2><p id="coach-division" class="muted">—</p></div>
+          <section class="coach-banner neo-card">
+            <div><p class="eyebrow">COACH TERVERIFIKASI MELALUI LINK</p><h2 id="coach-name">—</h2><p id="coach-division" class="muted">—</p></div>
             <span class="access-pill"><span class="live-dot"></span> Link aktif</span>
-          </div>
-          <form id="attendance-form" class="neo-card form-card">
-            <div class="form-heading"><div><p class="eyebrow">SESSION DETAILS</p><h2>Detail Pertemuan</h2></div><span class="step-number">01</span></div>
-            <div class="field-grid">
-              <div class="field"><label for="session-date">Tanggal latihan</label><input id="session-date" class="field-input" type="date" required></div>
-              <div class="field"><label for="session-name">Nama sesi</label><input id="session-name" class="field-input" type="text" maxlength="60" placeholder="Contoh: Latihan rutin 1" required></div>
+          </section>
+
+          <section class="neo-card checkin-card">
+            <div class="form-heading"><div><p class="eyebrow">COACH CHECK-IN</p><h2>Absen Sekarang</h2><p class="muted">Foto dan lokasi diperlukan sebagai bukti kehadiran coach.</p></div><span class="step-number">01</span></div>
+            <div id="checkin-existing" class="existing-checkin" hidden>
+              <div class="success-icon">✓</div>
+              <div><strong>Absensi hari ini sudah tercatat.</strong><p id="checkin-existing-info" class="muted"></p><a id="checkin-existing-map" href="#" target="_blank" rel="noopener" hidden>Lihat lokasi di peta ↗</a></div>
             </div>
-            <div class="form-heading members-heading"><div><p class="eyebrow">ACTIVE MEMBERS</p><h2>Daftar Anggota Aktif</h2><p class="muted" id="member-count">Memuat daftar anggota…</p></div><span class="step-number">02</span></div>
+            <div id="checkin-start-area">
+              <p class="small-muted">Tekan tombol di bawah untuk meminta izin kamera dan lokasi dari perangkat.</p>
+              <button id="start-checkin" class="button button-primary" type="button">Absen Sekarang <span>→</span></button>
+            </div>
+            <div id="capture-area" class="capture-area" hidden>
+              <div class="capture-layout">
+                <div class="camera-frame">
+                  <video id="camera-preview" autoplay playsinline muted></video>
+                  <img id="photo-preview" alt="Foto absensi yang diambil" hidden>
+                  <div id="camera-placeholder" class="camera-placeholder"><span>◎</span><small>Kamera belum aktif</small></div>
+                  <canvas id="photo-canvas" hidden></canvas>
+                </div>
+                <div class="capture-info">
+                  <div class="permission-row"><span class="permission-icon">⌖</span><div><strong>Lokasi perangkat</strong><small id="location-status">Meminta izin lokasi…</small></div></div>
+                  <div class="permission-row"><span class="permission-icon">◉</span><div><strong>Kamera</strong><small id="camera-status">Menunggu izin kamera…</small></div></div>
+                  <p class="small-muted">Pastikan foto menampilkan coach dengan jelas. Lokasi, akurasi GPS, dan waktu server akan tersimpan bersama absensi.</p>
+                  <div class="capture-buttons"><button id="capture-photo" class="button button-secondary" type="button" disabled>Ambil Foto</button><button id="retake-photo" class="button button-quiet" type="button" hidden>Ulangi Foto</button></div>
+                  <button id="submit-checkin" class="button button-primary full-width" type="button" disabled>Kirim Absensi <span>→</span></button>
+                </div>
+              </div>
+            </div>
+            <div id="checkin-message" class="message" role="status" aria-live="polite"></div>
+          </section>
+
+          <section id="member-workspace" class="neo-card form-card" hidden>
+            <div class="form-heading"><div><p class="eyebrow">MEMBER ATTENDANCE & EVALUATION</p><h2>Periksa Anggota Aktif</h2><p id="member-count" class="muted">Memuat daftar anggota…</p></div><span class="step-number">02</span></div>
+            <div class="member-note-banner">Pilih status kehadiran setiap anggota dan isi nilai evaluasi. Daftar nama dibaca dari sheet <strong>AnggotaAktif</strong>.</div>
             <div id="member-list" class="member-list"><div class="empty-state">Memuat daftar anggota…</div></div>
-            <div class="form-actions">
-              <p class="small-muted">Pastikan status kehadiran dan nilai sudah diperiksa sebelum menyimpan.</p>
-              <button id="save-attendance" class="button button-primary" type="submit">Simpan Absensi & Nilai <span>→</span></button>
-            </div>
-            <div id="attendance-message" class="message" role="status" aria-live="polite"></div>
-          </form>
+            <div class="form-actions"><p class="small-muted">Data anggota disimpan terkait dengan absensi coach pada hari ini.</p><button id="save-members" class="button button-primary" type="button">Simpan Kehadiran & Nilai <span>→</span></button></div>
+            <div id="member-message" class="message" role="status" aria-live="polite"></div>
+          </section>
+
           <section id="coach-monitor" class="neo-card report-card" hidden>
-            <div class="form-heading"><div><p class="eyebrow">RECENT EVALUATIONS</p><h2>Pemantauan Nilai Terakhir</h2><p class="muted">Riwayat evaluasi anggota pada sesi sebelumnya.</p></div></div>
-            <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Nama Anggota</th><th>Hadir</th><th>Nilai</th><th>Catatan Coach</th></tr></thead><tbody id="coach-history-rows"></tbody></table></div>
+            <div class="form-heading"><div><p class="eyebrow">RECENT RECORDS</p><h2>Riwayat & Pemantauan</h2><p class="muted">Riwayat absensi coach dan evaluasi anggota.</p></div></div>
+            <div id="coach-checkin-history" class="history-list"></div>
+            <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Anggota</th><th>Kehadiran</th><th>Nilai</th><th>Catatan</th></tr></thead><tbody id="coach-history-rows"></tbody></table></div>
           </section>
         </div>
       </section>
 
-      <!-- TARIK DATA -->
       <section id="view-laporan" class="view">
-        <div class="page-heading">
-          <p class="eyebrow">ADMINISTRATOR</p>
-          <h1>Tarik Data Laporan</h1>
-          <p>Ambil rekap absensi dan penilaian berdasarkan periode untuk dokumentasi dan pelaporan kepada kepala sekolah.</p>
-        </div>
+        <div class="page-heading"><p class="eyebrow">BIDANG KESISWAAN</p><h1>Tarik Data & Laporan</h1><p>Rekap absensi coach, lokasi, foto bukti, kehadiran anggota, dan penilaian berdasarkan periode.</p></div>
         <div id="admin-auth" class="neo-card auth-card">
-          <div class="auth-symbol">⌑</div>
-          <h2>Akses administrator</h2>
-          <p class="muted">Masuk menggunakan akun administrator yang disimpan pada Script Properties Google Apps Script.</p>
+          <div class="auth-symbol">⌑</div><h2>Akses administrator</h2><p class="muted">Masuk menggunakan akun pengelola yang disimpan pada Script Properties Google Apps Script.</p>
           <form id="admin-login-form">
             <div class="field"><label for="admin-username">Username</label><input id="admin-username" class="field-input" autocomplete="username" required></div>
             <div class="field"><label for="admin-password">Password</label><input id="admin-password" class="field-input" type="password" autocomplete="current-password" required></div>
@@ -144,26 +139,27 @@
         </div>
 
         <div id="report-workspace" hidden>
-          <div class="neo-card form-card">
+          <section class="neo-card form-card">
             <div class="form-heading"><div><p class="eyebrow">REPORT FILTER</p><h2>Periode Laporan</h2></div><button id="admin-logout" type="button" class="button button-quiet">Keluar</button></div>
-            <div class="field-grid">
-              <div class="field"><label for="date-from">Dari tanggal</label><input id="date-from" class="field-input" type="date" required></div>
-              <div class="field"><label for="date-to">Sampai tanggal</label><input id="date-to" class="field-input" type="date" required></div>
-            </div>
-            <div class="field"><label for="report-division">Divisi</label><select id="report-division" class="field-input"><option value="Semua Divisi">Semua Divisi</option><option>Musik Modern</option><option>Musik Tradisional (Angklung & Gamelan)</option><option>Olah Vokal & Paduan Suara</option></select></div>
+            <div class="field-grid"><div class="field"><label for="date-from">Dari tanggal</label><input id="date-from" class="field-input" type="date" required></div><div class="field"><label for="date-to">Sampai tanggal</label><input id="date-to" class="field-input" type="date" required></div></div>
+            <div class="field"><label for="report-division">Ekstrakurikuler</label><select id="report-division" class="field-input"><option value="Semua Ekstrakurikuler">Semua Ekstrakurikuler</option></select></div>
             <button id="load-report" class="button button-secondary full-width" type="button">Tampilkan Rekap <span>⌕</span></button>
             <div id="report-message" class="message" role="status" aria-live="polite"></div>
-          </div>
-          <div id="report-result" class="neo-card report-card" hidden>
+          </section>
+          <section id="report-result" class="neo-card report-card" hidden>
             <div class="form-heading"><div><p class="eyebrow">REPORT OVERVIEW</p><h2>Ringkasan Absensi</h2><p id="report-period" class="muted"></p></div><span class="report-stamp">SMK BPP</span></div>
             <div id="report-stats" class="report-stats"></div>
-            <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Coach</th><th>Anggota</th><th>Divisi</th><th>Kehadiran</th><th>Nilai</th></tr></thead><tbody id="report-rows"><tr><td colspan="6">Belum ada data.</td></tr></tbody></table></div>
-            <div class="download-row"><p class="small-muted">Dokumen Word dibuat dari data yang sudah tersimpan di Google Sheets.</p><button id="download-docx" class="button button-primary" type="button">Download laporan DOCX <span>⇩</span></button></div>
-          </div>
+            <h3 class="table-title">Absensi Coach</h3>
+            <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Waktu</th><th>Coach</th><th>Ekstrakurikuler</th><th>Lokasi / Akurasi</th><th>Foto</th></tr></thead><tbody id="report-coach-rows"></tbody></table></div>
+            <h3 class="table-title">Kehadiran & Penilaian Anggota</h3>
+            <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Coach</th><th>Anggota</th><th>Ekskul</th><th>Kehadiran</th><th>Nilai</th></tr></thead><tbody id="report-member-rows"></tbody></table></div>
+            <div class="download-row"><p class="small-muted">DOCX mengikuti identitas dan gaya laporan yang kamu unggah, dengan lampiran tabel absensi serta bukti foto.</p><button id="download-docx" class="button button-primary" type="button">Download Laporan DOCX <span>⇩</span></button></div>
+          </section>
         </div>
       </section>
     </main>
   </div>
+  <script src="data.js"></script>
   <script src="config.js"></script>
   <script src="script.js"></script>
 </body>

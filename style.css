@@ -1252,7 +1252,7 @@ td { color: #a7adb3 !important; border-top-color: rgba(190,195,201,.08) !importa
 
 
 /* ================================================================
-   V3.14 — ABOUT FLOATING PANEL + RANDOM EMOJI / ENVELOPE SIGNATURE
+   V3.15 — ABOUT FLOATING PANEL + SINGLE FAST GLASSES EMOJI / ENVELOPE SIGNATURE
    All surfaces stay within the black-charcoal carved-stone system.
    ================================================================ */
 .about-popover {
@@ -1311,30 +1311,25 @@ td { color: #a7adb3 !important; border-top-color: rgba(190,195,201,.08) !importa
 .about-popover-body .about-closing { margin:12px 0 0; padding:12px 13px; border:1px solid rgba(190,196,202,.08); border-radius:13px; color:#858c93; background:linear-gradient(145deg,#1b1e21,#26292d); box-shadow:inset 4px 4px 9px rgba(0,0,0,.65),inset -3px -3px 7px rgba(80,84,90,.12); font-size:10px; font-style:italic; }
 .nav-btn.about-open { color:#c1c7cd !important; border-color:rgba(190,196,202,.17) !important; background:linear-gradient(145deg,#303338,#1d2023) !important; box-shadow:inset 3px 3px 7px rgba(0,0,0,.55),inset -2px -2px 5px rgba(98,103,109,.13),4px 5px 12px rgba(0,0,0,.56) !important; }
 
-/* Randomly placed decorative emoji are small, low-contrast and individually clickable. */
+/* One oversized glasses emoji darts between random points; the button itself keeps a carved-stone finish. */
 .emoji-layer { position:fixed; inset:0; z-index:48; pointer-events:none; overflow:hidden; }
 .float-emoji {
   position:fixed; z-index:1; display:grid; place-items:center;
-  width:35px; height:35px; padding:0;
-  border:1px solid rgba(190,196,202,.12); border-radius:50%;
-  color:#c3c8cd; background:linear-gradient(145deg,rgba(50,53,58,.82),rgba(23,25,28,.78));
-  box-shadow:7px 8px 16px rgba(0,0,0,.68),-4px -4px 10px rgba(85,89,95,.18),inset 1px 1px 1px rgba(255,255,255,.07),inset -1px -1px 3px rgba(0,0,0,.8);
-  font-size:17px; line-height:1; cursor:pointer; pointer-events:auto;
-  opacity:.68; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-  animation:emoji-drift var(--emoji-duration,11s) ease-in-out var(--emoji-delay,0s) infinite alternate;
-  transition:opacity .2s ease,filter .2s ease,transform .2s ease;
+  width:78px; height:78px; padding:0 0 3px;
+  border:1px solid rgba(190,196,202,.19); border-radius:50%;
+  color:#d0d4d8; background:linear-gradient(145deg,rgba(55,59,64,.97),rgba(23,25,28,.98));
+  box-shadow:10px 12px 22px rgba(0,0,0,.82),-6px -6px 14px rgba(91,96,102,.2),inset 1.5px 1.5px 2px rgba(255,255,255,.1),inset -2px -2px 5px rgba(0,0,0,.88);
+  font-size:43px; line-height:1; cursor:pointer; pointer-events:auto;
+  opacity:.94; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  transform:translate(-50%,-50%); will-change:left,top,transform;
+  transition:filter .16s ease,transform .16s ease,box-shadow .16s ease;
   -webkit-tap-highlight-color:transparent;
 }
-.float-emoji:hover { opacity:.98; filter:brightness(1.12); }
-.float-emoji:focus-visible { outline:1px solid rgba(180,188,196,.5); outline-offset:4px; }
-.float-emoji.is-selected { opacity:1; z-index:2; animation-play-state:paused; transform:translate(-50%,-50%) scale(1.25); }
-.emoji-layer.is-paused .float-emoji { animation-play-state:paused; }
-.emoji-layer.is-paused .float-emoji.is-dimmed { opacity:.12; filter:grayscale(1); }
-@keyframes emoji-drift {
-  0% { transform:translate(-50%,-50%) rotate(-8deg) translate3d(0,0,0); }
-  50% { transform:translate(calc(-50% + var(--drift-x,12px)),calc(-50% + var(--drift-y,-16px))) rotate(8deg); }
-  100% { transform:translate(calc(-50% - var(--drift-x,12px)),calc(-50% - var(--drift-y,-16px))) rotate(-5deg); }
-}
+.float-emoji:hover { filter:brightness(1.12); transform:translate(-50%,-50%) scale(1.1) rotate(-5deg); box-shadow:12px 15px 25px rgba(0,0,0,.86),-7px -7px 16px rgba(100,105,111,.24),inset 1.5px 1.5px 2px rgba(255,255,255,.12); }
+.float-emoji:active { transform:translate(-50%,-50%) scale(.94); }
+.float-emoji:focus-visible { outline:2px solid rgba(180,188,196,.58); outline-offset:5px; }
+.float-emoji.is-selected { opacity:1; z-index:2; transform:translate(-50%,-50%) scale(1.16); }
+.emoji-layer.is-paused .float-emoji { pointer-events:none; }
 
 /* Envelope grows from the emoji position; its translucent glass note rises out of the pocket. */
 .signature-envelope {
@@ -1388,7 +1383,7 @@ td { color: #a7adb3 !important; border-top-color: rgba(190,195,201,.08) !importa
   .about-popover-body p { font-size:11px; line-height:1.72; }
   .about-feature-row { gap:6px; }
   .about-feature-row span { padding:7px 8px; font-size:8px; }
-  .float-emoji { width:31px; height:31px; font-size:15px; opacity:.58; }
+  .float-emoji { width:70px; height:70px; font-size:39px; }
   .envelope-stage { height:185px; }
   .envelope-body { width:190px; height:105px; }
   .envelope-flap { left:calc(50% - 95px); bottom:59px; width:190px; height:68px; }
@@ -1396,10 +1391,84 @@ td { color: #a7adb3 !important; border-top-color: rgba(190,195,201,.08) !importa
   .signature-glass-banner strong { font-size:clamp(13px,4vw,17px); }
 }
 @media (prefers-reduced-motion:reduce) {
-  .float-emoji { animation:none !important; }
+  .float-emoji { transition:none !important; }
   .about-popover,.signature-envelope,.envelope-flap,.envelope-letter { transition:none !important; animation:none !important; }
   .about-popover.is-visible { transform:translate(-50%,-50%); }
   .signature-envelope.is-opening { opacity:1; transform:translate(-50%,-50%) scale(1); }
   .signature-envelope.letter-emerged .envelope-letter { opacity:1; transform:translate(-50%,-34px); }
   .signature-envelope.is-opening .envelope-flap { transform:rotateX(178deg); }
+}
+
+
+/* =====================================================================
+   V3.16 — LARGER SINGLE GLASSES EMOJI + STRONGER SITE-WIDE STONE ENGRAVING
+   ===================================================================== */
+:root {
+  --text-engraved:
+    -1.15px -1.15px 1px rgba(0,0,0,.96),
+    .85px .85px .65px rgba(208,216,222,.16),
+    0 2px 2.5px rgba(0,0,0,.74);
+  --text-engraved-heading:
+    -1.7px -1.7px 1.25px rgba(0,0,0,.98),
+    1px 1px .7px rgba(220,226,231,.19),
+    0 2.8px 3.8px rgba(0,0,0,.78);
+}
+
+/* Text follows the same recessed graphite treatment across every page and panel. */
+body {
+  text-shadow: var(--text-engraved);
+}
+body :is(
+  h1,h2,h3,h4,h5,h6,
+  p,span,strong,b,em,i,small,label,legend,
+  th,td,li,a,button,input,textarea,select,option,
+  summary,figcaption,output,time,dt,dd
+) {
+  text-shadow: var(--text-engraved) !important;
+}
+body :is(h1,h2,h3,h4,h5,h6,.brand-copy strong,.hero-title,.section-title,.program-title) {
+  text-shadow: var(--text-engraved-heading) !important;
+}
+input::placeholder,textarea::placeholder {
+  color: #858c91 !important;
+  text-shadow: -1px -1px 1px rgba(0,0,0,.96), .7px .7px .5px rgba(205,212,218,.13) !important;
+}
+
+/* One larger floating nerd emoji; position coordinates are its center point. */
+.float-emoji {
+  width: 112px !important;
+  height: 112px !important;
+  padding: 0 0 5px !important;
+  font-size: 64px !important;
+  border-color: rgba(182,190,198,.22) !important;
+  background: linear-gradient(145deg,rgba(59,63,68,.98),rgba(20,22,25,.99)) !important;
+  box-shadow:
+    15px 17px 28px rgba(0,0,0,.9),
+    -8px -8px 18px rgba(92,99,106,.24),
+    inset 2px 2px 2px rgba(255,255,255,.11),
+    inset -3px -3px 7px rgba(0,0,0,.94) !important;
+}
+.float-emoji:hover {
+  box-shadow:
+    17px 19px 32px rgba(0,0,0,.92),
+    -9px -9px 19px rgba(105,111,118,.27),
+    inset 2px 2px 2px rgba(255,255,255,.13),
+    inset -3px -3px 7px rgba(0,0,0,.95) !important;
+}
+.float-emoji.is-selected {
+  transform: translate(-50%,-50%) scale(1.08) !important;
+}
+@media (max-width:760px) {
+  .float-emoji {
+    width: 96px !important;
+    height: 96px !important;
+    font-size: 55px !important;
+  }
+}
+@media (max-width:380px) {
+  .float-emoji {
+    width: 88px !important;
+    height: 88px !important;
+    font-size: 50px !important;
+  }
 }

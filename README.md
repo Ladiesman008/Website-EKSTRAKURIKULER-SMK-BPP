@@ -4,11 +4,11 @@
 
 Versi ini mempertahankan struktur dan fungsi V3.12, tetapi mengganti keseluruhan sistem visual menjadi neumorphism hitam-charcoal dengan material batu berlapis: kartu dan tombol tampak menonjol melalui bayangan luar dan bevel halus, sedangkan input serta tipografi memakai efek cekung/ukiran. Aksen hijau neon diminimalkan dan diganti highlight graphite/netral. Layout beranda, enam emblem ekstrakurikuler, popup melayang, ornamen daun, absensi kamera-GPS, penilaian anggota, dan ekspor DOCX tetap dipertahankan. Backend dan endpoint Google Apps Script tidak berubah.
 
-## Cara memperbarui website ke V3.14
+## Cara memperbarui website ke V3.15
 
 Untuk GitHub Pages, unggah ulang `index.html` dan `style.css` dari paket ini. Pastikan seluruh folder `assets/` yang sudah ada tetap dipertahankan, karena berisi foto banner, enam logo ekskul, dan ornamen. `data.js`, `script.js`, `config.js`, dan `code.gs` tidak berubah pada pembaruan visual ini (query cache pada HTML dinaikkan ke versi 3.14). Karena perubahan hanya pada frontend, Google Apps Script tidak perlu di-deploy ulang. Setelah commit, lakukan hard refresh (`Ctrl + Shift + R`) agar browser memuat `style.css?v=3.14`.
 
-## Pembaruan fitur V3.14
+## Pembaruan fitur V3.15
 
 - **Palet penuh charcoal:** latar, header, sidebar, banner, kartu statistik, kartu ekskul, popup, tabel, form, tombol, dan panel laporan menggunakan gradasi hitam-charcoal.
 - **Neumorphism timbul 3D:** setiap panel utama memakai dua arah bayangan luar, highlight bevel di sisi atas-kiri, dan bayangan bawah-kanan yang lebih dalam. Tombol tetap memiliki state hover/pressed, tetapi tanpa lapisan glow hijau yang mencolok.
@@ -267,19 +267,31 @@ Pembaruan hanya pada `index.html`, `style.css`, `assets/leaf-ornament.svg`, dan 
 Unggah ulang `index.html` dan `style.css` dari paket V3.13. File `assets/leaf-botanical-carved.webp` disertakan sebagai aset mandiri/backup, tetapi tampilan web memakai gambar inline sehingga tidak wajib dimuat terpisah. File backend dan konfigurasi tidak berubah; Google Apps Script tidak perlu di-deploy ulang. Lakukan hard refresh setelah commit.
 
 
-## Fitur tambahan V3.14
+## Fitur tambahan V3.15
 
 - **Menu Tentang:** tombol Tentang membuka panel mengambang tanpa backdrop layar penuh. Isi menjelaskan tujuan website berdasarkan fungsi yang tersedia: informasi enam ekskul, absensi coach dengan foto/lokasi/timestamp server, pencatatan kehadiran dan nilai anggota, serta rekap DOCX untuk pelaporan kepala sekolah. Panel dapat ditutup melalui tombol X, klik area di luar panel, atau tombol Escape.
-- **Emoji interaktif:** beberapa emoji muncul di posisi acak dan bergerak perlahan. Saat salah satu emoji ditekan, seluruh emoji berhenti; emoji yang dipilih menjadi pemicu animasi amplop.
+- **Emoji interaktif:** satu emoji 🤓 berukuran besar bergerak cepat ke titik-titik acak di layar. Saat emoji ditekan, gerakannya berhenti tepat di posisi tersebut dan memicu animasi amplop.
 - **Animasi amplop:** amplop muncul dari posisi emoji yang ditekan, flap terbuka, lalu banner transparan bergaya glassmorphism bergerak keluar. Banner menampilkan “developed by Sahrul Mubarok, S. Pd.” dan “Tahun dibuat · 2026”. Tombol X menutup animasi dan memunculkan kembali emoji.
 - **Aksesibilitas:** panel menggunakan dialog non-modal agar kontrol lain di luar panel tidak terkunci. Animasi mengikuti preferensi `prefers-reduced-motion`, dan tombol emoji dapat diakses dengan keyboard.
 - **Backend tidak berubah:** tambahan ini hanya pada frontend; Google Apps Script tidak perlu di-deploy ulang.
 
-## Memperbarui ke V3.14
+## Memperbarui ke V3.15
 
-Ganti `index.html`, `style.css`, dan `script.js` dengan file V3.14. File `data.js`, `config.js`, `code.gs`, serta folder `assets/` tetap dipakai seperti sebelumnya. Setelah upload ke GitHub Pages, lakukan hard refresh agar cache versi 3.14 digunakan.
+Ganti `index.html`, `style.css`, dan `script.js` dengan file V3.15. File `data.js`, `config.js`, `code.gs`, serta folder `assets/` tetap dipakai seperti sebelumnya. Setelah upload ke GitHub Pages, lakukan hard refresh agar file dengan cache versi 3.15 dimuat.
 
 
-## Hasil pemeriksaan V3.14
+## Hasil pemeriksaan V3.15
 
-`verify_project.py` menjalankan 60 pemeriksaan statis dan seluruhnya lulus. Pemeriksaan mencakup ID HTML, panel Tentang, animasi emoji/amplop, CSS responsif dan reduced-motion, enam emblem, sintaks JavaScript/Apps Script, serta keberadaan alur absensi, penilaian, dan ekspor DOCX. Pengujian izin kamera/GPS tetap dilakukan pada situs HTTPS setelah deployment.
+`verify_project_v315.py` menjalankan pemeriksaan statis khusus V3.15; hasil terbaru dicatat di `verification-v3.15.txt`. Pemeriksaan mencakup ID HTML, panel Tentang, animasi emoji/amplop, CSS responsif dan reduced-motion, enam emblem, sintaks JavaScript/Apps Script, serta keberadaan alur absensi, penilaian, dan ekspor DOCX. Pengujian izin kamera/GPS tetap dilakukan pada situs HTTPS setelah deployment.
+
+
+## Pembaruan V3.16
+
+- Hanya satu emoji 🤓 yang bergerak acak dengan jeda pendek dan lintasan cepat.
+- Ukuran emoji: 112 px desktop, 96 px mobile, dan 88 px untuk layar sangat kecil.
+- Area gerak memperhitungkan radius tombol agar emoji tidak mudah terpotong tepi layar.
+- Efek huruf ukiran cekung diperkuat secara konsisten pada judul, teks, label, tombol, form, tabel, popup, dan footer.
+- Warna permukaan tetap hitam charcoal; highlight teks hanya berupa pantulan graphite yang halus.
+
+### File untuk pembaruan GitHub
+Ganti `index.html`, `style.css`, dan `script.js` dari paket V3.16. Pertahankan `data.js`, `config.js`, folder `assets/`, serta backend Apps Script yang sedang digunakan.

@@ -1,1 +1,1 @@
-3.14 - About floating panel, random interactive emoji and animated glass-envelope signature.
+3.16 - One larger glasses emoji with fast randomized movement (112px desktop, 96px mobile, 88px compact screens), pause-on-tap envelope signature, and stronger site-wide recessed graphite stone typography.

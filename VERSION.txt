@@ -1,7 +1,1 @@
-Version 3.9 — Embedded Botanical Fix
-- Decorative leaf SVG is now inline in index.html (no assets path or lazy loading).
-- Sidebar botanical has visible dimensions and overflow.
-- Quote strip no longer clips the leaf and reserves space for it.
-- Mobile layout keeps a small visible leaf.
-- Cache-busting query version updated to 3.9.
-- Backend/API behavior unchanged.
+3.12 - Unified black charcoal stone neumorphism; carved/inset typography; restrained green accents.

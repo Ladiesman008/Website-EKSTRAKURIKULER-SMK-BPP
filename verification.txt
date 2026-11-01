@@ -1,19 +1,2 @@
-V3.9 static verification — 50 checks, 0 failures
-PASS: duplicate HTML IDs absent
-PASS: all required popup HTML IDs present
-PASS: floating program popup remains non-modal
-PASS: popup open/close/switch/escape/scroll handlers retained
-PASS: six extracurricular entries and six embedded emblem data URIs
-PASS: original SVG botanical source remains valid
-PASS: sidebar botanical embedded inline in index.html
-PASS: quote botanical embedded inline in index.html
-PASS: no external leaf-ornament.svg dependency in HTML
-PASS: sidebar leaf is not lazy-loaded and container allows overflow
-PASS: quote strip allows overflow and reserves leaf area
-PASS: mobile quote leaf sizing and quote text clearance are set
-PASS: CSS parses without errors
-PASS: floating popup and mobile/reduced-motion rules retained
-PASS: script.js, data.js, config.js syntax
-PASS: code.gs syntax
-PASS: reporting API calls retained
-Backend/API files were preserved from V3.8; no backend deployment change is required.
+V3.12 static verification: 59 checks, 0 failures
+PASS: HTML IDs, popup interactions, six embedded emblems, inline carved leaves, unclipped responsive ornaments, CSS parsing, charcoal stone material system, inset typography, JS syntax, Apps Script syntax, and reporting hooks.

@@ -1,0 +1,2 @@
+V3.11 static verification: 53 checks, 0 failures
+PASS: HTML IDs, popup interactions, six embedded emblems, inline carved leaves, unclipped responsive ornaments, CSS parsing, JS syntax, Apps Script syntax, and reporting hooks.

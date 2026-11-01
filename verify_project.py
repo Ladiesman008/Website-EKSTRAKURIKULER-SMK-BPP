@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static checks for Absensi Coach SMK BPP V3.9."""
+"""Static checks for Absensi Coach SMK BPP V3.12."""
 from pathlib import Path
 from collections import Counter
 from bs4 import BeautifulSoup
@@ -30,7 +30,7 @@ check(not duplicates, f'Duplicate HTML IDs: {duplicates}')
 for required_id in ['extracurricular-grid', 'program-popover', 'program-popover-title', 'program-popover-content', 'close-program-popover']:
     check(soup.find(id=required_id) is not None, f'Missing HTML id: {required_id}')
 check('aria-modal="false"' in html, 'Floating panel must remain non-modal')
-check('v=3.9' in html, 'HTML asset cache-buster is not V3.9')
+check('v=3.12' in html, 'HTML asset cache-buster is not V3.12')
 
 # Frontend popup behavior hooks
 for marker in ['data-program-open', 'openProgramPopover', 'closeProgramPopover', 'Escape', 'positionProgramPopover']:
@@ -70,12 +70,15 @@ if leaf.exists():
 check(html.count('class=\"nav-ornament-svg carved-leaf-svg\"') == 1, 'Inline sidebar leaf missing')
 check(html.count('class=\"quote-leaf-ornament carved-leaf-svg\"') == 1, 'Inline quote leaf missing')
 check('assets/leaf-ornament.svg' not in html, 'Leaf still depends on external SVG path')
+check('fill=\"url(#navCarve-groove)\"' in html and 'fill=\"url(#quoteCarve-groove)\"' in html, 'Leaf cavity fill missing')
+check('stroke=\"#68727d\"' in html, 'Recessed graphite bevel highlight missing')
+check('filter:none !important' in css and 'drop-shadow' not in css[css.find('.nav-ornament-svg {'):css.find('main {')], 'Leaf still uses raised outer drop shadow')
 check('loading=\"lazy\"' not in html[html.find('nav-ornament'):html.find('</nav>')], 'Sidebar leaf must not lazy-load')
 check('.nav-ornament { position:relative' in css and 'overflow:visible' in css[css.find('.nav-ornament {'):css.find('main {')], 'Sidebar leaf container may clip ornament')
 quote_rule = css[css.find('.quote-strip {'):css.find('.quote-rule {')]
 check('overflow:visible' in quote_rule, 'Quote strip clips decorative leaf')
 check('min-height:124px' in quote_rule, 'Quote strip does not reserve vertical room for leaf')
-check('.quote-leaf-ornament {' in css and 'opacity:1' in css[css.find('.quote-leaf-ornament {'):css.find('.site-footer')], 'Quote leaf visibility CSS missing')
+check('.quote-leaf-ornament {' in css and 'opacity:.93' in css[css.find('.quote-leaf-ornament {'):css.find('.site-footer')], 'Quote leaf visibility CSS missing')
 
 # CSS parse
 rules = tinycss2.parse_stylesheet(css, skip_comments=True, skip_whitespace=True)
@@ -90,7 +93,7 @@ for name in ['script.js', 'data.js', 'config.js']:
     result = subprocess.run(['node', '--check', str(ROOT / name)], capture_output=True, text=True)
     check(result.returncode == 0, f'{name} syntax error: {result.stderr.strip()}')
 # Apps Script syntax is JavaScript; check with temporary .js extension.
-tmp = Path('/tmp/smk_bpp_v39_code_check.js')
+tmp = Path('/tmp/smk_bpp_v310_code_check.js')
 tmp.write_text((ROOT / 'code.gs').read_text(encoding='utf-8'), encoding='utf-8')
 result = subprocess.run(['node', '--check', str(tmp)], capture_output=True, text=True)
 check(result.returncode == 0, f'code.gs syntax error: {result.stderr.strip()}')
@@ -99,9 +102,17 @@ check(result.returncode == 0, f'code.gs syntax error: {result.stderr.strip()}')
 check('function request(' in js, 'Frontend request helper missing')
 check("request('export_docx'" in js and "request('report_data'" in js, 'Reporting API calls missing')
 
-print(f'V3.9 static verification: {checks} checks, {len(errors)} failures')
+# V3.12 charcoal stone material-system checks
+check('BLACK CHARCOAL STONE NEUMORPHISM' in css, 'V3.12 charcoal material override missing')
+check('--bg: #191a1c' in css and '--surface: #242629' in css, 'Black charcoal palette tokens missing')
+check('inset 7px 7px 14px' in css and 'inset -6px -6px 13px' in css, 'Stone inset shadows missing')
+check('text-shadow:' in css[css.rfind('BLACK CHARCOAL STONE NEUMORPHISM'):], 'Carved/inset typography rules missing')
+check('0 0 22px rgba(65,190,103' not in css[css.rfind('BLACK CHARCOAL STONE NEUMORPHISM'):], 'Strong green popup glow remains in final override')
+check('linear-gradient(145deg,#34373b' in css, 'Primary button is not charcoal in final override')
+
+print(f'V3.12 static verification: {checks} checks, {len(errors)} failures')
 for err in errors:
     print('FAIL:', err)
 if errors:
     sys.exit(1)
-print('PASS: HTML IDs, popup interactions, six embedded emblems, inline carved leaves, unclipped responsive ornaments, CSS parsing, JS syntax, Apps Script syntax, and reporting hooks.')
+print('PASS: HTML IDs, popup interactions, six embedded emblems, inline carved leaves, unclipped responsive ornaments, CSS parsing, charcoal stone material system, inset typography, JS syntax, Apps Script syntax, and reporting hooks.')

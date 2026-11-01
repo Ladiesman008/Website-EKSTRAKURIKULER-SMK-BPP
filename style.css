@@ -172,10 +172,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .nav-about { min-height:64px; }
 /* Inline carved botanical: no external image path or lazy-load dependency. */
 .nav-ornament { position:relative; display:flex; align-items:flex-end; justify-content:center; flex:1 1 245px; min-height:225px; margin:13px 3px 2px; overflow:visible; opacity:1; isolation:isolate; }
-.nav-ornament-svg { position:absolute; left:50%; bottom:-2px; display:block; width:min(100%,220px); height:min(100%,270px); overflow:visible; object-fit:contain; transform:translateX(-50%) rotate(-7deg); transform-origin:bottom center; filter:drop-shadow(6px 10px 7px rgba(0,0,0,.96)) drop-shadow(0 0 5px rgba(117,193,132,.12)); }
-.carved-leaf-svg { shape-rendering:geometricPrecision; }
-.carved-leaf-svg .vein-light { stroke:#f1f6ed; stroke-width:2.6; opacity:.98; }
-.carved-leaf-svg .vein-fine { stroke:#e6eee3; stroke-width:1.8; opacity:.92; }
+.nav-ornament-svg { position:absolute; left:50%; bottom:-2px; display:block; width:min(100%,220px); height:min(100%,270px); overflow:visible; object-fit:contain; transform:translateX(-50%) rotate(-7deg); transform-origin:bottom center; opacity:.93; filter:none; }
+.carved-leaf-svg { shape-rendering:geometricPrecision; overflow:visible; }
+.carved-leaf-svg .vein-light { stroke:#68727d; stroke-width:1.2; opacity:.68; }
+.carved-leaf-svg .vein-fine { stroke:#58626d; stroke-width:.95px; opacity:.62; }
 
 main { min-width:0; }
 .view { display:none; min-width:0; animation:fade-up .3s ease both; }
@@ -275,9 +275,9 @@ h1,h2,h3,h4 { font-family:var(--display); }
 .quote-rule { position:relative; z-index:1; height:1px; width:min(16%,150px); background:linear-gradient(90deg,transparent,rgba(96,181,117,.65),transparent); }
 .quote-mark { position:relative; z-index:1; color:#6fbd83; font:700 48px/.75 Georgia,serif; transform:translateY(8px); text-shadow:-2px -2px 1px #000,1px 1px 0 rgba(255,255,255,.16),0 3px 4px #000; }
 .quote-strip p { position:relative; z-index:1; max-width:min(68%,700px); margin:0; color:#b8c1ba; font:italic 600 clamp(13px,1.2vw,17px)/1.45 var(--body); text-align:center; text-shadow:-1px -1px 1px #000,1px 1px 0 rgba(255,255,255,.12),0 2px 4px #000; }
-.quote-leaf-ornament { position:absolute; z-index:0; right:8px; bottom:-2px; display:block; width:124px; height:128px; overflow:visible; opacity:1; transform:scaleX(-1) rotate(-5deg); transform-origin:bottom right; pointer-events:none; filter:drop-shadow(5px 8px 6px rgba(0,0,0,.96)) drop-shadow(0 0 5px rgba(130,190,139,.13)); }
-.quote-leaf-ornament .vein-light { stroke:#f1f6ed; stroke-width:2.6; opacity:.98; }
-.quote-leaf-ornament .vein-fine { stroke:#e6eee3; stroke-width:1.8; opacity:.92; }
+.quote-leaf-ornament { position:absolute; z-index:0; right:8px; bottom:-2px; display:block; width:124px; height:128px; overflow:visible; opacity:.93; transform:scaleX(-1) rotate(-5deg); transform-origin:bottom right; pointer-events:none; filter:none; }
+.quote-leaf-ornament .vein-light { stroke:#68727d; stroke-width:1.2; opacity:.68; }
+.quote-leaf-ornament .vein-fine { stroke:#58626d; stroke-width:.95px; opacity:.62; }
 .site-footer { display:flex; justify-content:space-between; gap:15px; margin:14px 4px 0; color:#677168; font-size:9px; }
 
 /* Halaman absensi coach, penilaian dan laporan */
@@ -776,3 +776,449 @@ td { padding:11px; border-top:1px solid rgba(255,255,255,.05); color:#c5cec6; ve
 
 .program-card.program-open { transition:transform .22s var(--ease),box-shadow .22s var(--ease),border-color .22s ease,filter .22s ease; }
 @media (hover:hover) and (pointer:fine) { .program-card.program-open:hover { filter:brightness(1.035); } }
+
+
+/* V3.10 — recessed botanical engraving (no raised drop-shadow) */
+.nav-ornament-svg, .quote-leaf-ornament { filter:none !important; }
+.nav-ornament-svg path, .quote-leaf-ornament path { vector-effect:non-scaling-stroke; }
+
+
+/* V3.11 — black stone neumorphism: recessed botanical relief, graphite-only highlights. */
+.nav-ornament-svg, .quote-leaf-ornament {
+  filter:none !important; opacity:.94; mix-blend-mode:normal;
+}
+.carved-leaf-svg { shape-rendering:geometricPrecision; }
+/* ================================================================
+   V3.12 — BLACK CHARCOAL STONE NEUMORPHISM
+   All components use a unified carved-stone material system.
+   Green is restrained to tiny functional indicators only.
+   ================================================================ */
+:root {
+  color-scheme: dark;
+  --bg: #191a1c;
+  --bg-deep: #101113;
+  --surface: #242629;
+  --surface-hi: #303236;
+  --surface-low: #181a1c;
+  --edge: rgba(190, 195, 201, .115);
+  --text: #aeb3b8;
+  --soft: #858b91;
+  --muted: #70767d;
+  --accent: #899097;
+  --accent-2: #646a70;
+  --accent-deep: #35383c;
+  --success: #8b938d;
+  --warning: #9a907e;
+  --danger: #9a7d81;
+  --blue: #7e8994;
+  --stone-hi: rgba(224, 228, 232, .105);
+  --stone-low: rgba(0, 0, 0, .78);
+  --raised:
+    17px 18px 34px rgba(0, 0, 0, .88),
+    -9px -9px 23px rgba(65, 67, 71, .47),
+    inset 1.4px 1.4px 2px rgba(255, 255, 255, .075),
+    inset -2px -2px 4px rgba(0, 0, 0, .78);
+  --raised-soft:
+    11px 12px 23px rgba(0, 0, 0, .82),
+    -6px -6px 16px rgba(62, 64, 68, .39),
+    inset 1px 1px 1px rgba(255, 255, 255, .065),
+    inset -1.5px -1.5px 3px rgba(0, 0, 0, .72);
+  --inset:
+    inset 7px 7px 14px rgba(7, 8, 10, .88),
+    inset -6px -6px 13px rgba(67, 70, 75, .36),
+    inset 0 0 0 1px rgba(255, 255, 255, .025);
+  --ease: cubic-bezier(.2, .72, .22, 1);
+  --neon-edge: rgba(158, 165, 172, .15);
+  --neon-edge-soft: rgba(158, 165, 172, .09);
+  --neon-halo: rgba(148, 155, 162, .025);
+  --neon-halo-strong: rgba(148, 155, 162, .04);
+}
+
+html { background: var(--bg); }
+body {
+  color: var(--text) !important;
+  background:
+    radial-gradient(ellipse at 14% 0%, rgba(124, 128, 133, .045), transparent 36rem),
+    radial-gradient(ellipse at 100% 58%, rgba(90, 94, 99, .035), transparent 38rem),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.006) 0 1px, transparent 1px 4px),
+    linear-gradient(145deg, #1d1e20, #17181a 55%, #141517) !important;
+  text-shadow: -0.65px -0.65px .7px rgba(0,0,0,.96), .65px .65px .55px rgba(255,255,255,.12) !important;
+}
+
+/* Inset/engraved typography: dark upper-left groove + a very fine lower-right stone edge. */
+h1, h2, h3, h4,
+.brand-copy strong, .brand-copy small,
+.hero h1, .hero h1 span, .hero-text,
+.stat-content strong, .program-panel-heading h2,
+.program-title-stack h3, .program-open .program-title,
+.page-heading h1, .coach-banner h2, .form-heading h2,
+.gate-card h2, .auth-card h2, .table-title,
+.program-popover-title-copy h2,
+.program-popover-section h3,
+.quote-strip p, .quote-mark {
+  color: #969ba1 !important;
+  text-shadow:
+    -1.15px -1.15px 1px rgba(0,0,0,.98),
+    .75px .75px .55px rgba(255,255,255,.16),
+    0 1.5px 2.5px rgba(0,0,0,.62) !important;
+  -webkit-text-stroke: .12px rgba(0,0,0,.2);
+}
+.brand-copy strong { color: #a5aab0 !important; }
+.brand-copy small { color: #777d83 !important; }
+.hero h1, .hero h1 span { color: #aeb3b9 !important; }
+.hero-text, .quote-strip p { color: #8b9197 !important; }
+.eyebrow, .program-popover-title-copy .eyebrow {
+  color: #777e84 !important;
+  text-shadow: -1px -1px 1px #050607, .6px .6px .5px rgba(255,255,255,.12) !important;
+}
+.small-muted, .muted, .site-footer, .program-count,
+.stat-content small, .program-popover-subtitle,
+.program-popover-intro, .program-popover-section p,
+.program-popover-section li, .program-popover-note,
+.member-id span, .history-item small, .page-heading p:last-child {
+  color: #858b91 !important;
+  text-shadow: -.55px -.55px .7px #050607, .45px .45px .4px rgba(255,255,255,.09) !important;
+}
+
+/* One consistent charcoal stone body for all raised panels. */
+.neo-card,
+.site-header,
+.main-nav,
+.hero,
+.stat-card,
+.program-panel,
+.program-card,
+.quote-strip,
+.gate-card,
+.auth-card,
+.coach-banner,
+.checkin-card,
+.form-card,
+.report-card,
+#member-workspace,
+#coach-monitor,
+#report-result {
+  border: 1px solid rgba(194, 199, 204, .105) !important;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.035) 0%, rgba(255,255,255,.008) 25%, transparent 48%),
+    linear-gradient(145deg, #2a2c2f 0%, #232528 42%, #1a1c1f 100%) !important;
+  box-shadow: var(--raised) !important;
+}
+.site-header {
+  box-shadow:
+    21px 22px 40px rgba(0,0,0,.9),
+    -11px -11px 27px rgba(67,69,73,.48),
+    inset 1.7px 1.7px 2px rgba(255,255,255,.085),
+    inset -2px -2px 3px rgba(0,0,0,.82) !important;
+}
+.main-nav {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.035), transparent 35%),
+    linear-gradient(155deg, #292b2e, #202225 52%, #181a1c) !important;
+}
+.hero {
+  background: linear-gradient(145deg, #292b2e, #202225 54%, #17191b) !important;
+}
+.hero::before {
+  background: linear-gradient(90deg, transparent 0%, rgba(13,14,16,.08) 36%, #191b1e 58%, #17191b 100%) !important;
+}
+.hero::after {
+  border-left-color: rgba(185,190,196,.10) !important;
+  border-right-color: rgba(255,255,255,.035) !important;
+  background: linear-gradient(90deg, transparent, rgba(157,162,168,.025), transparent) !important;
+}
+.hero-photo { filter: saturate(.3) contrast(1.12) brightness(.72) grayscale(.35) !important; }
+
+/* Main logo well and small circular medallions are also carved from charcoal. */
+.brand-logo-wrap,
+.calendar-badge,
+.stat-icon,
+.program-emblem-wrap,
+.program-open .program-open-arrow,
+.program-popover-icon-wrap,
+.program-popover-close,
+.gate-icon,
+.auth-symbol,
+.step-number,
+.permission-icon,
+.report-stamp {
+  color: #9da3a9 !important;
+  border-color: rgba(190,195,201,.16) !important;
+  background: linear-gradient(145deg, #292c30 0%, #202225 56%, #17191c 100%) !important;
+  box-shadow:
+    9px 10px 18px rgba(0,0,0,.86),
+    -6px -6px 15px rgba(69,72,77,.43),
+    inset 1.5px 1.5px 2px rgba(255,255,255,.085),
+    inset -3px -3px 6px rgba(0,0,0,.8) !important;
+}
+.brand-mark {
+  color: #a1a6ac !important;
+  background: linear-gradient(145deg,#2c2e32,#17191c) !important;
+  box-shadow: var(--inset) !important;
+}
+.brand-logo { filter: drop-shadow(2px 3px 4px rgba(0,0,0,.75)) !important; }
+.calendar-badge svg { stroke: #92989e !important; }
+.system-status { color: #9ba39d !important; }
+.system-status i, .live-indicator, .live-dot {
+  background: #758078 !important;
+  box-shadow: 0 0 0 1px rgba(120,135,124,.08) !important;
+}
+
+/* Sidebar navigation: black stone, no green slab or neon halo. */
+.nav-btn {
+  color: #858b91 !important;
+  background: linear-gradient(145deg, transparent, rgba(0,0,0,.035)) !important;
+  border-color: transparent !important;
+  text-shadow: -1px -1px .8px #08090a, .7px .7px .55px rgba(255,255,255,.13) !important;
+}
+.nav-btn svg { stroke: #9ba1a7 !important; }
+.nav-btn:hover,
+.nav-btn:not(.active):hover {
+  color: #b2b7bd !important;
+  background: linear-gradient(145deg,#292c30,#1e2023) !important;
+  box-shadow: 7px 8px 16px rgba(0,0,0,.72), -5px -5px 13px rgba(67,70,75,.35), inset 1px 1px 1px rgba(255,255,255,.055) !important;
+}
+.nav-btn.active {
+  color: #b6bbc0 !important;
+  border-color: rgba(190,196,202,.14) !important;
+  background: linear-gradient(145deg,#24272a,#1c1e21) !important;
+  box-shadow:
+    inset 5px 5px 10px rgba(8,9,11,.82),
+    inset -4px -4px 9px rgba(67,70,75,.32),
+    1px 1px 2px rgba(0,0,0,.55) !important;
+}
+.nav-btn.active svg { stroke: #b4bac0 !important; }
+.nav-separator { background: linear-gradient(90deg,transparent,rgba(190,195,201,.18),transparent) !important; }
+
+/* Stat blocks and extracurricular cards: dimensional graphite rather than green plastic. */
+.stat-card, .program-panel { background: linear-gradient(145deg,#292b2e,#222427 55%,#191b1e) !important; }
+.stat-icon svg { color: #a0a6ac !important; stroke: currentColor !important; fill: rgba(170,176,182,.10) !important; filter: drop-shadow(1px 2px 2px rgba(0,0,0,.85)) !important; }
+.heading-marker {
+  background: linear-gradient(145deg,#858b91,#44494f) !important;
+  box-shadow: 3px 3px 6px #0c0d0f, -2px -2px 5px #414449, inset 1px 1px 1px rgba(255,255,255,.22) !important;
+}
+.program-card {
+  background: linear-gradient(145deg,#2d3033 0%,#242629 54%,#191b1e 100%) !important;
+  border-color: rgba(194,199,204,.105) !important;
+  box-shadow:
+    14px 15px 28px rgba(0,0,0,.88),
+    -8px -8px 19px rgba(67,70,75,.44),
+    inset 1.4px 1.4px 2px rgba(255,255,255,.09),
+    inset -2px -2px 4px rgba(0,0,0,.8) !important;
+}
+.program-card::before { background: linear-gradient(130deg,rgba(255,255,255,.025),transparent 44%) !important; }
+.program-open:hover {
+  border-color: rgba(190,196,202,.18) !important;
+  box-shadow: 18px 20px 31px rgba(0,0,0,.91), -9px -9px 21px rgba(70,73,78,.46), inset 1.5px 1.5px 2px rgba(255,255,255,.10), inset -2px -2px 4px rgba(0,0,0,.82) !important;
+}
+.program-emblem-wrap {
+  border-color: rgba(190,195,201,.18) !important;
+  background: radial-gradient(circle at 28% 22%,#34373b,#202225 58%,#141619) !important;
+  box-shadow: 9px 10px 18px rgba(0,0,0,.91), -6px -6px 15px rgba(69,72,77,.45), inset 2px 2px 3px rgba(255,255,255,.10), inset -3px -3px 6px rgba(0,0,0,.86) !important;
+}
+.program-emblem-wrap::before { display:none !important; }
+.program-emblem-wrap::after { border-color: rgba(190,195,201,.09) !important; box-shadow: inset 0 1px 3px rgba(255,255,255,.045) !important; }
+.program-emblem { filter: drop-shadow(1.5px 2px 2px rgba(0,0,0,.76)) !important; }
+.program-open .program-open-arrow {
+  color: #a7adb3 !important;
+  border-color: rgba(190,195,201,.16) !important;
+  background: linear-gradient(145deg,#2b2e32,#1b1d20) !important;
+  box-shadow: 6px 7px 13px rgba(0,0,0,.82), -4px -4px 10px rgba(68,71,76,.4), inset 1px 1px 2px rgba(255,255,255,.075), inset -2px -2px 4px rgba(0,0,0,.8) !important;
+  text-shadow: -1px -1px 1px #050607, .6px .6px .5px rgba(255,255,255,.16) !important;
+}
+.program-open:hover .program-open-arrow {
+  border-color: rgba(193,198,204,.22) !important;
+  box-shadow: 7px 8px 14px rgba(0,0,0,.86), -4px -4px 11px rgba(68,71,76,.42), inset 1px 1px 2px rgba(255,255,255,.08) !important;
+}
+.program-open[aria-expanded="true"] {
+  border-color: rgba(190,196,202,.22) !important;
+  box-shadow: inset 4px 4px 9px rgba(8,9,11,.35), inset -2px -2px 6px rgba(75,78,83,.12), 10px 12px 22px rgba(0,0,0,.66) !important;
+}
+.program-open[aria-expanded="true"] .program-open-arrow {
+  border-color: rgba(190,196,202,.17) !important;
+  box-shadow: var(--inset) !important;
+}
+
+/* Quote, botanical ornaments, and footer remain graphite monochrome. */
+.quote-strip {
+  background: linear-gradient(145deg,#292b2f,#222427 58%,#181a1d) !important;
+  box-shadow: 15px 16px 29px rgba(0,0,0,.88), -8px -8px 19px rgba(66,69,74,.39), inset 1.5px 1.5px 2px rgba(255,255,255,.075), inset -2px -2px 3px rgba(0,0,0,.8) !important;
+}
+.quote-rule { background: linear-gradient(90deg,transparent,rgba(156,162,168,.36),transparent) !important; }
+.quote-mark { color: #92989e !important; }
+.nav-ornament-svg, .quote-leaf-ornament { filter: none !important; opacity: .88 !important; }
+.carved-leaf-svg .vein-light, .quote-leaf-ornament .vein-light { stroke: #596067 !important; opacity: .56 !important; }
+.carved-leaf-svg .vein-fine, .quote-leaf-ornament .vein-fine { stroke: #454b52 !important; opacity: .58 !important; }
+
+/* Coach, camera, member forms, report and tables share the same stone surface. */
+.gate-icon, .auth-symbol, .step-number, .permission-icon, .report-stamp {
+  color: #a1a7ad !important;
+}
+.access-pill, .existing-checkin, .member-note-banner {
+  color: #92989e !important;
+  background: linear-gradient(145deg,#242629,#1b1d20) !important;
+  border: 1px solid rgba(190,195,201,.11) !important;
+  box-shadow: var(--inset) !important;
+}
+.existing-checkin strong, .member-note-banner strong { color: #adb3b9 !important; }
+.success-icon { color: #c1c6ca !important; background: linear-gradient(145deg,#4a4e53,#26292d) !important; box-shadow: var(--raised-soft) !important; }
+.capture-area { border-top-color: rgba(190,195,201,.1) !important; }
+.camera-frame { background: #101214 !important; border: 1px solid rgba(190,195,201,.12) !important; box-shadow: var(--inset) !important; }
+.camera-placeholder, .camera-placeholder span { color: #7d8389 !important; }
+.camera-countdown { color: #d0d4d8 !important; background: rgba(5,6,8,.52) !important; text-shadow: -2px -2px 2px #000, 1px 1px 1px rgba(255,255,255,.18) !important; }
+.permission-row, .history-item, .stat-box, .empty-state {
+  color: var(--text) !important;
+  background: linear-gradient(145deg,#1c1e21,#25282b) !important;
+  box-shadow: var(--inset) !important;
+}
+.permission-icon { color: #a4aab0 !important; }
+.member-row, .meta-item, .program-popover-fact {
+  background: linear-gradient(145deg,#1b1d20,#25282b) !important;
+  box-shadow: var(--inset) !important;
+  border: 1px solid rgba(190,195,201,.075) !important;
+}
+.member-field label, .field label { color: #8d9399 !important; }
+.field-input {
+  border-color: rgba(190,195,201,.12) !important;
+  background: linear-gradient(145deg,#191b1e,#202225) !important;
+  color: #c0c5ca !important;
+  box-shadow: var(--inset) !important;
+  text-shadow: -1px -1px .7px #050607, .55px .55px .45px rgba(255,255,255,.1) !important;
+}
+.field-input::placeholder { color: #666d73 !important; }
+.field-input:focus {
+  border-color: rgba(168,176,183,.28) !important;
+  box-shadow: var(--inset), 0 0 0 2px rgba(148,156,164,.055) !important;
+}
+.field-input option { background: #202225; color: #bdc2c7; }
+.form-actions, .download-row { border-top-color: rgba(190,195,201,.1) !important; }
+.table-wrap { background: linear-gradient(145deg,#191b1e,#222528) !important; box-shadow: var(--inset) !important; }
+th {
+  background: linear-gradient(145deg,#303337,#232629) !important;
+  color: #aeb4ba !important;
+  text-shadow: -1px -1px 1px #08090a, .6px .6px .5px rgba(255,255,255,.13) !important;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+td { color: #a7adb3 !important; border-top-color: rgba(190,195,201,.08) !important; }
+.status-text, .status-Hadir, .status-Izin, .status-Sakit, .status-Alpa {
+  color: #a1a7ad !important;
+  background: linear-gradient(145deg,#292c30,#1c1f22) !important;
+  border: 1px solid rgba(190,195,201,.09) !important;
+  box-shadow: var(--inset) !important;
+}
+.report-stamp { transform: none !important; }
+.report-stats .stat-box strong { color: #b4bac0 !important; }
+
+/* Buttons: raised black stone; primary actions are no longer green-filled. */
+.button,
+.button-primary,
+.button-secondary,
+.button-quiet,
+.program-popover-close {
+  color: #aeb4ba !important;
+  border: 1px solid rgba(194,199,205,.14) !important;
+  background: linear-gradient(145deg,#303337 0%,#24272a 52%,#1a1c1f 100%) !important;
+  box-shadow:
+    8px 9px 17px rgba(0,0,0,.84),
+    -5px -5px 12px rgba(68,71,76,.39),
+    inset 1.2px 1.2px 1px rgba(255,255,255,.075),
+    inset -1.5px -1.5px 3px rgba(0,0,0,.76) !important;
+  text-shadow: -1px -1px .8px #050607, .65px .65px .5px rgba(255,255,255,.13) !important;
+}
+.button-primary {
+  color: #c0c5ca !important;
+  background: linear-gradient(145deg,#34373b,#272a2e 54%,#1c1f22) !important;
+  box-shadow:
+    0 4px 0 #111315,
+    10px 13px 21px rgba(0,0,0,.85),
+    -5px -5px 13px rgba(70,73,78,.34),
+    inset 1.4px 1.4px 2px rgba(255,255,255,.095),
+    inset -2px -2px 4px rgba(0,0,0,.78) !important;
+}
+.button-secondary { background: linear-gradient(145deg,#303337,#202326) !important; }
+.button-quiet { color: #858b91 !important; background: linear-gradient(145deg,#282b2f,#1b1e21) !important; }
+.button:hover:not(:disabled), .nav-btn:hover:not(:disabled), .program-popover-close:hover {
+  border-color: rgba(195,200,206,.22) !important;
+}
+.button:active:not(:disabled), .nav-btn:active:not(:disabled),
+.program-open:active, .program-open-arrow:active,
+.program-popover-close:active {
+  border-color: rgba(185,191,197,.18) !important;
+  box-shadow:
+    inset 5px 5px 10px rgba(5,6,8,.84),
+    inset -4px -4px 8px rgba(70,73,78,.27),
+    0 1px 2px rgba(0,0,0,.6) !important;
+}
+.button-primary:active:not(:disabled) {
+  box-shadow:
+    0 1px 0 #111315,
+    2px 3px 6px rgba(0,0,0,.72),
+    inset 6px 6px 12px rgba(7,8,10,.82),
+    inset -3px -3px 7px rgba(91,95,101,.18) !important;
+}
+.button:focus-visible, .nav-btn:focus-visible, .program-card.program-open:focus-visible,
+.field-input:focus-visible {
+  outline: 1px solid rgba(173,180,187,.42) !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px rgba(150,158,166,.045) !important;
+}
+.button:disabled, .nav-btn:disabled { opacity: .42; }
+
+/* Floating detail panel: graphite-only surface, soft physical shadow, no green halo. */
+.program-popover {
+  border: 1px solid rgba(195,200,206,.19) !important;
+  color: #b0b6bc !important;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.035),transparent 32%),
+    linear-gradient(145deg,rgba(45,48,52,.99),rgba(31,34,38,.99) 54%,rgba(20,22,25,.995)) !important;
+  box-shadow:
+    22px 25px 48px rgba(0,0,0,.91),
+    -9px -9px 24px rgba(68,71,76,.3),
+    inset 1.5px 1.5px 2px rgba(255,255,255,.105),
+    inset -2px -2px 4px rgba(0,0,0,.86) !important;
+}
+.program-popover::before { border-top-color: rgba(255,255,255,.075) !important; }
+.program-popover-head { border-bottom-color: rgba(190,195,201,.1) !important; }
+.program-popover-title-copy h2 { color: #b8bec4 !important; }
+.program-popover-title-copy .eyebrow { color: #82888e !important; }
+.program-popover-subtitle { color: #858b91 !important; }
+.program-popover-close { color: #b4bac0 !important; }
+.program-popover-scroll { scrollbar-color: #555b62 #1b1d20 !important; }
+.program-popover-fact { background: linear-gradient(145deg,#1d1f22,#292c30) !important; }
+.program-popover-fact span, .program-popover-section h3 { color: #90969c !important; }
+.program-popover-fact strong { color: #b9bfc5 !important; }
+.program-popover-section h3::before {
+  background: linear-gradient(145deg,#92989e,#454a50) !important;
+  box-shadow: 2px 2px 4px #08090a,-1px -1px 3px #454a50 !important;
+}
+.program-popover-section p, .program-popover-section li { color: #a0a6ac !important; }
+.program-popover-note { border-top-color: rgba(190,195,201,.09) !important; color: #7e848a !important; }
+
+/* Reduce every legacy emerald glow and green cast to near-neutral graphite. */
+.program-emblem-wrap::before,
+.nav-btn.active::before { box-shadow: none !important; }
+.nav-btn.active,
+.program-card.program-open[aria-expanded="true"],
+.program-open[aria-expanded="true"] .program-open-arrow,
+.program-popover, .program-popover-close,
+.button, .button-primary, .button-secondary, .button-quiet {
+  filter: none !important;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .button:not(:disabled):hover, .nav-btn:not(:disabled):hover,
+  .program-card.program-open:hover, .program-popover-close:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      12px 14px 22px rgba(0,0,0,.87),
+      -6px -6px 15px rgba(72,75,80,.4),
+      inset 1px 1px 1px rgba(255,255,255,.08),
+      inset -1px -1px 2px rgba(0,0,0,.75) !important;
+  }
+}
+@media (hover:none) {
+  .button:hover, .nav-btn:hover, .program-card.program-open:hover { transform:none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior:auto !important; transition-duration:.01ms !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; }
+}

@@ -1,6 +1,23 @@
 # Sistem Absensi Coach & Evaluasi Ekstrakurikuler — SMK BPP Bandung
 
-Versi 3.7 menyusun ulang beranda agar mengikuti komposisi gambar referensi: header besar di atas, navigasi vertikal di kiri, banner foto gedung, empat kartu statistik, enam kartu ekstrakurikuler dalam grid 3×2, dan panel kutipan. Enam emblem SVG khusus, efek ukiran pada tipografi, serta lapisan neumorphism 3D tetap dipertahankan. Backend tetap kompatibel dengan API V3.2. Versi ini mempertahankan alur absensi one-tap dan memperbaiki alur interaksi, koneksi API, validasi payload, dan layout responsif; versi ini juga mengganti data khusus Musik pada versi sebelumnya menjadi enam program dalam dokumen **Laporan Evaluasi & Kinerja Ekstrakurikuler SMK Balai Perguruan Putri Bandung, TA 2025/2026**.
+**Versi 3.12 — Unified Black Charcoal Stone Neumorphism**
+
+Versi ini mempertahankan struktur dan fungsi V3.11, tetapi mengganti keseluruhan sistem visual menjadi neumorphism hitam-charcoal dengan material batu berlapis: kartu dan tombol tampak menonjol melalui bayangan luar dan bevel halus, sedangkan input serta tipografi memakai efek cekung/ukiran. Aksen hijau neon diminimalkan dan diganti highlight graphite/netral. Layout beranda, enam emblem ekstrakurikuler, popup melayang, ornamen daun, absensi kamera-GPS, penilaian anggota, dan ekspor DOCX tetap dipertahankan. Backend dan endpoint Google Apps Script tidak berubah.
+
+## Cara memperbarui website ke V3.12
+
+Untuk GitHub Pages, unggah ulang `index.html` dan `style.css` dari paket ini. Pastikan seluruh folder `assets/` yang sudah ada tetap dipertahankan, karena berisi foto banner, enam logo ekskul, dan ornamen. `data.js`, `script.js`, `config.js`, dan `code.gs` tidak berubah pada pembaruan visual ini. Karena perubahan hanya pada frontend, Google Apps Script tidak perlu di-deploy ulang. Setelah commit, lakukan hard refresh (`Ctrl + Shift + R`) agar browser memuat `style.css?v=3.12`.
+
+## Pembaruan visual V3.12
+
+- **Palet penuh charcoal:** latar, header, sidebar, banner, kartu statistik, kartu ekskul, popup, tabel, form, tombol, dan panel laporan menggunakan gradasi hitam-charcoal.
+- **Neumorphism timbul 3D:** setiap panel utama memakai dua arah bayangan luar, highlight bevel di sisi atas-kiri, dan bayangan bawah-kanan yang lebih dalam. Tombol tetap memiliki state hover/pressed, tetapi tanpa lapisan glow hijau yang mencolok.
+- **Tipografi ukiran:** judul, nama sekolah, label, statistik, dan isi popup memakai bayangan gelap pada sisi atas-kiri serta highlight kecil pada sisi bawah-kanan untuk memberi kesan huruf terukir ke dalam batu.
+- **Form dan tabel cekung:** input, area kamera, baris anggota, statistik laporan, dan tabel memakai inset shadow graphite.
+- **Popup detail ekskul:** panel tetap melayang di atas grid dan tidak menggeser kartu lain; permukaannya kini memakai material charcoal yang sama.
+- **Emblem tetap relevan:** enam simbol ekskul mempertahankan identitas gambarnya masing-masing, tetapi duduk di dalam medali hitam-charcoal.
+- **Aksen hijau diminimalkan:** tidak ada tombol primer berwarna hijau penuh atau glow hijau besar; indikator status tetap menggunakan warna semantik yang redup.
+- **Responsif dan aksesibel:** aturan desktop/mobile dan dukungan `prefers-reduced-motion` tetap dipertahankan.
 
 ## Fitur utama
 
@@ -219,3 +236,20 @@ Keluhan daun yang tidak muncul berasal dari dua risiko pada implementasi sebelum
 
 ### File update
 Untuk update GitHub, ganti `index.html` dan `style.css` dengan versi V3.9. File `assets/leaf-ornament.svg` boleh tetap disimpan, tetapi tidak lagi menjadi ketergantungan tampilan daun. Backend `code.gs`, `config.js`, dan spreadsheet tidak berubah. Pastikan file `data.js` serta aset lain dari paket lengkap tetap dipertahankan. Setelah commit, lakukan hard refresh.
+
+
+## V3.10 — Daun ukiran cekung
+Pada V3.10, ornamen daun di sidebar dan panel kutipan diubah dari relief timbul menjadi ukiran cekung. Siluet daun tidak lagi memakai bidang isi terang atau drop-shadow luar. Garis tepi dan urat daun memakai pasangan bayangan gelap di sisi kiri-atas dan bevel terang lembut di sisi kanan-bawah untuk memberi kesan alur yang dipahat ke permukaan batu. SVG tetap inline di `index.html`, sehingga tidak bergantung pada pemuatan file gambar eksternal.
+
+
+## Pembaruan V3.10 — efek daun menjorok ke dalam
+Perubahan V3.10 khusus pada ilustrasi daun. Bidang daun terang dan bayangan luar yang sebelumnya membuat efek timbul telah dihilangkan. Bentuk daun sekarang dibuat dari alur outline gelap, garis bayangan cekung pada sisi kiri-atas, bevel reflektif tipis pada sisi kanan-bawah, serta urat daun yang juga dipahat sebagai alur. Dua ornamen tetap inline di `index.html`, sehingga tidak membutuhkan asset tambahan. Cache CSS/JS/data dinaikkan ke `3.10`.
+
+Pemasangan: ganti `index.html` dan `style.css` dari paket V3.10. Pertahankan file JavaScript, konfigurasi, backend, serta aset lain. Tidak perlu deploy ulang Apps Script. Lakukan hard refresh setelah commit.
+
+
+## V3.11 — Black Neumorphism Ukiran Batu
+
+Ornamen daun diselaraskan dengan permukaan dashboard hitam/charcoal. Tidak ada lagi bidang daun hijau. Bentuk daun memakai alur hitam pekat, bevel graphite abu-abu yang sangat terkendali pada sisi bawah/kanan, serta urat daun berupa garis pahatan. Efeknya cekung ke dalam batu, bukan timbul atau bercahaya.
+
+Pembaruan hanya pada `index.html`, `style.css`, `assets/leaf-ornament.svg`, dan cache-buster asset versi 3.11. Backend tidak berubah. Untuk update GitHub, ganti `index.html` dan `style.css`; `leaf-ornament.svg` juga ikut diganti bila file tersebut digunakan di luar elemen inline.

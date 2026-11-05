@@ -15,7 +15,7 @@ const EXTRACURRICULAR_SEED = [
   { id: 'boxing', name: 'Boxing', coaches: ['H. Gilang Muhammad Farji Faresi, M. Pd.'], chair: 'Muhammad Akram', count: 27, schedule: 'Senin' },
   { id: 'futsal', name: 'Futsal', coaches: ['M. Rasyid, S. Pd.'], chair: 'Variel', count: 20, schedule: 'Rabu' },
   { id: 'seni-tari', name: 'Seni Tari', coaches: ['Ghina Zalfa Dewi, S. Pd.'], chair: 'Jasmine', count: 16, schedule: 'Kamis' },
-  { id: 'basket', name: 'Basket', coaches: ['Lizaldi Ramandhika, S. Pd.', 'Cselia Midtsaluna, S. Pd.'], chair: 'Alif', count: 14, schedule: 'Kamis' }
+  { id: 'basket', name: 'Basket', coaches: ['Lizaldi Ramandhika, S. Pd.'], chair: 'Alif', count: 14, schedule: 'Kamis' }
 ];
 
 const HEADERS = {

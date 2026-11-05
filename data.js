@@ -117,7 +117,7 @@ const EXTRACURRICULARS = [
   },
   {
     id: 'basket', name: 'Basket', category: 'Olahraga', count: 14,
-    coaches: ['Lizaldi Ramandhika, S. Pd.', 'Cselia Midtsaluna, S. Pd.'], chair: 'Alif', schedule: 'Kamis',
+    coaches: ['Lizaldi Ramandhika, S. Pd.'], chair: 'Alif', schedule: 'Kamis',
     description: 'Wadah pengembangan potensi olahraga bola basket yang mengedepankan pembinaan teknik dasar, ketahanan stamina, taktik beregu, dan nilai sportivitas.',
     vision: 'Menjadi ekstrakurikuler basket yang berprestasi, disiplin, dan menjunjung tinggi sportivitas serta mampu mengembangkan potensi siswa di bidang olahraga.',
     missions: [
